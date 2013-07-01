@@ -1,0 +1,33 @@
+*.png
+*.gif
+*.bmp
+*.jpg
+*.jpeg
+*.obj
+*.dae
+*~
+~*
+cmake_install.cmake
+# *.cmake
+
+/resource/*
+!/resource/shader/
+/AUTHORS
+/COPYING
+/INSTALL
+/NEWS
+/COPYING
+/AUTHORS
+
+build/
+bin/*
+
+ChangeLog
+# CMakeLists.txt
+CMakeCache.txt
+CMakeFiles
+Makefile
+
+*.sublime-*
+
+run.sh
