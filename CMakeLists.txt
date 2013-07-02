@@ -12,6 +12,5 @@ foreach(file_name ${DIR_LIST})
 	set(LOCAL_SOURCES ${LOCAL_SOURCES} ${file_name})
 endforeach()
 
-# ${PROJECT_SOURCE_DIR}/Tests/ZombieWorld/main.cpp
-add_executable(heaven ${SOURCE_FILES} ${LOCAL_SOURCES})
-target_link_libraries(heaven ${LINK_LIBRARIES} ${LOCAL_LIBS} ${ADDITIONAL_LIBRARIES})
+add_executable(heaven ${LOCAL_SOURCES})
+target_link_libraries(heaven ${LOCAL_LIBS} aengine)
