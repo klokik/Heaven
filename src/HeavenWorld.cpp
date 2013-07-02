@@ -1,7 +1,12 @@
 #include <iostream>
 #include <random>
 #include <functional>
+
+#include "AEVectorMath.h"
+
 #include "HeavenWorld.hpp"
+
+#include "CameraTarget.hpp"
 
 namespace heaven
 {
@@ -48,19 +53,19 @@ namespace heaven
 
 	void HeavenWorld::init(void)
 	{
-		for(int q=0;q<10;q++)
-		{
-			Island island;
-			islands.push_back(island);
-		}
-
-		islands[0].ownership = Island::MINE;
-		islands[9].ownership = Island::EVIL;
-
 		engine.Init(AE_INIT_WINDOW|AE_INIT_RENDER_GL|AE_INIT_SCENE|AE_INIT_CAMERA);
 
 		engine.Refresh = iOnRefresh;
-		engine.OnStart = iOnStart;	
+		engine.OnStart = iOnStart;
+
+		//init camera
+		view_target = new CameraTarget(engine.curCamera);
+		view_target->setDistance(30.0f);
+		//view_target->setPitch(30.0f);
+
+		engine.scene->AddObject(view_target);
+
+		loadIslands();
 	}
 
 	void HeavenWorld::run(void)
@@ -86,7 +91,7 @@ namespace heaven
 
 	void HeavenWorld::updateWorld(float dt_ms)
 	{
-		//TODO
+		updateView();
 	}
 
 	void HeavenWorld::iOnStart(int *param)
@@ -99,5 +104,38 @@ namespace heaven
 	void HeavenWorld::engineStarted(void)
 	{
 		engine.render->CacheScene(engine.scene);
+	}
+
+	void HeavenWorld::loadIslands(void)
+	{
+		for(int q=0;q<10;q++)
+		{
+			Island island;
+
+			island.SetTranslate(vec3f((q-5)*10.0f,0.0f,0.0f));
+
+			islands.push_back(island);
+		}
+
+		islands[0].ownership = Island::MINE;
+		islands[9].ownership = Island::EVIL;
+
+		for(size_t q=0;q<islands.size();q++)
+		{
+			engine.scene->AddObject(&islands[q]);
+		}
+
+		selected_island = &islands[0];
+	}
+
+	void HeavenWorld::updateView(void)
+	{
+		if(selected_island)
+			view_target->SetTranslate(selected_island->GetAbsPosition());
+	}
+
+	HeavenWorld::~HeavenWorld(void)
+	{
+		//TODO: just save current state
 	}
 }
