@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "world.hpp"
+#include "HeavenWorld.hpp"
 
 using namespace std;
 using namespace heaven;
@@ -9,7 +9,7 @@ int main(void)
 {
 	cout<<"Hello!"<<endl;
 
-	World world;
+	HeavenWorld world;
 
 	world.init();
 	world.run();
