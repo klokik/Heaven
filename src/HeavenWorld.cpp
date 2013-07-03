@@ -167,9 +167,9 @@ namespace heaven
 	void HeavenWorld::updateView(void)
 	{
 		if(engine.GetKeyState('a'))
-			view_target->relYaw(4.0f);
-		if(engine.GetKeyState('d'))
 			view_target->relYaw(-4.0f);
+		if(engine.GetKeyState('d'))
+			view_target->relYaw(4.0f);
 		if(engine.GetKeyState('w'))
 			view_target->relDistance(-1.0f);
 		if(engine.GetKeyState('s'))
