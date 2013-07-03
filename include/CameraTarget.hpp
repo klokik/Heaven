@@ -12,7 +12,7 @@ namespace heaven
 		CameraTarget(AEObjectCamera *camera);
 
 		void setDistance(float distance);
-		void alterDistance(float delta);
+		void relDistance(float delta);
 
 		void setPitch(float angle);
 		void setYaw(float angle);

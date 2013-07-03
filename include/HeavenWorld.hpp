@@ -39,7 +39,7 @@ namespace heaven
 
 	public:
 		// Dont add/remove islands after initialization
-		std::vector<Island> islands;
+		std::vector<Island*> islands;
 
 		AEEngine engine;
 
@@ -52,9 +52,11 @@ namespace heaven
 
 		static void iOnRefresh(int *param);
 		static void iOnStart(int *param);
+		static void iOnKeyDown(int *param);
 
 		void updateWorld(float dt_ms);
 		void engineStarted(void);
+		void keyDown(int keycode);
 
 		void updateView(void);
 

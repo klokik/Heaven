@@ -14,7 +14,7 @@ namespace heaven
 		children[0]->SetTranslate(vec3f(0.0f,0.0f,distance));
 	}
 
-	void CameraTarget::alterDistance(float delta)
+	void CameraTarget::relDistance(float delta)
 	{
 		children[0]->RelTranslate(vec3f(0.0f,0.0f,delta));
 	}

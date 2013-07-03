@@ -57,11 +57,12 @@ namespace heaven
 
 		engine.Refresh = iOnRefresh;
 		engine.OnStart = iOnStart;
+		engine.OnKeyDown = iOnKeyDown;
 
 		//init camera
 		view_target = new CameraTarget(engine.curCamera);
 		view_target->setDistance(30.0f);
-		//view_target->setPitch(30.0f);
+		view_target->setPitch(30.0f);
 
 		engine.scene->AddObject(view_target);
 
@@ -77,7 +78,7 @@ namespace heaven
 		auto rnd = bind(distrib,rengine);
 		for(int q=0;q<10;q++)
 		{
-			islands[rnd()].tryCapture(islands[rnd()]);
+			islands[rnd()]->tryCapture(*islands[rnd()]);
 		}
 		cout<<"Finish"<<endl;
 	}
@@ -106,32 +107,68 @@ namespace heaven
 		engine.render->CacheScene(engine.scene);
 	}
 
+	void HeavenWorld::iOnKeyDown(int *param)
+	{
+		if(!world) throw 0;
+
+		world->keyDown(param[0]);
+	}
+
+	void HeavenWorld::keyDown(int keycode)
+	{
+		switch(keycode)
+		{
+		case SDLK_ESCAPE:
+			engine.Stop();
+			break;
+
+		case '1':
+		case '2':
+		case '3':
+			selected_island = islands[keycode-'1'];
+			break;
+		}	
+	}
+
 	void HeavenWorld::loadIslands(void)
 	{
+		
 		for(int q=0;q<10;q++)
 		{
-			Island island;
+			Island *island = new Island;
 
-			island.SetTranslate(vec3f((q-5)*10.0f,0.0f,0.0f));
+			island->SetTranslate(vec3f((q-5)*10.0f,0.0f,0.0f));
 
 			islands.push_back(island);
 		}
 
-		islands[0].ownership = Island::MINE;
-		islands[9].ownership = Island::EVIL;
+		islands[0]->ownership = Island::MINE;
+		islands[9]->ownership = Island::EVIL;
 
 		for(size_t q=0;q<islands.size();q++)
 		{
-			engine.scene->AddObject(&islands[q]);
+			engine.scene->AddObject(islands[q]);
 		}
 
-		selected_island = &islands[0];
+		selected_island = islands[0];
 	}
 
 	void HeavenWorld::updateView(void)
 	{
+		if(engine.GetKeyState('a'))
+			view_target->relYaw(4.0f);
+		if(engine.GetKeyState('d'))
+			view_target->relYaw(-4.0f);
+		if(engine.GetKeyState('w'))
+			view_target->relDistance(-1.0f);
+		if(engine.GetKeyState('s'))
+			view_target->relDistance(1.0f);
+
 		if(selected_island)
 			view_target->SetTranslate(selected_island->GetAbsPosition());
+
+		//BUG
+		view_target->children[0]->InvalidateTransform();
 	}
 
 	HeavenWorld::~HeavenWorld(void)
