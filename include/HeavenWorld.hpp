@@ -37,6 +37,8 @@ namespace heaven
 
 		CameraTarget *view_target;
 
+		float dt_ms;
+
 	public:
 		// Dont add/remove islands after initialization
 		std::vector<Island*> islands;

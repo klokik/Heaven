@@ -52,6 +52,7 @@ namespace heaven
 		}
 
 		HeavenWorld::world = this;
+		dt_ms = 0.0f;
 	}
 
 	void HeavenWorld::init(void)
@@ -95,6 +96,7 @@ namespace heaven
 
 	void HeavenWorld::updateWorld(float dt_ms)
 	{
+		this->dt_ms = dt_ms;
 		updateView();
 	}
 
@@ -174,7 +176,18 @@ namespace heaven
 			view_target->relDistance(1.0f);
 
 		if(selected_island)
-			view_target->SetTranslate(selected_island->GetAbsPosition());
+		{
+			float max_dist = 0.1f;
+			float speed = 10.0f; // 10 units/second
+			Vec3f m_vec = selected_island->GetAbsPosition()-view_target->translate;
+			if(SqrLength(m_vec)>=max_dist*max_dist)
+			{
+				Vec3f d_vec = vec3f(0.0f,0.0f,0.0f);
+				//normalize m_vec
+				d_vec = m_vec*(1/Length(m_vec))*speed*(dt_ms/1000);
+				view_target->RelTranslate(d_vec);
+			}
+		}
 
 		//BUG
 		view_target->children[0]->InvalidateTransform();
