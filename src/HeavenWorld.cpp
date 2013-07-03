@@ -2,11 +2,14 @@
 #include <random>
 #include <functional>
 
+#include "AEObjectMesh.h"
 #include "AEVectorMath.h"
 
 #include "HeavenWorld.hpp"
 
 #include "CameraTarget.hpp"
+
+void LoadObjFile(AEMesh *&mesh, const char *path);
 
 namespace heaven
 {
@@ -132,10 +135,16 @@ namespace heaven
 
 	void HeavenWorld::loadIslands(void)
 	{
-		
+		AEMesh *island_mesh;
+		LoadObjFile(island_mesh,"res/models/island.obj");
+
 		for(int q=0;q<10;q++)
 		{
 			Island *island = new Island;
+			AEObjectMesh *island_mesh_object = new AEObjectMesh;
+
+			island_mesh_object->mesh = island_mesh;
+			island->AddChild(island_mesh_object);
 
 			island->SetTranslate(vec3f((q-5)*10.0f,0.0f,0.0f));
 
