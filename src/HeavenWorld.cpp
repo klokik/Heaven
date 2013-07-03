@@ -65,7 +65,7 @@ namespace heaven
 		//init camera
 		view_target = new CameraTarget(engine.curCamera);
 		view_target->setDistance(30.0f);
-		view_target->setPitch(30.0f);
+		view_target->setPitch(-30.0f);
 
 		engine.scene->AddObject(view_target);
 
