@@ -20,6 +20,10 @@ namespace heaven
 		ownership = NEUTRAL;
 	}
 
+	void Island::update(float dt_ms)
+	{
+	}
+
 	bool Island::tryCapture(Island &target)
 	{
 		switch(target.ownership)
@@ -71,6 +75,10 @@ namespace heaven
 		engine.scene->AddObject(view_target);
 
 		loadIslands();
+
+		Ship *ship01 = new Ship;
+		ship01->target = islands[0];
+		addWarship(ship01);
 	}
 
 	void HeavenWorld::run(void)
@@ -97,6 +105,13 @@ namespace heaven
 	void HeavenWorld::updateWorld(float dt_ms)
 	{
 		this->dt_ms = dt_ms;
+
+		for(auto island:islands)
+			island->update(dt_ms);
+
+		for(auto ship:warships)
+			ship->update(dt_ms);
+
 		updateView();
 	}
 
@@ -191,6 +206,15 @@ namespace heaven
 
 		//BUG
 		view_target->children[0]->InvalidateTransform();
+	}
+
+	void HeavenWorld::addWarship(Ship *ship)
+	{
+		if(!ship)
+			throw 0;
+
+		warships.push_back(ship);
+		engine.scene->AddObject(ship);
 	}
 
 	HeavenWorld::~HeavenWorld(void)

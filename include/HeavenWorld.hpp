@@ -7,15 +7,12 @@
 #include "AEObjectEmpty.h"
 
 #include "CameraTarget.hpp"
+#include "Ship.hpp"
 
 namespace heaven
 {
 	using namespace aengine;
 
-	class Character
-	{
-	public:
-	};
 
 	class Island: public AEObjectEmpty
 	{
@@ -23,10 +20,10 @@ namespace heaven
 		enum Ownership {MINE,EVIL,NEUTRAL};
 
 		Ownership ownership;
-		std::vector<Character> population;
 
 		Island(void);
 
+		void update(float dt_ms) /* =0 */;
 		bool tryCapture(Island &target);
 	};
 
@@ -40,8 +37,8 @@ namespace heaven
 		float dt_ms;
 
 	public:
-		// Dont add/remove islands after initialization
 		std::vector<Island*> islands;
+		std::vector<Ship*> warships;
 
 		AEEngine engine;
 
@@ -61,6 +58,8 @@ namespace heaven
 		void keyDown(int keycode);
 
 		void updateView(void);
+
+		void addWarship(Ship *ship);
 
 		~HeavenWorld(void);
 
