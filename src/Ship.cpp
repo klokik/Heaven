@@ -12,13 +12,13 @@ namespace heaven
 
 	map<string,AEMesh*> Ship::mesh_library;
 
-	Ship::Ship(void)
+	Ship::Ship(string type)
 	{
 		target = nullptr;
 
 		static int counter = 0;
 		AEObjectMesh *ship_mesh = new AEObjectMesh;
-		ship_mesh->mesh = getMesh("glider");
+		ship_mesh->mesh = getMesh(type);
 		ship_mesh->name = "warship " + counter;
 
 		AddChild(ship_mesh);
@@ -35,25 +35,37 @@ namespace heaven
 	{
 		attack_dt += dt_ms;
 
-		moveToTarget(dt_ms);
+		move(dt_ms);
 		if(target->ownership == Island::EVIL
 			&& attack_dt >= attack_time_limit)
 			attack();
 	}
 
-	void Ship::moveToTarget(float dt_ms)
+	void Ship::move(float dt_ms)
 	{
 		if(target)
 		{
-			float max_dist = 0.1f;
+			float max_dist = 0.25f;
+			float distance = speed*(dt_ms/1000);
+
 			Vec3f m_vec = target->GetAbsPosition()-this->translate;
+			m_vec.Y = 0.0f;
 			if(SqrLength(m_vec)>=max_dist*max_dist)
 			{
+				//move to target
 				Vec3f d_vec = vec3f(0.0f,0.0f,0.0f);
 				//normalize m_vec
-				d_vec = m_vec*(1/Length(m_vec))*speed*(dt_ms/1000);
-				d_vec.Y = 0.0f;
+				d_vec = m_vec*(1/Length(m_vec))*distance;
 				RelTranslate(d_vec);
+				SetRotate(vec3f(0.0f,0.0f,0.0f));
+			}
+			else
+			{
+				//move on orbit
+				float radius = 3.0f;
+				children[0]->SetTranslate(vec3f(radius,0.0f,0.0f));
+				float phi = (distance/radius)*57.29577951308f;
+				RelRotate(vec3f(0.0f,phi,0.0f));
 			}
 		}
 	}

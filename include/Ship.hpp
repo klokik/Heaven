@@ -18,10 +18,10 @@ namespace heaven
 		Island *target;
 		float speed;
 
-		Ship(void);
+		Ship(std::string type);
 
 		void update(float dt_ms);
-		void moveToTarget(float dt_ms);
+		void move(float dt_ms);
 		void attack(void);
 
 	protected:

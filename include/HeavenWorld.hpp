@@ -4,28 +4,15 @@
 #include <vector>
 
 #include "AEEngine.h"
-#include "AEObjectEmpty.h"
 
 #include "CameraTarget.hpp"
 #include "Ship.hpp"
+#include "Island.hpp"
 
 namespace heaven
 {
 	using namespace aengine;
 
-
-	class Island: public AEObjectEmpty
-	{
-	public:
-		enum Ownership {MINE,EVIL,NEUTRAL};
-
-		Ownership ownership;
-
-		Island(void);
-
-		void update(float dt_ms) /* =0 */;
-		bool tryCapture(Island &target);
-	};
 
 	class HeavenWorld
 	{
