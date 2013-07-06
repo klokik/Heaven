@@ -15,34 +15,6 @@ namespace heaven
 {
 	using namespace std;
 
-	Island::Island(void)
-	{
-		ownership = NEUTRAL;
-	}
-
-	void Island::update(float dt_ms)
-	{
-	}
-
-	bool Island::tryCapture(Island &target)
-	{
-		switch(target.ownership)
-		{
-		case MINE:
-			break;
-		case EVIL:
-			cout<<"Evil ";
-			break;
-		case NEUTRAL:
-			cout<<"Neutral ";
-			break;
-		}
-
-		cout<<"island captured"<<endl;
-		target.ownership = ownership;
-
-		return true;
-	}
 
 	HeavenWorld *HeavenWorld::world = nullptr;
 
@@ -76,7 +48,7 @@ namespace heaven
 
 		loadIslands();
 
-		Ship *ship01 = new Ship;
+		Ship *ship01 = new Ship("glider");
 		ship01->target = islands[0];
 		addWarship(ship01);
 	}
@@ -84,14 +56,7 @@ namespace heaven
 	void HeavenWorld::run(void)
 	{
 		engine.Run();
-		
-		default_random_engine rengine;
-		uniform_int_distribution<int> distrib(0,9);
-		auto rnd = bind(distrib,rengine);
-		for(int q=0;q<10;q++)
-		{
-			islands[rnd()]->tryCapture(*islands[rnd()]);
-		}
+
 		cout<<"Finish"<<endl;
 	}
 
@@ -157,7 +122,7 @@ namespace heaven
 
 		for(int q=0;q<10;q++)
 		{
-			Island *island = new Island;
+			Island *island = new TownIsland;
 			AEObjectMesh *island_mesh_object = new AEObjectMesh;
 
 			island_mesh_object->mesh = island_mesh;

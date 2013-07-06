@@ -8,11 +8,13 @@
 #include "AEObjectEmpty.h"
 #include "AEObjectMesh.h"
 
+#include "StaticMeshLibrary.hpp"
+
 namespace heaven
 {
 	class Island;
 
-	class Ship: public AEObjectEmpty
+	class Ship: public AEObjectEmpty, public StaticMeshLibrary
 	{
 	public:
 		Island *target;
@@ -27,10 +29,6 @@ namespace heaven
 	protected:
 		float attack_dt;
 		float attack_time_limit;
-
-		static std::map<std::string,AEMesh*> mesh_library;
-		static void loadMeshLibrary(void);
-		static AEMesh *getMesh(std::string name);
 	};
 }
 

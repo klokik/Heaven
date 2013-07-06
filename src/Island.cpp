@@ -1,4 +1,5 @@
 #include "Island.hpp"
+#include "Ship.hpp"
 
 namespace heaven
 {
@@ -7,7 +8,7 @@ namespace heaven
 		ownership = NEUTRAL;
 	}
 
-	IslandProduct FactoryIsland::Produce(void)
+	IslandProduct FactoryIsland::produce(void)
 	{
 		IslandProduct product = {IslandProduct::NONE,0,nullptr};
 
@@ -38,14 +39,16 @@ namespace heaven
 			product.amount = time_elapsed/time_per_item;
 
 			time_elapsed -= time_per_item;
-
-			return product;
 		}
+
+		return product;
 	}
 
 	IslandProduct FactoryIsland::update(float dt_ms)
 	{
 		time_elapsed += dt_ms;
+
+		return produce();
 	}
 
 	IslandProduct TownIsland::update(float dt_ms)

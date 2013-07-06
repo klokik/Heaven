@@ -7,7 +7,7 @@
 
 namespace heaven
 {
-	using namespace aengine;
+	// using namespace aengine;
 
 
 	class Island: public AEObjectEmpty
@@ -33,14 +33,14 @@ namespace heaven
 
 		Type product_type;
 
-		IslandProduct Produce(void);
+		IslandProduct produce(void);
 		virtual IslandProduct update(float dt_ms);
 	};
 
 	class TownIsland: public Island
 	{
 	public:
-		virtual IslandProduct upadate(float dt_ms);
+		virtual IslandProduct update(float dt_ms);
 	};
 }
 

@@ -3,18 +3,20 @@
 #include "Ship.hpp"
 #include "HeavenWorld.hpp"
 
-void LoadObjFile(AEMesh *&mesh, const char *path);
 
 namespace heaven
 {
 	using namespace std;
 	using namespace aengine;
-
-	map<string,AEMesh*> Ship::mesh_library;
+	
 
 	Ship::Ship(string type)
 	{
 		target = nullptr;
+
+		loadMesh("glider","res/models/glider.obj");
+		loadMesh("plane","res/models/plane.obj");
+		loadMesh("zeppelin","res/models/zeppelin.obj");
 
 		static int counter = 0;
 		AEObjectMesh *ship_mesh = new AEObjectMesh;
@@ -73,32 +75,5 @@ namespace heaven
 	void Ship::attack(void)
 	{
 		//TODO
-	}
-
-	void Ship::loadMeshLibrary(void)
-	{
-		AEMesh *mesh;
-
-		LoadObjFile(mesh,"res/models/glider.obj");
-		mesh_library.insert(pair<string,AEMesh*>("glider",mesh));
-
-		LoadObjFile(mesh,"res/models/plane.obj");
-		mesh_library.insert(pair<string,AEMesh*>("plane",mesh));
-
-		LoadObjFile(mesh,"res/models/zeppelin.obj");
-		mesh_library.insert(pair<string,AEMesh*>("zeppelin",mesh));
-	}
-
-	AEMesh *Ship::getMesh(string name)
-	{
-		static bool loaded = false;
-
-		if(!loaded)
-		{
-			loadMeshLibrary();
-			loaded = true;
-		}
-
-		return mesh_library.at(name);
 	}
 }

@@ -13,7 +13,6 @@ namespace heaven
 {
 	using namespace aengine;
 
-
 	class HeavenWorld
 	{
 	private:
