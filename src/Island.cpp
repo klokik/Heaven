@@ -1,11 +1,39 @@
+#include <map>
+#include <string>
+
+#include "AEObjectMesh.h"
+
 #include "Island.hpp"
 #include "Ship.hpp"
 
 namespace heaven
 {
+	using namespace aengine;
+
 	Island::Island(void)
 	{
 		ownership = NEUTRAL;
+
+		loadMesh("town","res/models/town.obj");
+		loadMesh("iron_factory","res/models/iron_factory.obj");
+		loadMesh("food_factory","res/models/food_factory.obj");
+		loadMesh("ship_factory","res/models/ship_factory.obj");
+	}
+
+	FactoryIsland::FactoryIsland(Type product_type)
+	{
+		this->product_type = product_type;
+		std::map<Type,std::string> m_name = {
+			{FOOD,"food_factory"},
+			{IRON,"iron_factory"},
+			{GLIDER,"ship_factory"},
+			{PLANE,"ship_factory"},
+			{ZEPPELIN,"ship_factory"}};
+
+		AEObjectMesh *island_mesh_obj = new AEObjectMesh;
+		island_mesh_obj->mesh = getMesh(m_name[product_type]);
+
+		AddChild(island_mesh_obj);
 	}
 
 	IslandProduct FactoryIsland::produce(void)
@@ -49,6 +77,15 @@ namespace heaven
 		time_elapsed += dt_ms;
 
 		return produce();
+	}
+
+	TownIsland::TownIsland(void)
+	{
+		AEObjectMesh *island_mesh_obj = new AEObjectMesh;
+
+		island_mesh_obj->mesh = getMesh("town");
+
+		AddChild(island_mesh_obj);
 	}
 
 	IslandProduct TownIsland::update(float dt_ms)

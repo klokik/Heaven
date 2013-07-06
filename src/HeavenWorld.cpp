@@ -117,16 +117,9 @@ namespace heaven
 
 	void HeavenWorld::loadIslands(void)
 	{
-		AEMesh *island_mesh;
-		LoadObjFile(island_mesh,"res/models/island.obj");
-
 		for(int q=0;q<10;q++)
 		{
 			Island *island = new TownIsland;
-			AEObjectMesh *island_mesh_object = new AEObjectMesh;
-
-			island_mesh_object->mesh = island_mesh;
-			island->AddChild(island_mesh_object);
 
 			island->SetTranslate(vec3f((q-5)*10.0f,0.0f,0.0f));
 

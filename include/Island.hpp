@@ -4,13 +4,14 @@
 #include "AEObjectEmpty.h"
 
 #include "IslandProduct.hpp"
+#include "StaticMeshLibrary.hpp"
 
 namespace heaven
 {
 	// using namespace aengine;
 
 
-	class Island: public AEObjectEmpty
+	class Island: public AEObjectEmpty, public StaticMeshLibrary
 	{
 	public:
 		enum Ownership {MINE,EVIL,NEUTRAL};
@@ -33,6 +34,8 @@ namespace heaven
 
 		Type product_type;
 
+		FactoryIsland(Type product_type);
+
 		IslandProduct produce(void);
 		virtual IslandProduct update(float dt_ms);
 	};
@@ -40,6 +43,9 @@ namespace heaven
 	class TownIsland: public Island
 	{
 	public:
+
+		TownIsland(void);
+		
 		virtual IslandProduct update(float dt_ms);
 	};
 }
