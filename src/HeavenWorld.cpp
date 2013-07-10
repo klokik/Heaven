@@ -258,7 +258,7 @@ namespace heaven
 	{
 		if(!world) throw 0;
 
-		return world->getIslandShips(island)
+		return world->getIslandShips(island);
 	}
 
 
