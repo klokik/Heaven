@@ -13,6 +13,7 @@ namespace heaven
 	Ship::Ship(string type)
 	{
 		target = nullptr;
+		getIslandShips = nullptr;
 
 		loadMesh("glider","res/models/glider.obj");
 		loadMesh("plane","res/models/plane.obj");
@@ -31,6 +32,11 @@ namespace heaven
 		attack_dt = attack_time_limit;
 
 		speed = 20.0f;
+		gun_power = 1.0f;
+		attack_range = 5.0f;
+
+		max_health = 100;
+		health = max_health;
 	}
 
 	void Ship::update(float dt_ms)
@@ -38,8 +44,7 @@ namespace heaven
 		attack_dt += dt_ms;
 
 		move(dt_ms);
-		if(target->ownership == Island::EVIL
-			&& attack_dt >= attack_time_limit)
+		if(target->ownership == Island::EVIL)
 			attack();
 	}
 
@@ -74,6 +79,26 @@ namespace heaven
 
 	void Ship::attack(void)
 	{
-		//TODO
+		if(!getIslandShips)
+			throw 0; // island is nowhere?
+
+		if(attack_dt >= attack_time_limit)
+			attack_dt -= attack_time_limit;
+		else
+			return;
+
+		std::vector<Ship*> evil_ships;
+		for(auto ship:evil_ships)
+		{
+			if(inRange(ship))
+			{
+				ship->health-=gun_power;
+			}
+		}
+	}
+
+	bool Ship::inRange(Ship *ship)
+	{
+		return (SqrLength(ship->translate - this->translate) <= attack_range*attack_range);
 	}
 }

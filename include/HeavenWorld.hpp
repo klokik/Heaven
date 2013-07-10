@@ -53,6 +53,9 @@ namespace heaven
 		void destroyWarship(Ship *ship);
 		void addIsland(Island *island);
 
+		static std::vector<Ship*> iGetIslandShips(Island *island);
+		std::vector<Ship*> getIslandShips(Island *island);
+
 		~HeavenWorld(void);
 
 	protected:

@@ -224,6 +224,7 @@ namespace heaven
 		if(!ship)
 			throw 0;
 
+		ship->getIslandShips = iGetIslandShips;
 		warships.push_back(ship);
 		engine.scene->AddObject(ship);
 	}
@@ -236,6 +237,27 @@ namespace heaven
 		islands.push_back(island);
 		engine.scene->AddObject(island);
 	}
+
+	vector<Ship*> HeavenWorld::getIslandShips(Island *island)
+	{
+		vector<Ship*> result;
+
+		for(auto ship:warships)
+		{
+			if(ship->target == island)
+				result.push_back(ship);
+		}
+
+		return result;
+	}
+
+	vector<Ship*> HeavenWorld::iGetIslandShips(Island *island)
+	{
+		if(!world) throw 0;
+
+		return world->getIslandShips(island);
+	}
+
 
 	HeavenWorld::~HeavenWorld(void)
 	{
