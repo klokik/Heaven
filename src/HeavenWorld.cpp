@@ -73,18 +73,21 @@ namespace heaven
 
 		for(auto island:islands)
 		{
-			IslandResult result = island->update(dt_ms);
+			IslandProduct product = island->update(dt_ms);
 
-			switch(result)
+			switch(product.prod_type)
 			{
-			case IslandResult::FOOD:
-				food+=result.amount;
+			case IslandProduct::FOOD:
+				food+=product.amount;
 				break;
-			case IslandResult::IRON:
-				iron+=result.amount;
+			case IslandProduct::IRON:
+				iron+=product.amount;
 				break;
-			case IslandResult::SHIP:
-				addWarship(result.ship);
+			case IslandProduct::SHIP:
+				addWarship(product.ship);
+				break;
+			case IslandProduct::NONE:
+				// just to be complte
 				break;
 			}
 		}
@@ -255,7 +258,7 @@ namespace heaven
 	{
 		if(!world) throw 0;
 
-		return world->getIslandShips(island);
+		return world->getIslandShips(island)
 	}
 
 
