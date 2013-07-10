@@ -64,6 +64,11 @@ namespace heaven
 				break;
 			}
 
+			if(product.ship)
+			{
+				product.ship->target = this;
+			}
+
 			product.amount = time_elapsed/time_per_item;
 
 			time_elapsed -= time_per_item;

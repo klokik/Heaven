@@ -72,7 +72,22 @@ namespace heaven
 		this->dt_ms = dt_ms;
 
 		for(auto island:islands)
-			island->update(dt_ms);
+		{
+			IslandResult result = island->update(dt_ms);
+
+			switch(result)
+			{
+			case IslandResult::FOOD:
+				food+=result.amount;
+				break;
+			case IslandResult::IRON:
+				iron+=result.amount;
+				break;
+			case IslandResult::SHIP:
+				addWarship(result.ship);
+				break;
+			}
+		}
 
 		for(auto ship:warships)
 			ship->update(dt_ms);
@@ -173,6 +188,15 @@ namespace heaven
 
 		warships.push_back(ship);
 		engine.scene->AddObject(ship);
+	}
+
+	void HeavenWorld::addIsland(Island *island)
+	{
+		if(!island)
+			throw 0;
+
+		islands.push_back(island);
+		engine.scene->AddObject(island);
 	}
 
 	HeavenWorld::~HeavenWorld(void)

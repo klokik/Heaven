@@ -30,6 +30,10 @@ namespace heaven
 
 		Island *selected_island;
 
+		// -------- resources --
+		float iron;
+		float food;
+
 		HeavenWorld(void);
 
 		void init();
@@ -46,6 +50,8 @@ namespace heaven
 		void updateView(void);
 
 		void addWarship(Ship *ship);
+		void destroyWarship(Ship *ship);
+		void addIsland(Island *island);
 
 		~HeavenWorld(void);
 
