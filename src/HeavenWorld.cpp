@@ -132,22 +132,60 @@ namespace heaven
 
 	void HeavenWorld::loadIslands(void)
 	{
-		for(int q=0;q<10;q++)
-		{
-			Island *island = new TownIsland;
+		Island *island;
 
-			island->SetTranslate(vec3f((q-5)*10.0f,0.0f,0.0f));
 
-			islands.push_back(island);
-		}
+		float dist = 10.0f;
+		// towns
+		island = new TownIsland;
+		island->SetTranslate(vec3f((0-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::MINE;
+		island = new TownIsland;
+		island->SetTranslate(vec3f((9-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::EVIL;
+
+		// farms
+		island = new FactoryIsland(FactoryIsland::FOOD);
+		island->SetTranslate(vec3f((1-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::MINE;
+		island = new FactoryIsland(FactoryIsland::FOOD);
+		island->SetTranslate(vec3f((8-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::EVIL;
+
+		// mines
+		island = new FactoryIsland(FactoryIsland::IRON);
+		island->SetTranslate(vec3f((2-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::MINE;
+		island = new FactoryIsland(FactoryIsland::IRON);
+		island->SetTranslate(vec3f((7-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::EVIL;
+
+		// factories
+		island = new FactoryIsland(FactoryIsland::GLIDER);
+		island->SetTranslate(vec3f((3-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::MINE;
+		island = new FactoryIsland(FactoryIsland::ZEPPELIN);
+		island->SetTranslate(vec3f((4-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::NEUTRAL;
+		island = new FactoryIsland(FactoryIsland::ZEPPELIN);
+		island->SetTranslate(vec3f((5-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::NEUTRAL;
+		island = new FactoryIsland(FactoryIsland::GLIDER);
+		island->SetTranslate(vec3f((6-5)*dist,0.0f,0.0f));
+		addIsland(island);
+		island->ownership = Island::EVIL;
 
 		islands[0]->ownership = Island::MINE;
 		islands[9]->ownership = Island::EVIL;
-
-		for(size_t q=0;q<islands.size();q++)
-		{
-			engine.scene->AddObject(islands[q]);
-		}
 
 		selected_island = islands[0];
 	}
