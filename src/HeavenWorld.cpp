@@ -1,6 +1,5 @@
 #include <iostream>
 #include <random>
-#include <functional>
 
 #include "AEObjectMesh.h"
 #include "AEVectorMath.h"
@@ -93,7 +92,15 @@ namespace heaven
 		}
 
 		for(auto ship:warships)
+		{
 			ship->update(dt_ms);
+		}
+
+		for(auto ship=warships.begin();ship!=warships.end();)
+		{
+			if((*ship)->health<=0)
+				destroyWarship(*ship);
+		}
 
 		updateView();
 	}
@@ -230,6 +237,15 @@ namespace heaven
 		ship->getIslandShips = iGetIslandShips;
 		warships.push_back(ship);
 		engine.scene->AddObject(ship);
+	}
+
+	void HeavenWorld::destroyWarship(Ship *ship)
+	{
+		// we need some animation for destroy process
+		warships.remove(ship);
+		engine.scene->RemoveObject(ship);
+
+		delete ship;
 	}
 
 	void HeavenWorld::addIsland(Island *island)

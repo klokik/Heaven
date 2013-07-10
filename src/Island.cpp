@@ -34,6 +34,8 @@ namespace heaven
 		island_mesh_obj->mesh = getMesh(m_name[product_type]);
 
 		AddChild(island_mesh_obj);
+
+		time_per_item = 1000.0f;
 	}
 
 	IslandProduct FactoryIsland::produce(void)
