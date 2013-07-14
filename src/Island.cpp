@@ -70,6 +70,7 @@ namespace heaven
 			if(product.ship)
 			{
 				product.ship->target = this;
+				product.ship->SetTranslate(this->translate);
 			}
 
 			product.amount = time_elapsed/time_per_item;

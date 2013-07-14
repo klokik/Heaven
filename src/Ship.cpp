@@ -27,8 +27,6 @@ namespace heaven
 
 		AddChild(ship_mesh);
 
-		SetTranslate(vec3f(0.0f,3.0f,0.0f));
-
 		attack_time_limit = 200;
 		attack_dt = attack_time_limit;
 
@@ -58,8 +56,7 @@ namespace heaven
 			float max_dist = 0.25f;
 			float distance = speed*(dt_ms/1000);
 
-			Vec3f m_vec = target->GetAbsPosition()-this->translate;
-			m_vec.Y = 0.0f;
+			Vec3f m_vec = target->GetAbsPosition()+vec3f(0.0f,3.0f,0.0f)-this->translate;
 			if(SqrLength(m_vec)>=max_dist*max_dist)
 			{
 				//move to target
