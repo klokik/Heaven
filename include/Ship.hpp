@@ -9,6 +9,7 @@
 #include "AEObjectEmpty.h"
 #include "AEObjectMesh.h"
 
+#include "Ownership.hpp"
 #include "StaticMeshLibrary.hpp"
 
 namespace heaven
@@ -24,10 +25,11 @@ namespace heaven
 		float health;
 		float gun_power;
 		float attack_range;
+		Ownership ownership;
 
 		std::vector<Ship*> (*getIslandShips)(Island *island);
 
-		Ship(std::string type);
+		Ship(std::string type,Ownership _ownership);
 
 		void update(float dt_ms);
 		void move(float dt_ms);

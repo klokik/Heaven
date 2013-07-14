@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "StaticMeshLibrary.hpp"
 
 
@@ -26,6 +28,8 @@ namespace heaven
 	{
 		if(mesh_library.find(name)!=mesh_library.end())
 			return;
+
+		std::cout<<filename<<std::endl;
 
 		AEMesh *mesh;
 

@@ -50,7 +50,7 @@ namespace heaven
 		void updateView(void);
 
 		void addWarship(Ship *ship);
-		void destroyWarship(Ship *ship);
+		std::vector<Ship*>::iterator destroyWarship(Ship *ship);
 		void addIsland(Island *island);
 
 		static std::vector<Ship*> iGetIslandShips(Island *island);

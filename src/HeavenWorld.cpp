@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <algorithm>
 
 #include "AEObjectMesh.h"
 #include "AEVectorMath.h"
@@ -46,10 +47,6 @@ namespace heaven
 		engine.scene->AddObject(view_target);
 
 		loadIslands();
-
-		Ship *ship01 = new Ship("glider");
-		ship01->target = islands[0];
-		addWarship(ship01);
 	}
 
 	void HeavenWorld::run(void)
@@ -99,7 +96,11 @@ namespace heaven
 		for(auto ship=warships.begin();ship!=warships.end();)
 		{
 			if((*ship)->health<=0)
-				destroyWarship(*ship);
+			{
+				ship = destroyWarship(*ship);
+			}
+			else
+				++ship;
 		}
 
 		updateView();
@@ -126,6 +127,9 @@ namespace heaven
 
 	void HeavenWorld::keyDown(int keycode)
 	{
+		static Island *isl_from = nullptr;
+		static Island *isl_target = nullptr;
+
 		switch(keycode)
 		{
 		case SDLK_ESCAPE:
@@ -135,7 +139,23 @@ namespace heaven
 		case '1':
 		case '2':
 		case '3':
-			selected_island = islands[keycode-'1'];
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case '0':
+			selected_island = islands[keycode-'0'];
+			break;
+
+		case 'c':
+			isl_from = selected_island;
+			break;
+		case 'f':
+			isl_target = selected_island;
+			for(auto ship:getIslandShips(isl_from))
+				ship->target = isl_target;
 			break;
 		}	
 	}
@@ -150,52 +170,52 @@ namespace heaven
 		island = new TownIsland;
 		island->SetTranslate(vec3f((0-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::MINE;
+		island->ownership = MINE;
 		island = new TownIsland;
 		island->SetTranslate(vec3f((9-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::EVIL;
+		island->ownership = EVIL;
 
 		// farms
 		island = new FactoryIsland(FactoryIsland::FOOD);
 		island->SetTranslate(vec3f((1-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::MINE;
+		island->ownership = MINE;
 		island = new FactoryIsland(FactoryIsland::FOOD);
 		island->SetTranslate(vec3f((8-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::EVIL;
+		island->ownership = EVIL;
 
 		// mines
 		island = new FactoryIsland(FactoryIsland::IRON);
 		island->SetTranslate(vec3f((2-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::MINE;
+		island->ownership = MINE;
 		island = new FactoryIsland(FactoryIsland::IRON);
 		island->SetTranslate(vec3f((7-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::EVIL;
+		island->ownership = EVIL;
 
 		// factories
 		island = new FactoryIsland(FactoryIsland::GLIDER);
 		island->SetTranslate(vec3f((3-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::MINE;
+		island->ownership = MINE;
 		island = new FactoryIsland(FactoryIsland::ZEPPELIN);
 		island->SetTranslate(vec3f((4-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::NEUTRAL;
+		island->ownership = NEUTRAL;
 		island = new FactoryIsland(FactoryIsland::ZEPPELIN);
 		island->SetTranslate(vec3f((5-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::NEUTRAL;
+		island->ownership = NEUTRAL;
 		island = new FactoryIsland(FactoryIsland::GLIDER);
 		island->SetTranslate(vec3f((6-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = Island::EVIL;
+		island->ownership = EVIL;
 
-		islands[0]->ownership = Island::MINE;
-		islands[9]->ownership = Island::EVIL;
+		islands[0]->ownership = MINE;
+		islands[9]->ownership = EVIL;
 
 		selected_island = islands[0];
 	}
@@ -239,13 +259,16 @@ namespace heaven
 		engine.scene->AddObject(ship);
 	}
 
-	void HeavenWorld::destroyWarship(Ship *ship)
+	std::vector<Ship*>::iterator HeavenWorld::destroyWarship(Ship *ship)
 	{
 		// we need some animation for destroy process
-		warships.remove(ship);
+		auto next_item = remove(warships.begin(),warships.end(),ship);
+		warships.erase(next_item,warships.end());
 		engine.scene->RemoveObject(ship);
 
 		delete ship;
+
+		return next_item;
 	}
 
 	void HeavenWorld::addIsland(Island *island)

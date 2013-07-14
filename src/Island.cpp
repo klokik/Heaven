@@ -1,5 +1,6 @@
 #include <map>
 #include <string>
+#include <iostream>
 
 #include "AEObjectMesh.h"
 
@@ -35,7 +36,7 @@ namespace heaven
 
 		AddChild(island_mesh_obj);
 
-		time_per_item = 1000.0f;
+		time_per_item = 2000.0f;
 	}
 
 	IslandProduct FactoryIsland::produce(void)
@@ -53,15 +54,15 @@ namespace heaven
 				product.prod_type = IslandProduct::IRON;
 				break;
 			case GLIDER:
-				product.ship = new Ship("glider");
+				product.ship = new Ship("glider",ownership);
 				product.prod_type = IslandProduct::SHIP;
 				break;
 			case PLANE:
-				product.ship = new Ship("plane");
+				product.ship = new Ship("plane",ownership);
 				product.prod_type = IslandProduct::SHIP;
 				break;
 			case ZEPPELIN:
-				product.ship = new Ship("zeppelin");
+				product.ship = new Ship("zeppelin",ownership);
 				product.prod_type = IslandProduct::SHIP;
 				break;
 			}

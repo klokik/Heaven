@@ -10,7 +10,7 @@ namespace heaven
 	using namespace aengine;
 	
 
-	Ship::Ship(string type)
+	Ship::Ship(string type,Ownership _ownership)
 	{
 		target = nullptr;
 		getIslandShips = nullptr;
@@ -18,6 +18,7 @@ namespace heaven
 		loadMesh("glider","res/models/glider.obj");
 		loadMesh("plane","res/models/plane.obj");
 		loadMesh("zeppelin","res/models/zeppelin.obj");
+
 
 		static int counter = 0;
 		AEObjectMesh *ship_mesh = new AEObjectMesh;
@@ -32,11 +33,13 @@ namespace heaven
 		attack_dt = attack_time_limit;
 
 		speed = 20.0f;
-		gun_power = 1.0f;
+		gun_power = 20.0f;
 		attack_range = 5.0f;
 
 		max_health = 100;
 		health = max_health;
+
+		ownership = _ownership;
 	}
 
 	void Ship::update(float dt_ms)
@@ -44,7 +47,7 @@ namespace heaven
 		attack_dt += dt_ms;
 
 		move(dt_ms);
-		if(target->ownership == Island::EVIL)
+		if(target->ownership != this->ownership)
 			attack();
 	}
 

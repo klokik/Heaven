@@ -3,6 +3,7 @@
 
 #include "AEObjectEmpty.h"
 
+#include "Ownership.hpp"
 #include "IslandProduct.hpp"
 #include "StaticMeshLibrary.hpp"
 
@@ -14,8 +15,6 @@ namespace heaven
 	class Island: public AEObjectEmpty, public StaticMeshLibrary
 	{
 	public:
-		enum Ownership {MINE,EVIL,NEUTRAL};
-
 		Ownership ownership;
 
 		Island(void);
