@@ -14,12 +14,17 @@ namespace heaven
 
 	class Island: public AEObjectEmpty, public StaticMeshLibrary
 	{
+	protected:
+		AEMaterial *material;
+
 	public:
 		Ownership ownership;
 
 		Island(void);
 
-		virtual IslandProduct update(float dt_ms) = 0;
+		virtual IslandProduct update(float dt_ms);
+
+		virtual ~Island() = 0;
 	};
 
 	class FactoryIsland: public Island
@@ -37,6 +42,8 @@ namespace heaven
 
 		IslandProduct produce(void);
 		virtual IslandProduct update(float dt_ms);
+
+		virtual ~FactoryIsland(void);
 	};
 
 	class TownIsland: public Island
@@ -46,6 +53,8 @@ namespace heaven
 		TownIsland(void);
 		
 		virtual IslandProduct update(float dt_ms);
+
+		virtual ~TownIsland(void);
 	};
 }
 

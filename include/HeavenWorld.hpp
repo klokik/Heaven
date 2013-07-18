@@ -24,6 +24,8 @@ namespace heaven
 		float dt_ms;
 
 	public:
+		static HeavenWorld * const &instance;
+		
 		std::vector<Island*> islands;
 		std::vector<Ship*> warships;
 

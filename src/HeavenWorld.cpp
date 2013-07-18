@@ -16,6 +16,7 @@ namespace heaven
 
 
 	HeavenWorld *HeavenWorld::world = nullptr;
+	HeavenWorld * const &HeavenWorld::instance = HeavenWorld::world;
 
 	HeavenWorld::HeavenWorld(void)
 	{

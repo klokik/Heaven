@@ -2,8 +2,10 @@
 #include <string>
 
 #include "AEObjectMesh.h"
+#include "AEVectorMath.h"
 
 #include "Island.hpp"
+#include "HeavenWorld.hpp"
 #include "Ship.hpp"
 
 namespace heaven
@@ -18,6 +20,34 @@ namespace heaven
 		loadMesh("iron_factory","res/models/iron_factory.obj");
 		loadMesh("food_factory","res/models/food_factory.obj");
 		loadMesh("ship_factory","res/models/ship_factory.obj");
+
+		material = HeavenWorld::instance->engine.scene->materials.New();
+	}
+
+	IslandProduct Island::update(float dt_ms)
+	{
+		switch(ownership)
+		{
+		case MINE:
+			material->diffuse.vec = vec4f(0.0f,1.0f,0.0f,1.0f);	// green
+			break;
+		case EVIL:
+			material->diffuse.vec = vec4f(1.0f,0.0f,0.0f,1.0f);	// red
+			break;
+		case NEUTRAL:
+			material->diffuse.vec = vec4f(0.5f,0.5f,0.5f,1.0f); // lite gray
+			break;
+		default:
+			//undefined
+			material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,1.0f); // dark gray
+			break;
+		}
+
+		return {IslandProduct::NONE};
+	}
+
+	Island::~Island(void)
+	{
 	}
 
 	FactoryIsland::FactoryIsland(Type product_type)
@@ -32,6 +62,7 @@ namespace heaven
 
 		AEObjectMesh *island_mesh_obj = new AEObjectMesh;
 		island_mesh_obj->mesh = getMesh(m_name[product_type]);
+		island_mesh_obj->material = material;
 
 		AddChild(island_mesh_obj);
 
@@ -82,9 +113,15 @@ namespace heaven
 
 	IslandProduct FactoryIsland::update(float dt_ms)
 	{
+		Island::update(dt_ms);
+
 		time_elapsed += dt_ms;
 
 		return produce();
+	}
+
+	FactoryIsland::~FactoryIsland(void)
+	{
 	}
 
 	TownIsland::TownIsland(void)
@@ -92,12 +129,19 @@ namespace heaven
 		AEObjectMesh *island_mesh_obj = new AEObjectMesh;
 
 		island_mesh_obj->mesh = getMesh("town");
+		island_mesh_obj->material = material;
 
 		AddChild(island_mesh_obj);
 	}
 
 	IslandProduct TownIsland::update(float dt_ms)
 	{
+		Island::update(dt_ms);
+
 		return {IslandProduct::NONE};
+	}
+
+	TownIsland::~TownIsland(void)
+	{
 	}
 }

@@ -87,14 +87,23 @@ namespace heaven
 		else
 			return;
 
+		bool only_attack_side = true;
+
 		std::vector<Ship*> evil_ships = getIslandShips(target);
 		for(auto ship:evil_ships)
 		{
+			if(ship->ownership == this->ownership)
+				continue;
+
 			if(inRange(ship))
 			{
 				ship->health-=gun_power;
+				only_attack_side = false;
 			}
 		}
+
+		if(only_attack_side)
+			target->ownership = this->ownership;
 	}
 
 	bool Ship::inRange(Ship *ship)
