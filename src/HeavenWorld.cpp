@@ -83,7 +83,6 @@ namespace heaven
 				addWarship(product.ship);
 				break;
 			case IslandProduct::NONE:
-				// just to be compelte
 				break;
 			}
 		}
