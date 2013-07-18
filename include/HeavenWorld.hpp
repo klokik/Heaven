@@ -2,6 +2,7 @@
 #define HEAVENWORLD_H_
 
 #include <vector>
+#include <iostream>
 
 #include "AEEngine.h"
 
@@ -50,7 +51,7 @@ namespace heaven
 		void updateView(void);
 
 		void addWarship(Ship *ship);
-		std::vector<Ship*>::iterator destroyWarship(Ship *ship);
+		void destroyWarship(Ship *ship);
 		void addIsland(Island *island);
 
 		static std::vector<Ship*> iGetIslandShips(Island *island);

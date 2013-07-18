@@ -1,4 +1,3 @@
-#include <iostream>
 #include <random>
 #include <algorithm>
 
@@ -97,7 +96,7 @@ namespace heaven
 		{
 			if((*ship)->health<=0)
 			{
-				ship = destroyWarship(*ship);
+				destroyWarship(*ship);
 			}
 			else
 				++ship;
@@ -259,16 +258,14 @@ namespace heaven
 		engine.scene->AddObject(ship);
 	}
 
-	std::vector<Ship*>::iterator HeavenWorld::destroyWarship(Ship *ship)
+	void HeavenWorld::destroyWarship(Ship *ship)
 	{
 		// we need some animation for destroy process
-		auto next_item = remove(warships.begin(),warships.end(),ship);
-		warships.erase(next_item,warships.end());
+		auto new_end = remove(warships.begin(),warships.end(),ship);
+		warships.erase(new_end,warships.end());
 		engine.scene->RemoveObject(ship);
 
 		delete ship;
-
-		return next_item;
 	}
 
 	void HeavenWorld::addIsland(Island *island)

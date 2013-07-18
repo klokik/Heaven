@@ -87,7 +87,7 @@ namespace heaven
 		else
 			return;
 
-		std::vector<Ship*> evil_ships;
+		std::vector<Ship*> evil_ships = getIslandShips(target);
 		for(auto ship:evil_ships)
 		{
 			if(inRange(ship))
