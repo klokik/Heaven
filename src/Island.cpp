@@ -79,31 +79,30 @@ namespace heaven
 			{
 			case FOOD:
 				product.prod_type = IslandProduct::FOOD;
+				product.amount = 10.0f*time_elapsed/time_per_item;
 				break;
 			case IRON:
 				product.prod_type = IslandProduct::IRON;
+				product.amount = 7.25f*time_elapsed/time_per_item;
 				break;
 			case GLIDER:
 				product.ship = new Ship("glider",ownership);
-				product.prod_type = IslandProduct::SHIP;
 				break;
 			case PLANE:
 				product.ship = new Ship("plane",ownership);
-				product.prod_type = IslandProduct::SHIP;
 				break;
 			case ZEPPELIN:
 				product.ship = new Ship("zeppelin",ownership);
-				product.prod_type = IslandProduct::SHIP;
 				break;
 			}
 
 			if(product.ship)
 			{
+				product.prod_type = IslandProduct::IRON;
 				product.ship->target = this;
 				product.ship->SetTranslate(this->translate);
+				product.amount = -10.0f;
 			}
-
-			product.amount = time_elapsed/time_per_item;
 
 			time_elapsed -= time_per_item;
 		}

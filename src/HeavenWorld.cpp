@@ -29,6 +29,10 @@ namespace heaven
 
 		HeavenWorld::world = this;
 		dt_ms = 0.0f;
+
+		resources[MINE]["iron"] = 100;
+		resources[EVIL]["iron"] = 100;
+		resources[NEUTRAL]["iron"] = 20;
 	}
 
 	void HeavenWorld::init(void)
@@ -74,16 +78,24 @@ namespace heaven
 			switch(product.prod_type)
 			{
 			case IslandProduct::FOOD:
-				food+=product.amount;
+				resources[island->ownership]["food"]+=product.amount;
 				break;
 			case IslandProduct::IRON:
-				iron+=product.amount;
-				break;
-			case IslandProduct::SHIP:
-				addWarship(product.ship);
+				resources[island->ownership]["iron"]+=product.amount;
 				break;
 			case IslandProduct::NONE:
 				break;
+			}
+
+			if(product.ship)
+			{
+				if(resources[island->ownership]["iron"]>=0)
+					addWarship(product.ship);
+				else
+				{
+					delete product.ship;
+					resources[island->ownership]["iron"]-=product.amount;
+				}
 			}
 		}
 

@@ -9,6 +9,7 @@
 #include "CameraTarget.hpp"
 #include "Ship.hpp"
 #include "Island.hpp"
+#include "Ownership.hpp"
 
 namespace heaven
 {
@@ -25,7 +26,7 @@ namespace heaven
 
 	public:
 		static HeavenWorld * const &instance;
-		
+
 		std::vector<Island*> islands;
 		std::vector<Ship*> warships;
 
@@ -33,9 +34,7 @@ namespace heaven
 
 		Island *selected_island;
 
-		// -------- resources --
-		float iron;
-		float food;
+		std::map<Ownership,std::map<std::string,float> > resources;
 
 		HeavenWorld(void);
 

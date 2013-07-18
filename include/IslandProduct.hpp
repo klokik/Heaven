@@ -7,11 +7,11 @@ namespace heaven
 
 	struct IslandProduct
 	{
-		enum Type {NONE=0,FOOD=1,IRON=2,SHIP=3};
+		enum Type {NONE=0,FOOD=1,IRON=2};
 
 		Type prod_type;
 		float amount;
-		Ship *ship;
+		Ship *ship;			// if not null then a new ship created
 	};
 }
 
