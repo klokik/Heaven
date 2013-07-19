@@ -20,12 +20,11 @@ namespace heaven
 	private:
 		static HeavenWorld *world;
 
-		CameraTarget *view_target;
-
 		float dt_ms;
 
 	public:
 		static HeavenWorld * const &instance;
+		CameraTarget *view_target;
 
 		std::vector<Island*> islands;
 		std::vector<Ship*> warships;
@@ -36,6 +35,8 @@ namespace heaven
 
 		std::map<Ownership,std::map<std::string,float> > resources;
 
+		AEObject *gui;
+
 		HeavenWorld(void);
 
 		void init();
@@ -44,10 +45,14 @@ namespace heaven
 		static void iOnRefresh(int *param);
 		static void iOnStart(int *param);
 		static void iOnKeyDown(int *param);
+		static void iOnResize(int *param);
+		static void iOnMouseDown(int *param);
+		static void iOnMouseMove(int *param);
 
 		void updateWorld(float dt_ms);
 		void engineStarted(void);
 		void keyDown(int keycode);
+		void resize(Vec2f size);
 
 		void updateView(void);
 

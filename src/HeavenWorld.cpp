@@ -5,7 +5,7 @@
 #include "AEVectorMath.h"
 
 #include "HeavenWorld.hpp"
-
+#include "HGUI.hpp"
 #include "CameraTarget.hpp"
 
 void LoadObjFile(AEMesh *&mesh, const char *path);
@@ -42,6 +42,9 @@ namespace heaven
 		engine.Refresh = iOnRefresh;
 		engine.OnStart = iOnStart;
 		engine.OnKeyDown = iOnKeyDown;
+		engine.OnResize = iOnResize;
+		engine.OnMouseDown = iOnMouseDown;
+		engine.OnMouseMove = iOnMouseMove;
 
 		//init camera
 		view_target = new CameraTarget(engine.curCamera);
@@ -51,6 +54,9 @@ namespace heaven
 		engine.scene->AddObject(view_target);
 
 		loadIslands();
+
+		gui = new HGUI(this);
+		engine.scene->AddObject(gui);
 	}
 
 	void HeavenWorld::run(void)
@@ -115,6 +121,8 @@ namespace heaven
 		}
 
 		updateView();
+
+		dynamic_cast<HGUI*>(gui)->update();
 	}
 
 	void HeavenWorld::iOnStart(int *param)
@@ -126,6 +134,8 @@ namespace heaven
 
 	void HeavenWorld::engineStarted(void)
 	{
+		engine.scene->fonts.LoadFont("res/fonts/font.png","boundary",16,16);
+
 		engine.render->CacheScene(engine.scene);
 	}
 
@@ -169,6 +179,33 @@ namespace heaven
 				ship->target = isl_target;
 			break;
 		}	
+	}
+
+	void HeavenWorld::iOnResize(int *param)
+	{
+		if(!world) throw 0;
+
+		world->resize(vec2f((float)param[0],(float)param[1]));
+	}
+
+	void HeavenWorld::resize(Vec2f size)
+	{
+		if(gui)
+			(static_cast<HGUI*>(gui))->realign(size);
+	}
+
+	void HeavenWorld::iOnMouseDown(int *param)
+	{
+		if(!world) throw 0;
+
+		static_cast<HGUI*>(world->gui)->mouseDown(vec2f(param[0],param[1]));
+	}
+
+	void HeavenWorld::iOnMouseMove(int *param)
+	{
+		if(!world) throw 0;
+
+		static_cast<HGUI*>(world->gui)->mouseMove(vec2f(param[0],param[1]),vec2f(param[2],param[3]),param[4]);
 	}
 
 	void HeavenWorld::loadIslands(void)
