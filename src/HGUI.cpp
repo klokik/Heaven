@@ -41,15 +41,22 @@ namespace heaven
 		this->AddChild(btn_pause);
 	}
 
-	void HGUI::update(void)
+	void HGUI::setValues(void)
 	{
 		static_cast<AEObjectText*>(isl_info)->text = "Island \""+world_instance->selected_island->name+"\"";
 		static_cast<AEObjectText*>(res_info)->text = "Iron: "+std::to_string((int)world_instance->resources[MINE]["iron"])+"\n"+
 			"Food: "+std::to_string((int)world_instance->resources[MINE]["food"]);
 	}
 
+	void HGUI::update(void)
+	{
+		setValues();
+	}
+
 	void HGUI::realign(Vec2f size)
 	{
+		this->size = size;
+		
 		res_info->SetTranslate(vec3f(16.0f,size.Y - 25.0f,0.0f));
 		isl_info->SetTranslate(vec3f(size.X - 16.0f,128.0f,0.0f));
 

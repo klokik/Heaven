@@ -22,6 +22,8 @@ namespace heaven
 		AEObject *btn_pause;
 		AEObject *btn_quit;
 
+		Vec2f size;
+
 		void setValues(void);
 
 	public:
