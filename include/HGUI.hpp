@@ -1,13 +1,21 @@
 #ifndef HGUI_H_
 #define HGUI_H_
 
+#include <vector>
+
 #include "AEObjectEmpty.h"
 #include "AEObjectSprite.h"
+#include "AEObjectCamera.h"
 
 namespace heaven
 {
 	//using namespace aengine;
 
+	struct Line
+	{
+		Vec3f position;
+		Vec3f direction;
+	};
 
 	class HeavenWorld;
 
@@ -21,10 +29,16 @@ namespace heaven
 		AEObject *btn_restart;
 		AEObject *btn_pause;
 		AEObject *btn_quit;
+		std::vector<AEObject*> cursor;
 
 		Vec2f size;
 
 		void setValues(void);
+
+		//returns a point and direction of the line, that comes from center of camera to point on screen
+		Line getScreenRay(Vec2f screen_pos,AEObjectCamera *camera);
+
+		void attemptToSelect(Vec2f pos);
 
 	public:
 		HeavenWorld *world_instance;

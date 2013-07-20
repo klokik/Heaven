@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "AEObjectText.h"
 #include "AEObjectSprite.h"
 #include "AEVectorMath.h"
@@ -9,10 +11,21 @@ namespace heaven
 {
 	using namespace aengine;
 
+	const float distance(Vec3f pt,Line line)
+	{
+		Vec3f u = line.direction;
+		Vec3f A = line.position;
+
+		float t = dot(u,pt-A)/dot(u,u);
+
+		Vec3f B = A+u*t;
+
+		return Length(B-pt);
+	}
 
 	HGUI::HGUI(HeavenWorld *instance)
 	{
-		projection = AE_ORTHOGRAPHIC;
+		// projection = AE_ORTHOGRAPHIC;
 
 		world_instance = instance;
 
@@ -35,6 +48,13 @@ namespace heaven
 
 		isl_info->SetScale(vec3f(8.0f,8.0f,8.0f));
 
+		for(int q=0;q<20;q++)
+		{
+			AEObject *obj = new AEObjectEmpty;
+			cursor.push_back(obj);
+			this->AddChild(obj);
+		}
+
 		this->AddChild(res_info);
 		this->AddChild(isl_info);
 		this->AddChild(btn_quit);
@@ -46,6 +66,52 @@ namespace heaven
 		static_cast<AEObjectText*>(isl_info)->text = "Island \""+world_instance->selected_island->name+"\"";
 		static_cast<AEObjectText*>(res_info)->text = "Iron: "+std::to_string((int)world_instance->resources[MINE]["iron"])+"\n"+
 			"Food: "+std::to_string((int)world_instance->resources[MINE]["food"]);
+	}
+
+	Line HGUI::getScreenRay(Vec2f screen_pos,AEObjectCamera *camera)
+	{
+		Line result = {vec3f(0,0,0),vec3f(0,0,0)};
+
+		if(!camera)
+			return result;
+
+		Vec2f d_pos = (screen_pos-size*0.5);
+		result.direction = vec3f(d_pos.X,d_pos.Y,-size.X/tan(camera->angle)*sqrt(2)); // for some reason it works (not too acurately)
+		result.direction = normalize(result.direction);
+		AEMatrix4f4 wmat = camera->GetWorldMatrix();
+
+		Vec4f dir4 = wmat*vec4f(normalize(result.direction),1.0f);
+
+		result = {
+			camera->GetAbsPosition(),
+			(vec3f(dir4.X,dir4.Y,dir4.Z)-camera->GetAbsPosition())
+		};
+
+		return result;
+	}
+
+	void HGUI::attemptToSelect(Vec2f pos)
+	{
+		Line ray = getScreenRay(pos,world_instance->engine.curCamera);
+
+		std::vector<Island*> intersected;
+		for(auto &island:world_instance->islands)
+			if(distance(island->translate,ray)<island->bounding_sphere.radius)
+				intersected.push_back(island);
+
+		for(int q=0;q<20;q++)
+			cursor[q]->SetTranslate(ray.position+ray.direction*q*3);
+
+		if(intersected.empty())
+			return;
+
+		Island *isl = *std::min_element(intersected.begin(),intersected.end(),
+			[&ray](Island *a,Island *b)	{ return
+				Length(ray.position-a->translate)<
+				Length(ray.position-b->translate);
+			});
+
+		world_instance->selected_island = isl;
 	}
 
 	void HGUI::update(void)
@@ -70,6 +136,8 @@ namespace heaven
 			static_cast<HButton*>(btn_quit)->click(pos);
 		if(static_cast<HButton*>(btn_pause)->isOver(pos))
 			static_cast<HButton*>(btn_pause)->click(pos);
+
+		attemptToSelect(pos);
 	}
 
 	void HGUI::mouseMove(Vec2f pos,Vec2f delta,int key)
