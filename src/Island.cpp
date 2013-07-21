@@ -14,7 +14,7 @@ namespace heaven
 
 	Island::Island(void)
 	{
-		ownership = NEUTRAL;
+		side_uid = NEUTRAL;
 
 		loadMesh("town","res/models/town.obj");
 		loadMesh("iron_factory","res/models/iron_factory.obj");
@@ -26,7 +26,7 @@ namespace heaven
 
 	IslandProduct Island::update(float dt_ms)
 	{
-		switch(ownership)
+		switch(side_uid)
 		{
 		case MINE:
 			material->diffuse.vec = vec4f(0.0f,1.0f,0.0f,1.0f);	// green
@@ -86,13 +86,13 @@ namespace heaven
 				product.amount = 7.25f*time_elapsed/time_per_item;
 				break;
 			case GLIDER:
-				product.ship = new Ship("glider",ownership);
+				product.ship = new Ship("glider",side_uid);
 				break;
 			case PLANE:
-				product.ship = new Ship("plane",ownership);
+				product.ship = new Ship("plane",side_uid);
 				break;
 			case ZEPPELIN:
-				product.ship = new Ship("zeppelin",ownership);
+				product.ship = new Ship("zeppelin",side_uid);
 				break;
 			}
 

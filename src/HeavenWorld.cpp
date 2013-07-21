@@ -30,9 +30,9 @@ namespace heaven
 		HeavenWorld::world = this;
 		dt_ms = 0.0f;
 
-		resources[MINE]["iron"] = 100;
-		resources[EVIL]["iron"] = 100;
-		resources[NEUTRAL]["iron"] = 20;
+		players[MINE].resources["iron"] = 100;
+		players[EVIL].resources["iron"] = 100;
+		players[NEUTRAL].resources["iron"] = 20;
 	}
 
 	void HeavenWorld::init(void)
@@ -57,6 +57,9 @@ namespace heaven
 
 		gui = new HGUI(this);
 		engine.scene->AddObject(gui);
+
+		// create server and several clients
+		server.start();
 	}
 
 	void HeavenWorld::run(void)
@@ -84,10 +87,10 @@ namespace heaven
 			switch(product.prod_type)
 			{
 			case IslandProduct::FOOD:
-				resources[island->ownership]["food"]+=product.amount;
+				players[island->side_uid].resources["food"]+=product.amount;
 				break;
 			case IslandProduct::IRON:
-				resources[island->ownership]["iron"]+=product.amount;
+				players[island->side_uid].resources["iron"]+=product.amount;
 				break;
 			case IslandProduct::NONE:
 				break;
@@ -95,12 +98,12 @@ namespace heaven
 
 			if(product.ship)
 			{
-				if(resources[island->ownership]["iron"]>=0)
+				if(players[island->side_uid].resources["iron"]>=0)
 					addWarship(product.ship);
 				else
 				{
 					delete product.ship;
-					resources[island->ownership]["iron"]-=product.amount;
+					players[island->side_uid].resources["iron"]-=product.amount;
 				}
 			}
 		}
@@ -218,52 +221,52 @@ namespace heaven
 		island = new TownIsland;
 		island->SetTranslate(vec3f((0-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = MINE;
+		island->side_uid = MINE;
 		island = new TownIsland;
 		island->SetTranslate(vec3f((9-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = EVIL;
+		island->side_uid = EVIL;
 
 		// farms
 		island = new FactoryIsland(FactoryIsland::FOOD);
 		island->SetTranslate(vec3f((1-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = MINE;
+		island->side_uid = MINE;
 		island = new FactoryIsland(FactoryIsland::FOOD);
 		island->SetTranslate(vec3f((8-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = EVIL;
+		island->side_uid = EVIL;
 
 		// mines
 		island = new FactoryIsland(FactoryIsland::IRON);
 		island->SetTranslate(vec3f((2-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = MINE;
+		island->side_uid = MINE;
 		island = new FactoryIsland(FactoryIsland::IRON);
 		island->SetTranslate(vec3f((7-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = EVIL;
+		island->side_uid = EVIL;
 
 		// factories
 		island = new FactoryIsland(FactoryIsland::GLIDER);
 		island->SetTranslate(vec3f((3-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = MINE;
+		island->side_uid = MINE;
 		island = new FactoryIsland(FactoryIsland::ZEPPELIN);
 		island->SetTranslate(vec3f((4-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = NEUTRAL;
+		island->side_uid = NEUTRAL;
 		island = new FactoryIsland(FactoryIsland::ZEPPELIN);
 		island->SetTranslate(vec3f((5-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = NEUTRAL;
+		island->side_uid = NEUTRAL;
 		island = new FactoryIsland(FactoryIsland::GLIDER);
 		island->SetTranslate(vec3f((6-5)*dist,0.0f,0.0f));
 		addIsland(island);
-		island->ownership = EVIL;
+		island->side_uid = EVIL;
 
-		islands[0]->ownership = MINE;
-		islands[9]->ownership = EVIL;
+		islands[0]->side_uid = MINE;
+		islands[9]->side_uid = EVIL;
 
 		selected_island = islands[0];
 	}
@@ -349,6 +352,7 @@ namespace heaven
 
 	HeavenWorld::~HeavenWorld(void)
 	{
+		server.stop();
 		//TODO: just save current state
 	}
 }

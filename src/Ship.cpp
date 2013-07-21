@@ -10,7 +10,7 @@ namespace heaven
 	using namespace aengine;
 	
 
-	Ship::Ship(string type,Ownership _ownership)
+	Ship::Ship(string type,uint32_t _side_uid)
 	{
 		target = nullptr;
 		getIslandShips = nullptr;
@@ -37,7 +37,7 @@ namespace heaven
 		max_health = 100;
 		health = max_health;
 
-		ownership = _ownership;
+		side_uid = _side_uid;
 	}
 
 	void Ship::update(float dt_ms)
@@ -45,7 +45,7 @@ namespace heaven
 		attack_dt += dt_ms;
 
 		move(dt_ms);
-		if(target->ownership != this->ownership)
+		if(target->side_uid != this->side_uid)
 			attack();
 	}
 
@@ -92,7 +92,7 @@ namespace heaven
 		std::vector<Ship*> evil_ships = getIslandShips(target);
 		for(auto ship:evil_ships)
 		{
-			if(ship->ownership == this->ownership)
+			if(ship->side_uid == this->side_uid)
 				continue;
 
 			if(inRange(ship))
@@ -103,7 +103,7 @@ namespace heaven
 		}
 
 		if(only_attack_side)
-			target->ownership = this->ownership;
+			target->side_uid = this->side_uid;
 	}
 
 	bool Ship::inRange(Ship *ship)

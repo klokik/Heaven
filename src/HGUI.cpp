@@ -64,8 +64,8 @@ namespace heaven
 	void HGUI::setValues(void)
 	{
 		static_cast<AEObjectText*>(isl_info)->text = "Island \""+world_instance->selected_island->name+"\"";
-		static_cast<AEObjectText*>(res_info)->text = "Iron: "+std::to_string((int)world_instance->resources[MINE]["iron"])+"\n"+
-			"Food: "+std::to_string((int)world_instance->resources[MINE]["food"]);
+		static_cast<AEObjectText*>(res_info)->text = "Iron: "+std::to_string((int)world_instance->players[MINE].resources["iron"])+"\n"+
+			"Food: "+std::to_string((int)world_instance->players[MINE].resources["food"]);
 	}
 
 	Line HGUI::getScreenRay(Vec2f screen_pos,AEObjectCamera *camera)

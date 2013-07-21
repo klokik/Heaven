@@ -18,7 +18,7 @@ namespace heaven
 		AEMaterial *material;
 
 	public:
-		Ownership ownership;
+		uint32_t side_uid;
 
 		Island(void);
 

@@ -10,6 +10,7 @@
 #include "Ship.hpp"
 #include "Island.hpp"
 #include "Ownership.hpp"
+#include "Server.hpp"
 
 namespace heaven
 {
@@ -22,6 +23,8 @@ namespace heaven
 
 		float dt_ms;
 
+		Server server;
+
 	public:
 		static HeavenWorld * const &instance;
 		CameraTarget *view_target;
@@ -33,7 +36,7 @@ namespace heaven
 
 		Island *selected_island;
 
-		std::map<Ownership,std::map<std::string,float> > resources;
+		std::map<uint32_t,Side> players;
 
 		AEObject *gui;
 

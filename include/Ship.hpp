@@ -25,11 +25,11 @@ namespace heaven
 		float health;
 		float gun_power;
 		float attack_range;
-		Ownership ownership;
+		uint32_t side_uid;
 
 		std::vector<Ship*> (*getIslandShips)(Island *island);
 
-		Ship(std::string type,Ownership _ownership);
+		Ship(std::string type,uint32_t _side_uid);
 
 		void update(float dt_ms);
 		void move(float dt_ms);
