@@ -14,6 +14,7 @@ namespace heaven
 	{
 		target = nullptr;
 		getIslandShips = nullptr;
+		manufacturer = nullptr;
 
 		loadMesh("glider","res/models/glider.obj");
 		loadMesh("plane","res/models/plane.obj");

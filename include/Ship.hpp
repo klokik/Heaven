@@ -26,6 +26,7 @@ namespace heaven
 		float gun_power;
 		float attack_range;
 		uint32_t side_uid;
+		Island *manufacturer;
 
 		std::vector<Ship*> (*getIslandShips)(Island *island);
 

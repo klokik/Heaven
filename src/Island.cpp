@@ -67,6 +67,7 @@ namespace heaven
 		AddChild(island_mesh_obj);
 
 		time_per_item = 2000.0f;
+		max_alive = 4;
 	}
 
 	IslandProduct FactoryIsland::produce(void)
@@ -99,6 +100,7 @@ namespace heaven
 			if(product.ship)
 			{
 				product.prod_type = IslandProduct::IRON;
+				product.ship->manufacturer = this;
 				product.ship->target = this;
 				product.ship->SetTranslate(this->translate);
 				product.amount = -10.0f;
