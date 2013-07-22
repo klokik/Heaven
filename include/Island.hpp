@@ -33,7 +33,7 @@ namespace heaven
 		float time_elapsed;
 		float time_per_item;
 
-		int max_alive;
+		size_t max_alive;
 
 	public:
 		enum Type {FOOD,IRON,GLIDER,PLANE,ZEPPELIN};

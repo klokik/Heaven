@@ -1,5 +1,6 @@
 #include <map>
 #include <string>
+#include <algorithm>
 
 #include "AEObjectMesh.h"
 #include "AEVectorMath.h"
@@ -99,6 +100,17 @@ namespace heaven
 
 			if(product.ship)
 			{
+				// count alive ships
+				size_t alive = std::count_if(
+					HeavenWorld::instance->warships.begin(),
+					HeavenWorld::instance->warships.end(),
+					[this](Ship *ship) { return ship->manufacturer==this && ship->side_uid==side_uid; });
+				if(alive>=max_alive)
+				{
+					delete product.ship;
+					product.ship = nullptr;
+					return product;
+				}
 				product.prod_type = IslandProduct::IRON;
 				product.ship->manufacturer = this;
 				product.ship->target = this;
