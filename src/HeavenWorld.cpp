@@ -178,8 +178,7 @@ namespace heaven
 			break;
 		case 'f':
 			isl_target = selected_island;
-			for(auto ship:getIslandShips(isl_from))
-				ship->target = isl_target;
+			transfer(isl_from,isl_target,1.0f);
 			break;
 		}	
 	}
@@ -327,6 +326,15 @@ namespace heaven
 
 		islands.push_back(island);
 		engine.scene->AddObject(island);
+	}
+
+	void HeavenWorld::transfer(Island *from,Island *to,float amount)
+	{
+		for(auto ship:getIslandShips(from))
+		{
+			if(ship->side_uid==from->side_uid)
+				ship->target = to;
+		}
 	}
 
 	vector<Ship*> HeavenWorld::getIslandShips(Island *island)

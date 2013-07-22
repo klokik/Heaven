@@ -63,6 +63,8 @@ namespace heaven
 		void destroyWarship(Ship *ship);
 		void addIsland(Island *island);
 
+		void transfer(Island *from,Island *to,float amount);
+
 		static std::vector<Ship*> iGetIslandShips(Island *island);
 		std::vector<Ship*> getIslandShips(Island *island);
 
