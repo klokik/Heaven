@@ -29,8 +29,8 @@ namespace heaven
 		static HeavenWorld * const &instance;
 		CameraTarget *view_target;
 
-		std::vector<Island*> islands;
-		std::vector<Ship*> warships;
+		std::map<uint32_t,Island*> islands;
+		std::map<uint32_t,Ship*> warships;
 
 		AEEngine engine;
 
@@ -60,13 +60,13 @@ namespace heaven
 		void updateView(void);
 
 		void addWarship(Ship *ship);
-		void destroyWarship(Ship *ship);
+		void destroyWarship(uint32_t ship_uid);
 		void addIsland(Island *island);
 
-		void transfer(Island *from,Island *to,float amount);
+		void transfer(uint32_t from,uint32_t to,float amount);
 
-		static std::vector<Ship*> iGetIslandShips(Island *island);
-		std::vector<Ship*> getIslandShips(Island *island);
+		static std::vector<Ship*> iGetIslandShips(uint32_t island_uid);
+		std::vector<Ship*> getIslandShips(uint32_t island_uid);
 
 		~HeavenWorld(void);
 

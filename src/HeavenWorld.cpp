@@ -18,7 +18,8 @@ namespace heaven
 	HeavenWorld *HeavenWorld::world = nullptr;
 	HeavenWorld * const &HeavenWorld::instance = HeavenWorld::world;
 
-	HeavenWorld::HeavenWorld(void)
+	HeavenWorld::HeavenWorld(void):
+		server(this)
 	{
 		// Check if world've been already created
 		if(HeavenWorld::world)
@@ -59,7 +60,7 @@ namespace heaven
 		engine.scene->AddObject(gui);
 
 		// create server and several clients
-		server.start();
+		// server.start();
 	}
 
 	void HeavenWorld::run(void)
@@ -80,17 +81,17 @@ namespace heaven
 	{
 		this->dt_ms = dt_ms;
 
-		for(auto island:islands)
+		for(auto uid_island:islands)
 		{
-			IslandProduct product = island->update(dt_ms);
+			IslandProduct product = uid_island.second->update(dt_ms);
 
 			switch(product.prod_type)
 			{
 			case IslandProduct::FOOD:
-				players[island->side_uid].resources["food"]+=product.amount;
+				players[uid_island.second->side_uid].resources["food"]+=product.amount;
 				break;
 			case IslandProduct::IRON:
-				players[island->side_uid].resources["iron"]+=product.amount;
+				players[uid_island.second->side_uid].resources["iron"]+=product.amount;
 				break;
 			case IslandProduct::NONE:
 				break;
@@ -98,29 +99,29 @@ namespace heaven
 
 			if(product.ship)
 			{
-				if(players[island->side_uid].resources["iron"]>=0)
+				if(players[uid_island.second->side_uid].resources["iron"]>=0)
 					addWarship(product.ship);
 				else
 				{
 					delete product.ship;
-					players[island->side_uid].resources["iron"]-=product.amount;
+					players[uid_island.second->side_uid].resources["iron"]-=product.amount;
 				}
 			}
 		}
 
-		for(auto ship:warships)
+		for(auto uid_ship:warships)
 		{
-			ship->update(dt_ms);
+			uid_ship.second->update(dt_ms);
 		}
 
-		for(auto ship=warships.begin();ship!=warships.end();)
+		for(auto uid_ship=warships.begin();uid_ship!=warships.end();)
 		{
-			if((*ship)->health<=0)
+			if(uid_ship->second->health<=0)
 			{
-				destroyWarship(*ship);
+				destroyWarship(uid_ship->second->uid);
 			}
 			else
-				++ship;
+				++uid_ship;
 		}
 
 		updateView();
@@ -178,7 +179,7 @@ namespace heaven
 			break;
 		case 'f':
 			isl_target = selected_island;
-			transfer(isl_from,isl_target,1.0f);
+			transfer(isl_from->uid,isl_target->uid,1.0f);
 			break;
 		}	
 	}
@@ -267,7 +268,7 @@ namespace heaven
 		islands[0]->side_uid = MINE;
 		islands[9]->side_uid = EVIL;
 
-		selected_island = islands[0];
+		selected_island = islands.begin()->second;
 	}
 
 	void HeavenWorld::updateView(void)
@@ -301,19 +302,16 @@ namespace heaven
 
 	void HeavenWorld::addWarship(Ship *ship)
 	{
-		if(!ship)
-			throw 0;
-
 		ship->getIslandShips = iGetIslandShips;
-		warships.push_back(ship);
+		warships[ship->uid] = ship;
 		engine.scene->AddObject(ship);
 	}
 
-	void HeavenWorld::destroyWarship(Ship *ship)
+	void HeavenWorld::destroyWarship(uint32_t ship_uid)
 	{
 		// we need some animation for destroy process
-		auto new_end = remove(warships.begin(),warships.end(),ship);
-		warships.erase(new_end,warships.end());
+		Ship *ship = warships[ship_uid];
+		warships.erase(ship_uid);
 		engine.scene->RemoveObject(ship);
 
 		delete ship;
@@ -321,40 +319,41 @@ namespace heaven
 
 	void HeavenWorld::addIsland(Island *island)
 	{
-		if(!island)
-			throw 0;
-
-		islands.push_back(island);
+		islands[island->uid] = island;
 		engine.scene->AddObject(island);
 	}
 
-	void HeavenWorld::transfer(Island *from,Island *to,float amount)
+	void HeavenWorld::transfer(uint32_t from,uint32_t to,float amount)
 	{
+		Island *i_from = islands[from];
+		Island *i_to = islands[to];
+
 		for(auto ship:getIslandShips(from))
 		{
-			if(ship->side_uid==from->side_uid)
-				ship->target = to;
+			if(ship->side_uid==i_from->side_uid)
+				ship->target = i_to;
 		}
 	}
 
-	vector<Ship*> HeavenWorld::getIslandShips(Island *island)
+	vector<Ship*> HeavenWorld::getIslandShips(uint32_t island_uid)
 	{
 		vector<Ship*> result;
+		Island *targ = islands[island_uid];
 
-		for(auto ship:warships)
+		for(auto uid_ship:warships)
 		{
-			if(ship->target == island)
-				result.push_back(ship);
+			if(uid_ship.second->target == targ)
+				result.push_back(uid_ship.second);
 		}
 
 		return result;
 	}
 
-	vector<Ship*> HeavenWorld::iGetIslandShips(Island *island)
+	vector<Ship*> HeavenWorld::iGetIslandShips(uint32_t island_uid)
 	{
 		if(!world) throw 0;
 
-		return world->getIslandShips(island);
+		return world->getIslandShips(island_uid);
 	}
 
 

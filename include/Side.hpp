@@ -7,6 +7,8 @@
 
 #include "AEUnits.h"
 
+#include "HPacket.hpp"
+
 namespace heaven
 {
 	class HeavenWorld;
@@ -14,11 +16,15 @@ namespace heaven
 	class Side
 	{
 	protected:
+		int socket;
+		pthread_t thread;
 
+		static void *listen(void *param);
 	public:
 		uint32_t uid;
 		std::string name;
 		AEColor color;
+		bool done;
 
 		std::map<std::string,float> resources;
 
@@ -28,7 +34,8 @@ namespace heaven
 		int connect(uint32_t server);
 		void disconnect(void);
 
-		void Sync(HeavenWorld *world);
+		void send(HPacket cmd);
+		void handlePacket(HPacket cmd);
 
 		~Side(void);
 	};

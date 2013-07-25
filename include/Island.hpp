@@ -18,6 +18,7 @@ namespace heaven
 		AEMaterial *material;
 
 	public:
+		uint32_t uid;
 		uint32_t side_uid;
 
 		Island(void);

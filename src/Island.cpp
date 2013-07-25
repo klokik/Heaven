@@ -104,7 +104,7 @@ namespace heaven
 				size_t alive = std::count_if(
 					HeavenWorld::instance->warships.begin(),
 					HeavenWorld::instance->warships.end(),
-					[this](Ship *ship) { return ship->manufacturer==this && ship->side_uid==side_uid; });
+					[this](std::pair<uint32_t,Ship*> uid_ship) { return uid_ship.second->manufacturer==this && uid_ship.second->side_uid==side_uid; });
 				if(alive>=max_alive)
 				{
 					delete product.ship;

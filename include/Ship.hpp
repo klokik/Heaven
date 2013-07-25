@@ -19,6 +19,7 @@ namespace heaven
 	class Ship: public AEObjectEmpty, public StaticMeshLibrary
 	{
 	public:
+		uint32_t uid;
 		Island *target;
 		float speed;
 		float max_health;
@@ -28,7 +29,7 @@ namespace heaven
 		uint32_t side_uid;
 		Island *manufacturer;
 
-		std::vector<Ship*> (*getIslandShips)(Island *island);
+		std::vector<Ship*> (*getIslandShips)(uint32_t island_uid);
 
 		Ship(std::string type,uint32_t _side_uid);
 

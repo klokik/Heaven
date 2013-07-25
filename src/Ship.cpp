@@ -90,7 +90,7 @@ namespace heaven
 
 		bool only_attack_side = true;
 
-		std::vector<Ship*> evil_ships = getIslandShips(target);
+		std::vector<Ship*> evil_ships = getIslandShips(target->uid);
 		for(auto ship:evil_ships)
 		{
 			if(ship->side_uid == this->side_uid)

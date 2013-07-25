@@ -95,9 +95,9 @@ namespace heaven
 		Line ray = getScreenRay(pos,world_instance->engine.curCamera);
 
 		std::vector<Island*> intersected;
-		for(auto &island:world_instance->islands)
-			if(distance(island->translate,ray)<island->bounding_sphere.radius)
-				intersected.push_back(island);
+		for(auto &uid_island:world_instance->islands)
+			if(distance(uid_island.second->translate,ray)<uid_island.second->bounding_sphere.radius)
+				intersected.push_back(uid_island.second);
 
 		for(int q=0;q<20;q++)
 			cursor[q]->SetTranslate(ray.position+ray.direction*q*3);
