@@ -42,8 +42,9 @@ namespace heaven
 
 	public:
 		HeavenWorld *world_instance;
+		static Side *interface;
 
-		HGUI(HeavenWorld *instance);
+		HGUI(HeavenWorld *instance,Side *interface);
 
 		void update(void);
 		void realign(Vec2f size);

@@ -23,11 +23,14 @@ namespace heaven
 		return Length(B-pt);
 	}
 
-	HGUI::HGUI(HeavenWorld *instance)
+	Side *HGUI::interface = nullptr;
+
+	HGUI::HGUI(HeavenWorld *instance,Side *interface)
 	{
 		// projection = AE_ORTHOGRAPHIC;
 
 		world_instance = instance;
+		this->interface = interface;
 
 		res_info = new AEObjectText;
 		isl_info = new AEObjectText;
@@ -158,10 +161,14 @@ namespace heaven
 	void HGUI::iBtnPauseClick(int *param)
 	{
 		std::cout<<"Pause"<<std::endl;
+		if(interface)
+			interface->send(HPacket::PAUSE);
 	}
 
 	void HGUI::iBtnQuitClick(int *param)
 	{
+		if(interface)
+			interface->disconnect();
 		HeavenWorld::instance->engine.Stop();
 	}
 
