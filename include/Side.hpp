@@ -18,8 +18,12 @@ namespace heaven
 	protected:
 		int socket;
 		pthread_t thread;
+		bool empty;
+		bool connection_opened;
+		Side **thread_owner;
 
 		static void *listen(void *param);
+		void init(void);
 	public:
 		uint32_t uid;
 		std::string name;
@@ -30,6 +34,9 @@ namespace heaven
 
 		Side(void);
 		Side(std::string name,uint32_t server);
+		Side(Side &&s);
+
+		Side &operator=(Side &&s);
 
 		int connect(uint32_t server);
 		void disconnect(void);

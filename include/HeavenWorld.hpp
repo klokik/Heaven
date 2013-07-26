@@ -72,6 +72,7 @@ namespace heaven
 
 	protected:
 		void loadIslands(void);
+		void loadPlayers(void);
 	};
 }
 

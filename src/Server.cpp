@@ -19,6 +19,7 @@ namespace heaven
 		thread_owner = new Client*;
 		*thread_owner = this;
 		empty = false;
+		thread_alive = false;
 	}
 
 	Server::Client::Client(Client &&c)
@@ -28,14 +29,19 @@ namespace heaven
 
 	Server::Client &Server::Client::operator=(Client &&c)
 	{
+		if(c.empty)
+			throw 10;
+
 		thread = c.thread;
+		thread_alive = c.thread_alive;
 		thread_owner = c.thread_owner;
+		*thread_owner = this;
 		socket = c.socket;
 		server = c.server;
 		done = c.done;
 
+		empty = c.empty;
 		c.empty = true;
-		empty = false;
 
 		return *this;
 	}
@@ -49,8 +55,9 @@ namespace heaven
 
 	void *Server::Client::listen(void *param)
 	{
-		Server::Client *local_this = reinterpret_cast<Server::Client*>(param);
+		Server::Client *local_this = *static_cast<Server::Client**>(param);
 
+		local_this->thread_alive = true;
 		while(!local_this->done)
 		{
 			try
@@ -59,6 +66,8 @@ namespace heaven
 				std::cout<<"Packet accepted"<<std::endl;
 				local_this->handlePacket(packet);
 				packet.free();
+				//in case it've been changed
+				local_this = *static_cast<Server::Client**>(param);
 			}
 			catch(int i)
 			{
@@ -69,12 +78,16 @@ namespace heaven
 
 		local_this->disconnect();
 
+		//local_this->thread_alive = false;
 		return nullptr;
 	}
 
 	void Server::Client::start(void)
 	{
-		pthread_create(&thread,nullptr,listen,static_cast<void*>(*thread_owner));
+		if(thread_alive)
+			throw 89; //already running
+		done = false;
+		pthread_create(&thread,nullptr,listen,static_cast<void*>(thread_owner));
 	}
 
 	void Server::Client::send(HPacket cmd)
@@ -132,8 +145,14 @@ namespace heaven
 		if(!empty)
 		{
 			disconnect();
-			pthread_join(thread,nullptr);
+			if(thread_alive)
+			{
+				pthread_join(thread,nullptr);
+				thread_alive = false;
+			}
 			delete thread_owner;
+			empty = true;
+			std::cout<<"server::client destructed"<<std::endl;
 		}
 	}
 
@@ -200,7 +219,12 @@ namespace heaven
 		ssize_t bytes_read = 0;
 		while(bytes_read!=header_size)
 		{
-			recv(socket,data+bytes_read,header_size-bytes_read,0);
+			ssize_t round_read = recv(socket,data+bytes_read,header_size-bytes_read,0);
+			if(round_read<=0)
+			{
+				std::cout<<"pipeline broken\n"<<"receive failed"<<std::endl;
+				throw -1;
+			}
 		}
 
 		memcpy(static_cast<void*>(&packet),data,header_size);
@@ -260,12 +284,19 @@ namespace heaven
 
 	void Server::stop()
 	{
+		std::cout<<"Server stopping"<<std::endl;
 		done = true;
+		shutdown(listen_socket,2);
 		pthread_join(listen_thread,nullptr);
+
+		std::cout<<"Disconnecting clients: "<<clients.size()<<std::endl;
+		clients.clear();
+		std::cout<<"Server stopped"<<std::endl;
 	}
 
 	Server::~Server(void)
 	{
+		std::cout<<"Server destructed"<<std::endl;
 		stop();
 	}
 }

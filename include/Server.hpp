@@ -20,6 +20,7 @@ namespace heaven
 		private:
 			int socket;
 			pthread_t thread;
+			bool thread_alive;
 			Client **thread_owner;
 			Server *server;
 			bool done;
@@ -40,8 +41,6 @@ namespace heaven
 			void disconnect(void);
 			void kill(std::string msg);
 			void handlePacket(HPacket cmd);
-
-			//Client &operator=(Client &a);
 
 			~Client(void);
 		};

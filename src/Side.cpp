@@ -16,14 +16,47 @@ namespace heaven
 {
 	Side::Side(void)
 	{
-		socket = -1;
+		init();
 	}
 
-	Side::Side(std::string name,uint32_t server)
+	Side::Side(std::string name,uint32_t server): Side()
 	{
-		Side();
+		std::cout<<"new: "<<name<<std::endl;
 		this->name = name;
+	}
+
+	Side::Side(Side &&s)
+	{
+		operator=(std::move(s));
+	}
+
+	void Side::init(void)
+	{
+		socket = -1;
+		uid = 0;
+		empty = false;
 		color.vec = vec4f(1.0f,1.0f,1.0f,1.0f);
+		thread_owner = new Side*;
+		std::cout<<thread_owner<<std::endl;
+		*thread_owner = this;
+		connection_opened = false;
+	}
+
+	Side &Side::operator=(Side &&s)
+	{
+		uid = s.uid;
+		socket = s.socket;
+		thread = s.thread;
+		name = s.name;
+		color = s.color;
+		thread_owner = s.thread_owner;
+		*thread_owner = this;
+		connection_opened = s.connection_opened;
+
+		empty = s.empty;
+		s.empty = true;
+
+		return *this;
 	}
 
 	int Side::connect(uint32_t server)
@@ -43,7 +76,8 @@ namespace heaven
 		assert(status==0);
 
 		done = false;
-		pthread_create(&thread,nullptr,listen,static_cast<void*>(this));
+		connection_opened = true;
+		pthread_create(&thread,nullptr,listen,static_cast<void*>(thread_owner));
 
 		return 1;
 	}
@@ -51,6 +85,7 @@ namespace heaven
 	void Side::disconnect(void)
 	{
 		done = true;
+		connection_opened = false;
 		if(socket!=-1)
 		{
 			int status = shutdown(socket,2);
@@ -84,7 +119,7 @@ namespace heaven
 
 	void *Side::listen(void *param)
 	{
-		Side *local_this = static_cast<Side*>(param);
+		Side *local_this = *static_cast<Side**>(param);
 
 		while(!local_this->done)
 		{
@@ -93,6 +128,8 @@ namespace heaven
 				HPacket cmd = Server::readPacket(local_this->socket);
 				local_this->handlePacket(cmd);
 				cmd.free();
+				// In case it've been changed
+				local_this = const_cast<Side*>(*static_cast<Side**>(param));
 			}
 			catch(int i)
 			{
@@ -131,7 +168,16 @@ namespace heaven
 
 	Side::~Side(void)
 	{
-		disconnect();
-		pthread_join(thread,nullptr);
+		if(!empty&&connection_opened)
+		{
+			std::cout<<"destroy: "<<name<<std::endl;
+			done = true;
+			disconnect();
+			std::cout<<"joining to listener process: ... ";
+			pthread_join(thread,nullptr);
+			std::cout<<"done: "<<thread_owner<<std::endl;
+			delete thread_owner;
+			empty = true;
+		}
 	}
 }

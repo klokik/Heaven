@@ -23,6 +23,9 @@ namespace heaven
 		loadMesh("ship_factory","res/models/ship_factory.obj");
 
 		material = HeavenWorld::instance->engine.scene->materials.New();
+
+		static uint32_t seed_uid = 0;
+		uid = seed_uid++;
 	}
 
 	IslandProduct Island::update(float dt_ms)

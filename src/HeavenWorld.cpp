@@ -61,6 +61,7 @@ namespace heaven
 
 		// create server and several clients
 		// server.start();
+		loadPlayers();
 	}
 
 	void HeavenWorld::run(void)
@@ -152,8 +153,8 @@ namespace heaven
 
 	void HeavenWorld::keyDown(int keycode)
 	{
-		static Island *isl_from = nullptr;
-		static Island *isl_target = nullptr;
+		// static Island *isl_from = nullptr;
+		// static Island *isl_target = nullptr;
 
 		switch(keycode)
 		{
@@ -175,11 +176,11 @@ namespace heaven
 			break;
 
 		case 'c':
-			isl_from = selected_island;
+			// isl_from = selected_island;
 			break;
 		case 'f':
-			isl_target = selected_island;
-			transfer(isl_from->uid,isl_target->uid,1.0f);
+			// isl_target = selected_island;
+			// transfer(isl_from->uid,isl_target->uid,1.0f);
 			break;
 		}	
 	}
@@ -265,10 +266,21 @@ namespace heaven
 		addIsland(island);
 		island->side_uid = EVIL;
 
-		islands[0]->side_uid = MINE;
-		islands[9]->side_uid = EVIL;
 
 		selected_island = islands.begin()->second;
+	}
+
+	void HeavenWorld::loadPlayers(void)
+	{
+		server.start();
+
+		for(int q=0;q<3;q++)
+		{
+			Side side("player "+std::to_string(q),0);
+			side.uid = q;
+			side.connect(0);
+			players[side.uid] = std::move(side);
+		}
 	}
 
 	void HeavenWorld::updateView(void)
@@ -359,7 +371,7 @@ namespace heaven
 
 	HeavenWorld::~HeavenWorld(void)
 	{
-		server.stop();
+		cout<<"Armagedon!"<<endl;
 		//TODO: just save current state
 	}
 }

@@ -3,6 +3,6 @@
 
 namespace heaven
 {
-	enum Ownership {MINE,EVIL,NEUTRAL};
+	enum Ownership {MINE=0,EVIL=1,NEUTRAL=2};
 }
 #endif /* OWNERSHIP_H_ */
