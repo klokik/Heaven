@@ -12,7 +12,6 @@ namespace heaven
 		HGUI *gui;
 
 		HumanPlayer(void);
-		~HumanPlayer();
 	};
 
 	class DedicatedPlayer: public Side

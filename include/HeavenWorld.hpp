@@ -11,6 +11,7 @@
 #include "Island.hpp"
 #include "Ownership.hpp"
 #include "Server.hpp"
+#include "Environment.hpp"
 
 namespace heaven
 {
@@ -22,6 +23,7 @@ namespace heaven
 		static HeavenWorld *world;
 
 		float dt_ms;
+		float game_time;
 
 		Server server;
 
@@ -40,9 +42,11 @@ namespace heaven
 
 		AEObject *gui;
 
+		Environment *environment;
+
 		HeavenWorld(void);
 
-		void init();
+		int init();
 		void run();
 
 		static void iOnRefresh(int *param);
@@ -62,6 +66,7 @@ namespace heaven
 		void addWarship(Ship *ship);
 		void destroyWarship(uint32_t ship_uid);
 		void addIsland(Island *island);
+		void LoadEnvironment(void);
 
 		void transfer(uint32_t from,uint32_t to,float amount);
 
@@ -73,6 +78,7 @@ namespace heaven
 	protected:
 		void loadIslands(void);
 		void loadPlayers(void);
+		void initEnvironment(void);
 	};
 }
 

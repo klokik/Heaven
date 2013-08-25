@@ -73,6 +73,8 @@ namespace heaven
 		server_addr.sin_port = htons(port);
 
 		int status = ::connect(socket,reinterpret_cast<sockaddr*>(&server_addr),sizeof(server_addr));
+		if(status!=0)
+			perror("connect");
 		assert(status==0);
 
 		done = false;
@@ -94,14 +96,17 @@ namespace heaven
 			case 0:
 				std::cout<<"socket closed successfully"<<std::endl;
 				break;
-			case EBADF:
-				std::cout<<"socket is not a valid file descriptor."<<std::endl;
-				break;
-			case ENOTSOCK:
-				std::cout<<"socket is not a socket."<<std::endl;
-				break;
-			case ENOTCONN:
-				std::cout<<"socket is not connected"<<std::endl;
+			// case EBADF:
+			// 	std::cout<<"socket is not a valid file descriptor."<<std::endl;
+			// 	break;
+			// case ENOTSOCK:
+			// 	std::cout<<"socket is not a socket."<<std::endl;
+			// 	break;
+			// case ENOTCONN:
+			// 	std::cout<<"socket is not connected"<<std::endl;
+			// 	break;
+			default:
+				std::cout<<"socket was NOT closed successfully"<<std::endl;
 				break;
 			}
 

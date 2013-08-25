@@ -65,8 +65,11 @@ namespace heaven
 			{ZEPPELIN,"ship_factory"}};
 
 		AEObjectMesh *island_mesh_obj = new AEObjectMesh;
+		island_mesh_obj->name = m_name[product_type];
 		island_mesh_obj->mesh = getMesh(m_name[product_type]);
 		island_mesh_obj->material = material;
+
+		this->name = island_mesh_obj->name + "_base";
 
 		AddChild(island_mesh_obj);
 
@@ -146,8 +149,11 @@ namespace heaven
 
 		island_mesh_obj->mesh = getMesh("town");
 		island_mesh_obj->material = material;
+		island_mesh_obj->name = "town";
 
 		AddChild(island_mesh_obj);
+
+		name = "town_base";
 	}
 
 	IslandProduct TownIsland::update(float dt_ms)

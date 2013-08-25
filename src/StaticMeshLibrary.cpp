@@ -1,24 +1,22 @@
 #include <iostream>
 
+#include "AEDebug.h"
+#include "AEResourceManager.h"
+
 #include "StaticMeshLibrary.hpp"
 
 
-void LoadObjFile(AEMesh *&mesh, const char *path);
-
 namespace heaven
 {
-	using namespace std;
+	std::map<std::string,AEMesh*> StaticMeshLibrary::mesh_library;
 
-
-	map<string,AEMesh*> StaticMeshLibrary::mesh_library;
-
-	AEMesh *StaticMeshLibrary::getMesh(string name)
+	AEMesh *StaticMeshLibrary::getMesh(std::string name)
 	{
 		try
 		{
 			return mesh_library.at(name);
 		}
-		catch(const out_of_range &oor)
+		catch(const std::out_of_range &oor)
 		{
 			return nullptr;
 		}
@@ -29,11 +27,11 @@ namespace heaven
 		if(mesh_library.find(name)!=mesh_library.end())
 			return;
 
-		std::cout<<filename<<std::endl;
+		aengine::AEPrintLog("Load file: "+filename);
 
-		AEMesh *mesh;
+		AEMesh *mesh=new AEMesh;
 
-		LoadObjFile(mesh,filename.c_str());
-		mesh_library.insert(pair<string,AEMesh*>(name,mesh));
+		aengine::AEResourceManager::LoadMesh(filename,*mesh);
+		mesh_library.insert(std::pair<std::string,AEMesh*>(name,mesh));
 	}
 }

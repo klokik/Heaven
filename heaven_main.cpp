@@ -1,19 +1,22 @@
 #include <iostream>
 
 #include "HeavenWorld.hpp"
+#include "AEDebug.h"
 
 using namespace std;
 using namespace heaven;
 
 int main(void)
 {
-	cout<<"Hello!"<<endl;
+	AEPrintLog("Hello!");
 
 	HeavenWorld world;
 
-	world.init();
+	if(!world.init())
+		return 0;
+
 	world.run();
 
-	cout<<"Good luck!"<<endl;
+	aengine::AEPrintLog("Good luck!");
 	return 0;
 }

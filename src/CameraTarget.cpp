@@ -7,6 +7,7 @@ namespace heaven
 	CameraTarget::CameraTarget(AEObjectCamera *camera)
 	{
 		this->AddChild(camera);
+		this->name = "CameraTarget";
 	}
 
 	void CameraTarget::setDistance(float distance)

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <sstream>
 
 #include "AEObjectText.h"
 #include "AEObjectSprite.h"
@@ -30,16 +31,20 @@ namespace heaven
 		// projection = AE_ORTHOGRAPHIC;
 
 		world_instance = instance;
-		this->interface = interface;
+		HGUI::interface = interface;
 
-		res_info = new AEObjectText;
-		isl_info = new AEObjectText;
+		name = "HGUI";
+
+		res_info = new AEObjectText;	res_info->name = "res_info";
+		isl_info = new AEObjectText;	isl_info->name = "isl_info";
 
 		btn_quit = new HButton(this);
+		btn_quit->name = "btnQuit";
 		static_cast<AEObjectSprite*>(btn_quit)->material->diffuse.vec = vec4f(1.0f,0.0f,0.0f,0.5f);
 		static_cast<HButton*>(btn_quit)->on_click = iBtnQuitClick;
 
 		btn_pause = new HButton(this);
+		btn_pause->name = "btnPause";
 		static_cast<AEObjectSprite*>(btn_pause)->material->diffuse.vec = vec4f(0.0f,0.0f,1.0f,0.5f);
 		static_cast<HButton*>(btn_pause)->on_click = iBtnPauseClick;
 
@@ -66,9 +71,13 @@ namespace heaven
 
 	void HGUI::setValues(void)
 	{
+		std::stringstream res_str;
+
+		res_str<<"Iron: "<<world_instance->players[MINE].resources["iron"]<<"\n"
+			<<"Food: "<<world_instance->players[MINE].resources["food"];
+
 		static_cast<AEObjectText*>(isl_info)->text = "Island \""+world_instance->selected_island->name+"\"";
-		static_cast<AEObjectText*>(res_info)->text = "Iron: "+std::to_string((int)world_instance->players[MINE].resources["iron"])+"\n"+
-			"Food: "+std::to_string((int)world_instance->players[MINE].resources["food"]);
+		static_cast<AEObjectText*>(res_info)->text = res_str.str();
 	}
 
 	Line HGUI::getScreenRay(Vec2f screen_pos,AEObjectCamera *camera)
@@ -161,14 +170,10 @@ namespace heaven
 	void HGUI::iBtnPauseClick(int *param)
 	{
 		std::cout<<"Pause"<<std::endl;
-		if(interface)
-			interface->send(HPacket::PAUSE);
 	}
 
 	void HGUI::iBtnQuitClick(int *param)
 	{
-		if(interface)
-			interface->disconnect();
 		HeavenWorld::instance->engine.Stop();
 	}
 

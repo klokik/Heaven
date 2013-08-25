@@ -114,14 +114,17 @@ namespace heaven
 			case 0:
 				std::cout<<"socket closed successfully"<<std::endl;
 				break;
-			case EBADF:
-				std::cout<<"socket is not a valid file descriptor."<<std::endl;
-				break;
-			case ENOTSOCK:
-				std::cout<<"socket is not a socket."<<std::endl;
-				break;
-			case ENOTCONN:
-				std::cout<<"socket is not connected"<<std::endl;
+			// case EBADF:
+			// 	std::cout<<"socket is not a valid file descriptor."<<std::endl;
+			// 	break;
+			// case ENOTSOCK:
+			// 	std::cout<<"socket is not a socket."<<std::endl;
+			// 	break;
+			// case ENOTCONN:
+			// 	std::cout<<"socket is not connected"<<std::endl;
+			// 	break;
+			default:
+				std::cout<<"socket was NOT closed successfully"<<std::endl;
 				break;
 			}
 
@@ -273,6 +276,7 @@ namespace heaven
 
 		if(status==-1)
 		{
+			perror("bind");
 			std::cout<<"Failed to bind address to socket"<<std::endl;
 			throw 7;
 		}

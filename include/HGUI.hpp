@@ -7,6 +7,8 @@
 #include "AEObjectSprite.h"
 #include "AEObjectCamera.h"
 
+#include "Side.hpp"
+
 namespace heaven
 {
 	//using namespace aengine;

@@ -20,11 +20,16 @@ namespace heaven
 		loadMesh("plane","res/models/plane.obj");
 		loadMesh("zeppelin","res/models/zeppelin.obj");
 
-
 		static int counter = 0;
 		AEObjectMesh *ship_mesh = new AEObjectMesh;
+		// AEObjectEmpty *ship_mesh = new AEObjectEmpty;
 		ship_mesh->mesh = getMesh(type);
-		ship_mesh->name = "warship " + counter;
+		ship_mesh->name = "warship_"; ship_mesh->name += (char)('a'+counter);
+
+		this->name = ship_mesh->name + "_base";
+
+		uid = counter;
+		counter++;
 
 		AddChild(ship_mesh);
 

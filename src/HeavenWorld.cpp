@@ -3,10 +3,13 @@
 
 #include "AEObjectMesh.h"
 #include "AEVectorMath.h"
+#include "AEObjectLight.h"
+#include "AEDebug.h"
 
 #include "HeavenWorld.hpp"
 #include "HGUI.hpp"
 #include "CameraTarget.hpp"
+#include "Player.hpp"
 
 void LoadObjFile(AEMesh *&mesh, const char *path);
 
@@ -24,7 +27,7 @@ namespace heaven
 		// Check if world've been already created
 		if(HeavenWorld::world)
 		{	
-			cout<<"World have been already created!"<<endl;
+			aengine::AEPrintLog("World have been already created!");
 			throw 0;
 		}
 
@@ -36,9 +39,10 @@ namespace heaven
 		players[NEUTRAL].resources["iron"] = 20;
 	}
 
-	void HeavenWorld::init(void)
+	int HeavenWorld::init(void)
 	{
-		engine.Init(AE_INIT_WINDOW|AE_INIT_RENDER_GL|AE_INIT_SCENE|AE_INIT_CAMERA);
+		if(!engine.Init(AE_INIT_WINDOW|AE_INIT_RENDER_GL|AE_INIT_SCENE|AE_INIT_CAMERA))
+			return AE_ERR;
 
 		engine.Refresh = iOnRefresh;
 		engine.OnStart = iOnStart;
@@ -56,24 +60,36 @@ namespace heaven
 
 		loadIslands();
 
-		gui = new HGUI(this);
-		engine.scene->AddObject(gui);
+		initEnvironment();
+
+		// gui = new HGUI(this);
+		// engine.scene->AddObject(gui);
 
 		// create server and several clients
+		aengine::AEPrintLog("Starting server");
 		// server.start();
+		aengine::AEPrintLog("Server started");
 		loadPlayers();
+
+		aengine::AEPrintLog("Initialization complete");
+		
+		return AE_OK;
 	}
 
 	void HeavenWorld::run(void)
 	{
 		engine.Run();
 
-		cout<<"Finish"<<endl;
+		aengine::AEPrintLog("Finish");
 	}
 
 	void HeavenWorld::iOnRefresh(int *param)
 	{
-		if(!world) throw 0;
+		if(!world)
+		{
+			aengine::AEPrintLog("No World - No Way!");
+			throw 0;
+		}
 
 		world->updateWorld(param[0]);
 	}
@@ -81,6 +97,8 @@ namespace heaven
 	void HeavenWorld::updateWorld(float dt_ms)
 	{
 		this->dt_ms = dt_ms;
+
+		this->game_time+=dt_ms;
 
 		for(auto uid_island:islands)
 		{
@@ -110,21 +128,21 @@ namespace heaven
 			}
 		}
 
+		std::vector<uint32_t> to_delete;
 		for(auto uid_ship:warships)
 		{
 			uid_ship.second->update(dt_ms);
+			if(uid_ship.second->health<=0)
+				to_delete.push_back(uid_ship.first);
 		}
 
-		for(auto uid_ship=warships.begin();uid_ship!=warships.end();)
+		for(uint32_t item:to_delete)
 		{
-			if(uid_ship->second->health<=0)
-			{
-				destroyWarship(uid_ship->second->uid);
-			}
-			else
-				++uid_ship;
+			destroyWarship(item);
 		}
+		to_delete.clear();
 
+		this->environment->update(game_time/1000);
 		updateView();
 
 		dynamic_cast<HGUI*>(gui)->update();
@@ -140,8 +158,10 @@ namespace heaven
 	void HeavenWorld::engineStarted(void)
 	{
 		engine.scene->fonts.LoadFont("res/fonts/font.png","boundary",16,16);
-
+		aengine::AEPrintLog("Engine started");
 		engine.render->CacheScene(engine.scene);
+
+		game_time = 0;
 	}
 
 	void HeavenWorld::iOnKeyDown(int *param)
@@ -153,12 +173,12 @@ namespace heaven
 
 	void HeavenWorld::keyDown(int keycode)
 	{
-		// static Island *isl_from = nullptr;
-		// static Island *isl_target = nullptr;
+		static Island *isl_from = nullptr;
+		static Island *isl_target = nullptr;
 
 		switch(keycode)
 		{
-		case SDLK_ESCAPE:
+		case 27: // Escape
 			engine.Stop();
 			break;
 
@@ -176,11 +196,11 @@ namespace heaven
 			break;
 
 		case 'c':
-			// isl_from = selected_island;
+			isl_from = selected_island;
 			break;
 		case 'f':
-			// isl_target = selected_island;
-			// transfer(isl_from->uid,isl_target->uid,1.0f);
+			isl_target = selected_island;
+			transfer(isl_from->uid,isl_target->uid,1.0f);
 			break;
 		}	
 	}
@@ -214,6 +234,8 @@ namespace heaven
 
 	void HeavenWorld::loadIslands(void)
 	{
+		aengine::AEPrintLog("Load Islands");
+
 		Island *island;
 
 
@@ -272,15 +294,30 @@ namespace heaven
 
 	void HeavenWorld::loadPlayers(void)
 	{
-		server.start();
+		aengine::AEPrintLog("Load Players");
+		HumanPlayer human;
+		human.uid = 0;
+		// human.connect(0);
+		this->gui = human.gui;
+		engine.scene->AddObject(gui);
 
-		for(int q=0;q<3;q++)
+		players[human.uid] = std::move(human);
+
+		for(int q=1;q<3;q++)
 		{
-			Side side("player "+std::to_string(q),0);
+			Side side(string("player ")+static_cast<char>('a'+q),0);
 			side.uid = q;
-			side.connect(0);
+			// side.connect(0);
 			players[side.uid] = std::move(side);
 		}
+	}
+
+	void HeavenWorld::initEnvironment(void)
+	{
+		this->environment = new Environment;
+		this->environment->setMaterials(this->engine.scene->materials);
+
+		this->engine.scene->AddObject(this->environment);
 	}
 
 	void HeavenWorld::updateView(void)
@@ -307,6 +344,9 @@ namespace heaven
 				view_target->RelTranslate(d_vec);
 			}
 		}
+
+		//view_target->GetAbsPosition();
+		environment->SetTranslate(view_target->translate);
 
 		//BUG
 		view_target->children[0]->InvalidateTransform();
@@ -340,6 +380,8 @@ namespace heaven
 		Island *i_from = islands[from];
 		Island *i_to = islands[to];
 
+		std::cout<<"trans "<<from<<"-"<<to<<std::endl;
+
 		for(auto ship:getIslandShips(from))
 		{
 			if(ship->side_uid==i_from->side_uid)
@@ -371,7 +413,7 @@ namespace heaven
 
 	HeavenWorld::~HeavenWorld(void)
 	{
-		cout<<"Armagedon!"<<endl;
+		aengine::AEPrintLog("Armagedon!");
 		//TODO: just save current state
 	}
 }
