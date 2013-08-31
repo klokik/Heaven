@@ -142,7 +142,7 @@ namespace heaven
 		}
 		to_delete.clear();
 
-		this->environment->update(game_time/1000);
+		this->environment->update(game_time/1000,dt_ms);
 		updateView();
 
 		dynamic_cast<HGUI*>(gui)->update();
@@ -160,6 +160,8 @@ namespace heaven
 		engine.scene->fonts.LoadFont("res/fonts/font.png","boundary",16,16);
 		aengine::AEPrintLog("Engine started");
 		engine.render->CacheScene(engine.scene);
+
+		aengine::AEPrintLog("Work dir: "+aengine::AEResourceManager::GetWorkDirectory());
 
 		game_time = 0;
 	}
@@ -345,8 +347,7 @@ namespace heaven
 			}
 		}
 
-		//view_target->GetAbsPosition();
-		environment->SetTranslate(view_target->translate);
+		environment->SetTranslate(view_target->GetAbsPosition());
 
 		//BUG
 		view_target->children[0]->InvalidateTransform();
