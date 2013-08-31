@@ -80,31 +80,30 @@ namespace heaven
 		static_cast<AEObjectText*>(res_info)->text = res_str.str();
 	}
 
-	Line HGUI::getScreenRay(Vec2f screen_pos,AEObjectCamera *camera)
+	Line HGUI::getScreenRay(Vec2f screen_pos,AEObjectCamera &camera)
 	{
-		Line result = {vec3f(0,0,0),vec3f(0,0,0)};
+		Line ray = {vec3f(0,0,0),vec3f(0,0,0)};
 
-		if(!camera)
-			return result;
+		Vec2f frag_pos = (screen_pos-size*0.5); // shift coordinates to screen center
+		ray.direction = vec3f(
+			frag_pos.X,
+			frag_pos.Y,
+			-(size.X/2)/tan(camera.angle/57.2957795131f/2));
+		AEMatrix4f4 wmat = camera.GetWorldMatrix();
 
-		Vec2f d_pos = (screen_pos-size*0.5);
-		result.direction = vec3f(d_pos.X,d_pos.Y,-size.X/tan(camera->angle)*sqrt(2)); // for some reason it works (not too acurately)
-		result.direction = normalize(result.direction);
-		AEMatrix4f4 wmat = camera->GetWorldMatrix();
+		Vec4f dir4 = wmat*vec4f(ray.direction,1.0f);
 
-		Vec4f dir4 = wmat*vec4f(normalize(result.direction),1.0f);
-
-		result = {
-			camera->GetAbsPosition(),
-			(vec3f(dir4.X,dir4.Y,dir4.Z)-camera->GetAbsPosition())
+		ray = {
+			camera.GetAbsPosition(),
+			normalize(vec3f(dir4.X,dir4.Y,dir4.Z)-camera.GetAbsPosition())
 		};
 
-		return result;
+		return ray;
 	}
 
 	void HGUI::attemptToSelect(Vec2f pos)
 	{
-		Line ray = getScreenRay(pos,world_instance->engine.curCamera);
+		Line ray = getScreenRay(pos,*world_instance->engine.curCamera);
 
 		std::vector<Island*> intersected;
 		for(auto &uid_island:world_instance->islands)

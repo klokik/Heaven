@@ -38,7 +38,7 @@ namespace heaven
 		void setValues(void);
 
 		//returns a point and direction of the line, that comes from center of camera to point on screen
-		Line getScreenRay(Vec2f screen_pos,AEObjectCamera *camera);
+		Line getScreenRay(Vec2f screen_pos,AEObjectCamera &camera);
 
 		void attemptToSelect(Vec2f pos);
 
