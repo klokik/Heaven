@@ -2,6 +2,7 @@
 #define SERVER_H_
 
 #include <pthread.h>
+#include <semaphore.h>
 #include <map>
 #include <vector>
 #include <string>
@@ -48,6 +49,7 @@ namespace heaven
 		// std::map<uint32_t,Client> clients;
 		std::vector<Client> clients;
 		pthread_t listen_thread;
+		sem_t server_started;
 		bool done;
 
 		int listen_socket;

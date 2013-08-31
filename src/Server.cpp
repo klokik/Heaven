@@ -161,7 +161,10 @@ namespace heaven
 
 	Server::Server(HeavenWorld *world)
 	{
+		listen_socket = -1;
 
+		if(!sem_init(&server_started,0,0))
+			std::cout<<"Failed to create semaphore"<<std::endl;
 	}
 
 	void *Server::listenClients(void *param)
@@ -177,6 +180,7 @@ namespace heaven
 		}
 
 		std::cout<<"OK, listening client on port "<<local_this->port<<std::endl;
+		sem_post(&local_this->server_started);
 
 		local_this->done = false;
 		while(!local_this->done)
@@ -283,15 +287,30 @@ namespace heaven
 
 		pthread_create(&listen_thread,nullptr,listenClients,static_cast<void*>(this));
 
+		// wait until server started, in other case connection of local clients may fail
+		// TODO: add timeout with "sem_timedwait"
+		sem_wait(&server_started);
+
 		return 1;
 	}
 
 	void Server::stop()
 	{
 		std::cout<<"Server stopping"<<std::endl;
-		done = true;
-		shutdown(listen_socket,2);
-		pthread_join(listen_thread,nullptr);
+		if(!done)
+		{
+			done = true;
+
+			if(listen_socket!=-1)
+			{
+				std::cout<<"Shutdown connections"<<std::endl;
+				shutdown(listen_socket,2);
+				listen_socket=-1;
+			}
+
+			std::cout<<"Waiting for listen thread to stop"<<std::endl;
+			pthread_join(listen_thread,nullptr);
+		}
 
 		std::cout<<"Disconnecting clients: "<<clients.size()<<std::endl;
 		clients.clear();
@@ -300,6 +319,7 @@ namespace heaven
 
 	Server::~Server(void)
 	{
+		sem_destroy(&server_started);
 		std::cout<<"Server destructed"<<std::endl;
 		stop();
 	}
