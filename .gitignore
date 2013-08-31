@@ -31,3 +31,5 @@ Makefile
 *.sublime-*
 
 run.sh
+
+res/shader
