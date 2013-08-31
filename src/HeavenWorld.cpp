@@ -67,7 +67,7 @@ namespace heaven
 
 		// create server and several clients
 		aengine::AEPrintLog("Starting server");
-		// server.start();
+		server.start();
 		aengine::AEPrintLog("Server started");
 		loadPlayers();
 
@@ -299,7 +299,7 @@ namespace heaven
 		aengine::AEPrintLog("Load Players");
 		HumanPlayer human;
 		human.uid = 0;
-		// human.connect(0);
+		human.connect(0);
 		this->gui = human.gui;
 		engine.scene->AddObject(gui);
 
@@ -309,7 +309,7 @@ namespace heaven
 		{
 			Side side(string("player ")+static_cast<char>('a'+q),0);
 			side.uid = q;
-			// side.connect(0);
+			side.connect(0);
 			players[side.uid] = std::move(side);
 		}
 	}
