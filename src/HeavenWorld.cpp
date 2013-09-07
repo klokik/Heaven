@@ -157,7 +157,7 @@ namespace heaven
 
 	void HeavenWorld::engineStarted(void)
 	{
-		engine.scene->fonts.LoadFont("res/fonts/font.png","boundary",16,16);
+		engine.scene->fonts.LoadFont("res/fonts/font_3.png","boundary",16,16);
 		aengine::AEPrintLog("Engine started");
 		engine.render->CacheScene(engine.scene);
 
