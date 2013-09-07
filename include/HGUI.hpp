@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "AEObjectEmpty.h"
+#include "AEObjectText.h"
 #include "AEObjectSprite.h"
 #include "AEObjectCamera.h"
 
@@ -20,6 +21,20 @@ namespace heaven
 	};
 
 	class HeavenWorld;
+	class HLabel;
+	class HButton;
+	class HWindow;
+	class HTextInput;
+
+	void goToWindow(int *param);
+	void goBackWindow(int *param);
+	void showMainMenuWindow(int *param);
+	void showAboutWindow(int *param);
+	void showLocalGameWindow(int *param);
+	void showNetworkGameWindow(int *param);
+	void showOptionsWindow(int *param);
+	void showInGameWindow(int *param);
+	void showTextWindow(int *param);
 
 	class HGUI: public AEObjectEmpty
 	{
@@ -33,6 +48,8 @@ namespace heaven
 		AEObject *btn_quit;
 		std::vector<AEObject*> cursor;
 
+		std::vector<HWindow*> windows;
+
 		Vec2f size;
 
 		void setValues(void);
@@ -42,9 +59,13 @@ namespace heaven
 
 		void attemptToSelect(Vec2f pos);
 
+		void initWindows(void);
+
 	public:
 		HeavenWorld *world_instance;
 		static Side *interface;
+
+		HWindow *active_window;
 
 		HGUI(HeavenWorld *instance,Side *interface);
 
@@ -57,19 +78,181 @@ namespace heaven
 		static void iBtnRestartClick(int *param);
 		static void iBtnPauseClick(int *param);
 		static void iBtnQuitClick(int *param);
+
+		void showWindow(std::string name,HTextInput *ti=nullptr);
 	};
 
-	class HButton: public AEObjectSprite
+	class HLabel: public AEObjectText
+	{};
+
+	class HButton: public AEObjectEmpty
 	{
+	protected:
+		HLabel *label;
+		AEObjectSprite *sprite;
+
 	public:
+		Vec2f position;
+
 		AE_EVENT on_click;	// attributes {Vec2f}
 		AE_EVENT on_hover;	// attributes {Vec2f}
 
-		HButton(HGUI *gui);
+		HButton(void);
 
-		void click(Vec2f pos);
+		virtual void realign(Vec2f size);
+
+		virtual bool click(Vec2f pos);
 		void hover(Vec2f pos);
 		bool isOver(Vec2f pos);
+
+		HLabel &getLabel(void);
+		AEObjectSprite &getSprite(void);
+
+		virtual ~HButton(void);
+	};
+
+	class HTextInput: public HButton
+	{
+	public:
+		HTextInput(void);
+
+		std::string getText(void);
+	};
+
+	class HWindow: public HButton
+	{
+	protected:
+		std::vector<HButton*> controls;
+
+		HButton *btn_back;
+		HButton *btn_ok;
+
+	public:
+
+		std::string prev_window;
+
+		HWindow(void);
+
+		void setText(std::string text);
+
+		virtual bool click(Vec2f pos);
+
+		virtual void realign(Vec2f size);
+
+		virtual ~HWindow(void);
+	};
+
+	class HTextInputWindow: public HWindow
+	{
+	protected:
+		std::vector<HButton*> keyboard;
+		HTextInput *text;
+
+		Vec2f orig_text_position;
+		AEObject *orig_text_parent;
+	public:
+		HTextInputWindow(HTextInput *input);
+
+		virtual ~HTextInputWindow(void);
+	};
+
+	class HLoadWindow: public HWindow
+	{
+	protected:
+		HLabel *lb_progress;
+	public:
+		HLoadWindow(void);
+		virtual ~HLoadWindow();
+	};
+
+	class HMainMenuWindow: public HWindow
+	{
+	protected:
+		HButton *btn_local;
+		HButton *btn_network;
+		HButton *btn_options;
+		HButton *btn_about;
+	public:
+		HMainMenuWindow(void);
+		virtual ~HMainMenuWindow();
+	};
+
+	class HLocalGameWindow: public HWindow
+	{
+	protected:
+		HButton *btn_continue;
+		HButton *btn_new_game;
+	public:
+		HLocalGameWindow(void);
+		virtual ~HLocalGameWindow();
+	};
+
+	class HNetworkGameWindow: public HWindow
+	{
+	protected:
+		HButton *btn_start_server;
+		HButton *btn_connect_to_server;
+	public:
+		HNetworkGameWindow(void);
+		virtual ~HNetworkGameWindow();
+	};
+
+	class HOptionsWindow: public HWindow
+	{
+	protected:
+		HTextInput *ti_name;
+		HButton *btn_color;
+	public:
+		HOptionsWindow(void);
+		virtual ~HOptionsWindow();
+	};
+
+	class HAboutWindow: public HWindow
+	{
+	protected:
+		HLabel *lb_text;
+
+	public:
+		HAboutWindow(void);
+		virtual ~HAboutWindow();
+	};
+
+	class HServerSetupWindow: public HWindow
+	{
+	protected:
+		HTextInput *ti_name;
+		HTextInput *ti_port;
+		HTextInput *ti_number_of_players;
+	public:
+		HServerSetupWindow(void);
+		virtual ~HServerSetupWindow();
+	};
+
+	class HClientSetupWindow: public HWindow
+	{
+	protected:
+		HTextInput *ti_address;
+		HTextInput *ti_port;
+	public:
+		HClientSetupWindow(void);
+		virtual ~HClientSetupWindow();
+	};
+
+	class HPauseWindow: public HWindow
+	{
+	protected:
+	public:
+		HPauseWindow(void);
+//		virtual ~HPauseWindow();
+	};
+
+	class HInGameWindow: public HWindow
+	{
+	protected:
+		HButton *btn_pause;
+	public:
+		HInGameWindow(void);
+		virtual ~HInGameWindow();
 	};
 }
 

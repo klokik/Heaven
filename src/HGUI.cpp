@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <sstream>
+#include <cstring>
 
 #include "AEObjectText.h"
 #include "AEObjectSprite.h"
 #include "AEVectorMath.h"
+#include "AEMaterialManager.h"
 
 #include "HGUI.hpp"
 #include "HeavenWorld.hpp"
@@ -38,21 +40,21 @@ namespace heaven
 		res_info = new AEObjectText;	res_info->name = "res_info";
 		isl_info = new AEObjectText;	isl_info->name = "isl_info";
 
-		btn_quit = new HButton(this);
-		btn_quit->name = "btnQuit";
-		static_cast<AEObjectSprite*>(btn_quit)->material->diffuse.vec = vec4f(1.0f,0.0f,0.0f,0.5f);
-		static_cast<HButton*>(btn_quit)->on_click = iBtnQuitClick;
+		// btn_quit = new HButton;
+		// btn_quit->name = "btnQuit";
+		// static_cast<AEObjectSprite*>(btn_quit)->material->diffuse.vec = vec4f(1.0f,0.0f,0.0f,0.5f);
+		// static_cast<HButton*>(btn_quit)->on_click = iBtnQuitClick;
 
-		btn_pause = new HButton(this);
-		btn_pause->name = "btnPause";
-		static_cast<AEObjectSprite*>(btn_pause)->material->diffuse.vec = vec4f(0.0f,0.0f,1.0f,0.5f);
-		static_cast<HButton*>(btn_pause)->on_click = iBtnPauseClick;
+		// btn_pause = new HButton;
+		// btn_pause->name = "btnPause";
+		// static_cast<AEObjectSprite*>(btn_pause)->material->diffuse.vec = vec4f(0.0f,0.0f,1.0f,0.5f);
+		// static_cast<HButton*>(btn_pause)->on_click = iBtnPauseClick;
 
-		static_cast<AEObjectText*>(res_info)->text = "Resource info";
-		static_cast<AEObjectText*>(isl_info)->text = "Island info";
+		// static_cast<AEObjectText*>(res_info)->text = "Resource info";
+		// static_cast<AEObjectText*>(isl_info)->text = "Island info";
 
-		static_cast<AEObjectText*>(res_info)->alignment = AE_LEFT;
-		static_cast<AEObjectText*>(isl_info)->alignment = AE_RIGHT;
+		// static_cast<AEObjectText*>(res_info)->alignment = AE_LEFT;
+		// static_cast<AEObjectText*>(isl_info)->alignment = AE_RIGHT;
 
 		isl_info->SetScale(vec3f(8.0f,8.0f,8.0f));
 
@@ -63,10 +65,12 @@ namespace heaven
 			this->AddChild(obj);
 		}
 
-		this->AddChild(res_info);
-		this->AddChild(isl_info);
-		this->AddChild(btn_quit);
-		this->AddChild(btn_pause);
+		// this->AddChild(res_info);
+		// this->AddChild(isl_info);
+		// this->AddChild(btn_quit);
+		// this->AddChild(btn_pause);
+
+		initWindows();
 	}
 
 	void HGUI::setValues(void)
@@ -125,6 +129,72 @@ namespace heaven
 		world_instance->selected_island = isl;
 	}
 
+	void HGUI::initWindows(void)
+	{
+		HWindow *wnd;
+
+		wnd = new HMainMenuWindow;
+		wnd->name = "main";
+		windows.push_back(wnd);
+		this->AddChild(wnd);
+
+		wnd = new HLocalGameWindow;
+		wnd->name = "local";
+		windows.push_back(wnd);
+		this->AddChild(wnd);
+
+		wnd = new HNetworkGameWindow;
+		wnd->name = "network";
+		windows.push_back(wnd);
+		this->AddChild(wnd);
+
+		wnd = new HOptionsWindow;
+		wnd->name = "options";
+		windows.push_back(wnd);
+		this->AddChild(wnd);
+
+		wnd = new HAboutWindow;
+		wnd->name = "about";
+		windows.push_back(wnd);
+		this->AddChild(wnd);
+
+		wnd = new HInGameWindow;
+		wnd->name = "in_game";
+		windows.push_back(wnd);
+		this->AddChild(wnd);
+
+		wnd = new HPauseWindow;
+		wnd->name = "pause";
+		windows.push_back(wnd);
+		this->AddChild(wnd);
+
+		showWindow("main");
+	}
+
+	void HGUI::showWindow(std::string name,HTextInput *ti)
+	{
+		if(active_window)
+		{
+			active_window->visible = false;
+			active_window = nullptr;
+		}
+
+		if(name=="exit")
+			world_instance->engine.Stop();
+
+		for(HWindow *&wnd:windows)
+		{
+			if(wnd->name==name)
+			{
+				wnd->visible = true;
+				active_window = wnd;
+				break;
+			}
+			else
+				continue;//wnd->visible = false;
+		}
+	}
+
 	void HGUI::update(void)
 	{
 		setValues();
@@ -137,18 +207,22 @@ namespace heaven
 		res_info->SetTranslate(vec3f(16.0f,size.Y - 25.0f,0.0f));
 		isl_info->SetTranslate(vec3f(size.X - 16.0f,128.0f,0.0f));
 
-		btn_quit->SetTranslate(vec3f(132.0f,size.Y-64.0f,0.0f));
-		btn_pause->SetTranslate(vec3f(84.0f,size.Y-64.0f,0.0f));
+		// btn_quit->SetTranslate(vec3f(132.0f,size.Y-64.0f,0.0f));
+		// btn_pause->SetTranslate(vec3f(84.0f,size.Y-64.0f,0.0f));
+
+		for(HWindow *&wnd:windows)
+			wnd->realign(size);
 	}
 
 	void HGUI::mouseDown(Vec2f pos)
 	{
-		if(static_cast<HButton*>(btn_quit)->isOver(pos))
-			static_cast<HButton*>(btn_quit)->click(pos);
-		if(static_cast<HButton*>(btn_pause)->isOver(pos))
-			static_cast<HButton*>(btn_pause)->click(pos);
-
-		attemptToSelect(pos);
+		// if(static_cast<HButton*>(btn_quit)->isOver(pos))
+		// 	static_cast<HButton*>(btn_quit)->click(pos);
+		// if(static_cast<HButton*>(btn_pause)->isOver(pos))
+		// 	static_cast<HButton*>(btn_pause)->click(pos);
+		if(active_window)
+			if(!active_window->click(pos)&&active_window->name=="in_game")
+				attemptToSelect(pos);
 	}
 
 	void HGUI::mouseMove(Vec2f pos,Vec2f delta,int key)
@@ -177,19 +251,40 @@ namespace heaven
 	}
 
 
-	HButton::HButton(HGUI *gui)
+	HButton::HButton(void)
 	{
+		name = "h_button";
+		projection = AE_ORTHOGRAPHIC;
+
 		on_click = nullptr;
 		on_hover = nullptr;
 
-		material = gui->world_instance->engine.scene->materials.New();
-		SetScale(vec3f(32.0f,32.0f,32.0f));
+		label = new HLabel;
+		label->projection = AE_ORTHOGRAPHIC;
+		label->text = "Button";
+		AddChild(label);
+
+		sprite = new AEObjectSprite;
+		sprite->projection = AE_ORTHOGRAPHIC;
+		sprite->material = HeavenWorld::instance->engine.scene->materials.New();
+		sprite->material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.9f);
+		sprite->material->transparent = true;
+		sprite->SetScale(vec3f(128.0f,64.0f,32.0f));
+		AddChild(sprite);
+		position = vec2f(0.0f,0.0f);
 	}
 
-	void HButton::click(Vec2f pos)
+	void HButton::realign(Vec2f size)
+	{
+		SetTranslate(vec3f(size*position,0.0f));
+	}
+
+	bool HButton::click(Vec2f pos)
 	{
 		if(on_click)
 			on_click(reinterpret_cast<int*>(&pos));
+
+		return true;
 	}
 
 	void HButton::hover(Vec2f pos)
@@ -201,6 +296,114 @@ namespace heaven
 	bool HButton::isOver(Vec2f pos)
 	{
 		// too rough but who cares?
-		return (SqrLength(vec3f(pos,0.0f)-translate)<=SqrLength(scale)*0.25); // no further then one half of scale vector
+
+		return (SqrLength(vec3f(pos,0.0f)-GetAbsPosition())<=SqrLength(getSprite().GetAbsScale())*0.25); // no further then one half of scale vector
+	}
+
+	HLabel &HButton::getLabel(void)
+	{
+		return *label;
+	}
+
+	AEObjectSprite &HButton::getSprite(void)
+	{
+		return *sprite;
+	}
+
+	HButton::~HButton(void)
+	{
+		delete label;
+		delete sprite;
+	}
+
+	HTextInput::HTextInput(void)
+	{
+		name = "h_text_input";
+		label->text = "HTextInput";
+	}
+
+	std::string HTextInput::getText(void)
+	{
+		return label->text;
+	}
+
+	HWindow::HWindow(void)
+	{
+		name = "h_window";
+		visible = false;
+
+		btn_back = new HButton;
+		btn_ok = new HButton;
+
+		btn_back->position = vec2f(-0.4f,0.4f);
+		btn_ok->position = vec2f(0.4f,0.4f);
+
+		btn_back->getLabel().text = "back";
+		btn_ok->getLabel().text = "ok";
+
+		btn_back->on_click = goBackWindow;
+
+		sprite->material->diffuse.vec = vec4f(0.0f,0.0f,0.0f,0.6f);
+
+		// label->position = vec2f(0.0f,0.4f);
+
+		controls.push_back(btn_back);
+		controls.push_back(btn_ok);
+
+		AddChild(btn_back);
+		AddChild(btn_ok);
+	}
+
+	void HWindow::setText(std::string text)
+	{
+		label->text = text;
+	}
+
+	bool HWindow::click(Vec2f pos)
+	{
+		for(HButton *&control:controls)
+		{
+			if(!control)
+			{
+				AEPrintLog("invalid control");
+				continue;
+			}
+
+			if(control->isOver(pos))
+			{
+				AEPrintLog("click");
+				control->click(pos);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	void HWindow::realign(Vec2f size)
+	{
+		HButton::realign(size);
+
+		sprite->SetScale(vec3f(size,1.0f));
+		this->SetTranslate(vec3f(size*0.5f,0.0f));
+
+		for(HButton *&control:controls)
+		{
+			if(!control)
+			{
+				AEPrintLog("invalid control");
+				continue;
+			}
+
+			control->realign(size);
+		}
+
+		label->SetTranslate(vec3f(size*vec2f(0.0f,0.4f),0.0f));
+	}
+
+	HWindow::~HWindow(void)
+	{
+		delete btn_back;
+		delete btn_ok;
 	}
 }
