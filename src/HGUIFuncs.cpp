@@ -65,4 +65,18 @@ namespace heaven
 
 		// hgui->showWindow(wnd);
 	}
+
+	void toggleViewMode(int *param)
+	{
+		HGUI *hgui = static_cast<HGUI*>(HeavenWorld::instance->gui);
+
+		static bool top_view = false;
+
+		if(top_view)
+			hgui->setNormalView();
+		else
+			hgui->setTopView();
+
+		top_view=!top_view;
+	}
 }

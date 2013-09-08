@@ -20,6 +20,10 @@ namespace heaven
 		void relPitch(float angle_delta);
 		void relYaw(float angle_delta);
 
+		float getDistance(void);
+		float getPitch(void);
+		float getYaw(void);
+
 		~CameraTarget(void);
 	};
 }

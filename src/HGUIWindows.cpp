@@ -167,9 +167,14 @@ namespace heaven
 		prev_window = "pause";
 
 		btn_back->getLabel().text = "Pause";
-		btn_ok->visible = false;
+		btn_ok->getLabel().text = "View";
 
 		sprite->visible = false;
+
+		btn_ok->on_click = toggleViewMode;
+
+		//btn_top_view = new HButton;
+		//btn_top_view->position = vec2f(0.4f,0.4f);
 	}
 
 	HPauseWindow::HPauseWindow(void)

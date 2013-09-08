@@ -35,6 +35,8 @@ namespace heaven
 		world_instance = instance;
 		HGUI::interface = interface;
 
+		active_window = nullptr;
+
 		name = "HGUI";
 
 		res_info = new AEObjectText;	res_info->name = "res_info";
@@ -69,6 +71,13 @@ namespace heaven
 		// this->AddChild(isl_info);
 		// this->AddChild(btn_quit);
 		// this->AddChild(btn_pause);
+
+		last_normal_view_state = {20.0f,0.0f,-30.0f,0.0f};
+		last_top_view_state = {30.0f,0.0f,-90.0f,0.0f};
+		is_top_view = false;
+		is_normal_view = true;
+
+		setNormalView();
 
 		initWindows();
 	}
@@ -249,6 +258,38 @@ namespace heaven
 	{
 		HeavenWorld::instance->engine.Stop();
 	}
+
+	void HGUI::setNormalView(void)
+	{
+		if(is_top_view)
+		{
+			auto ct = HeavenWorld::instance->view_target;
+			last_top_view_state = {ct->getDistance(),0,ct->getPitch(),ct->getYaw()};
+
+			ct->setDistance(last_normal_view_state.distance);
+			ct->setPitch(last_normal_view_state.pitch);
+			ct->setYaw(last_normal_view_state.yaw);
+		}
+		is_normal_view = true;
+		is_top_view = false;
+	}
+
+	void HGUI::setTopView(void)
+	{
+		if(is_normal_view)
+		{
+			auto ct = HeavenWorld::instance->view_target;
+			last_normal_view_state = {ct->getDistance(),0,ct->getPitch(),ct->getYaw()};
+
+			ct->setDistance(last_top_view_state.distance);
+			ct->setPitch(last_top_view_state.pitch);
+			ct->setYaw(last_top_view_state.yaw);
+		}
+
+		is_normal_view = false;
+		is_top_view = true;
+	}
+
 
 
 	HButton::HButton(void)

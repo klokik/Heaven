@@ -40,6 +40,19 @@ namespace heaven
 		RelRotate(vec3f(0.0f,angle_delta,0.0f));
 	}
 
+	float CameraTarget::getDistance(void)
+	{
+		return children[0]->translate.Z;
+	}
+	float CameraTarget::getPitch(void)
+	{
+		return rotate.X;
+	}
+	float CameraTarget::getYaw(void)
+	{
+		return rotate.Y;
+	}
+
 	CameraTarget::~CameraTarget(void)
 	{
 		while(!children.empty())

@@ -35,6 +35,7 @@ namespace heaven
 	void showOptionsWindow(int *param);
 	void showInGameWindow(int *param);
 	void showTextWindow(int *param);
+	void toggleViewMode(int *param);
 
 	class HGUI: public AEObjectEmpty
 	{
@@ -51,6 +52,16 @@ namespace heaven
 		std::vector<HWindow*> windows;
 
 		Vec2f size;
+
+		bool is_top_view;
+		bool is_normal_view;
+		struct
+		{
+			float distance;
+			float roll;
+			float pitch;
+			float yaw;
+		} last_top_view_state,last_normal_view_state;
 
 		void setValues(void);
 
@@ -80,6 +91,9 @@ namespace heaven
 		static void iBtnQuitClick(int *param);
 
 		void showWindow(std::string name,HTextInput *ti=nullptr);
+
+		void setNormalView(void);
+		void setTopView(void);
 	};
 
 	class HLabel: public AEObjectText
@@ -250,6 +264,7 @@ namespace heaven
 	{
 	protected:
 		HButton *btn_pause;
+		HButton *btn_top_view;
 	public:
 		HInGameWindow(void);
 		virtual ~HInGameWindow();
