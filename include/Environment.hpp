@@ -147,7 +147,7 @@ namespace heaven
 					ground->material->texture->size<<";"<<std::endl;
 			}
 
-			addClouds(manag);
+			// addClouds(manag);
 		}
 
 		void update(float game_time,float dt_ms)
@@ -158,20 +158,20 @@ namespace heaven
 
 			sunlight->SetRotate(vec3f(360*game_time/24,0,0));
 
-			const float cloud_radius=30;
-			Vec3f wind = normalize(vec3f(0.2f,0.0f,0.5f));
-			for(size_t q=0;q<cloud_num;q++)
-			{
-				AEObjectSprite *cloud = clouds[q];
-				if(Length(vec2f(cloud->translate.X,cloud->translate.Z))>cloud_radius)
-				{
-					Vec3f translate = normalize(cloud->translate)*cloud_radius*(-1.0f);
-					translate.Y *= -1;
-					cloud->SetTranslate(translate);
-				}
+			// const float cloud_radius=30;
+			// Vec3f wind = normalize(vec3f(0.2f,0.0f,0.5f));
+			// for(size_t q=0;q<cloud_num;q++)
+			// {
+			// 	AEObjectSprite *cloud = clouds[q];
+			// 	if(Length(vec2f(cloud->translate.X,cloud->translate.Z))>cloud_radius)
+			// 	{
+			// 		Vec3f translate = normalize(cloud->translate)*cloud_radius*(-1.0f);
+			// 		translate.Y *= -1;
+			// 		cloud->SetTranslate(translate);
+			// 	}
 
-				cloud->RelTranslate(wind*dt_ms*0.001f);
-			}
+			// 	cloud->RelTranslate(wind*dt_ms*0.001f);
+			// }
 		}
 	};
 }
