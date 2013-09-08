@@ -21,6 +21,7 @@ namespace heaven
 	};
 
 	class HeavenWorld;
+	class Island;
 	class HLabel;
 	class HButton;
 	class HWindow;
@@ -63,12 +64,15 @@ namespace heaven
 			float yaw;
 		} last_top_view_state,last_normal_view_state;
 
+		Island *isl_from;
+		Island *isl_target;
+
 		void setValues(void);
 
 		//returns a point and direction of the line, that comes from center of camera to point on screen
 		Line getScreenRay(Vec2f screen_pos,AEObjectCamera &camera);
 
-		void attemptToSelect(Vec2f pos);
+		bool attemptToSelect(Vec2f pos);
 
 		void initWindows(void);
 
@@ -84,6 +88,7 @@ namespace heaven
 		void realign(Vec2f size);
 
 		void mouseDown(Vec2f pos);
+		void mouseUp(Vec2f pos);
 		void mouseMove(Vec2f pos,Vec2f delta,int key);	// key is one of {1..5}
 
 		static void iBtnRestartClick(int *param);

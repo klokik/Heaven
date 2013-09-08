@@ -54,6 +54,7 @@ namespace heaven
 		static void iOnKeyDown(int *param);
 		static void iOnResize(int *param);
 		static void iOnMouseDown(int *param);
+		static void iOnMouseUp(int *param);
 		static void iOnMouseMove(int *param);
 
 		void updateWorld(float dt_ms);

@@ -9,6 +9,7 @@
 
 #include "HGUI.hpp"
 #include "HeavenWorld.hpp"
+#include "Island.hpp"
 
 namespace heaven
 {
@@ -89,7 +90,8 @@ namespace heaven
 		res_str<<"Iron: "<<world_instance->players[MINE].resources["iron"]<<"\n"
 			<<"Food: "<<world_instance->players[MINE].resources["food"];
 
-		static_cast<AEObjectText*>(isl_info)->text = "Island \""+world_instance->selected_island->name+"\"";
+		if(world_instance->selected_island)
+			static_cast<AEObjectText*>(isl_info)->text = "Island \""+world_instance->selected_island->name+"\"";
 		static_cast<AEObjectText*>(res_info)->text = res_str.str();
 	}
 
@@ -114,7 +116,7 @@ namespace heaven
 		return ray;
 	}
 
-	void HGUI::attemptToSelect(Vec2f pos)
+	bool HGUI::attemptToSelect(Vec2f pos)
 	{
 		Line ray = getScreenRay(pos,*world_instance->engine.curCamera);
 
@@ -127,7 +129,7 @@ namespace heaven
 			cursor[q]->SetTranslate(ray.position+ray.direction*q*3);
 
 		if(intersected.empty())
-			return;
+			return false;
 
 		Island *isl = *std::min_element(intersected.begin(),intersected.end(),
 			[&ray](Island *a,Island *b)	{ return
@@ -136,6 +138,8 @@ namespace heaven
 			});
 
 		world_instance->selected_island = isl;
+
+		return true;
 	}
 
 	void HGUI::initWindows(void)
@@ -225,22 +229,39 @@ namespace heaven
 
 	void HGUI::mouseDown(Vec2f pos)
 	{
-		// if(static_cast<HButton*>(btn_quit)->isOver(pos))
-		// 	static_cast<HButton*>(btn_quit)->click(pos);
-		// if(static_cast<HButton*>(btn_pause)->isOver(pos))
-		// 	static_cast<HButton*>(btn_pause)->click(pos);
 		if(active_window)
 			if(!active_window->click(pos)&&active_window->name=="in_game")
-				attemptToSelect(pos);
+			{
+				if(attemptToSelect(pos))
+					isl_from = world_instance->selected_island;
+				else
+					isl_from = nullptr;
+				world_instance->selected_island = nullptr;
+			}
+	}
+
+	void HGUI::mouseUp(Vec2f pos)
+	{
+		if(active_window&&active_window->name=="in_game")
+		{
+			if(isl_from)
+			{
+				if(attemptToSelect(pos))
+				{
+					isl_target = world_instance->selected_island;
+					world_instance->transfer(isl_from->uid,isl_target->uid,1.0f);
+				}
+			}
+		}
 	}
 
 	void HGUI::mouseMove(Vec2f pos,Vec2f delta,int key)
 	{
-		// Middle key
-		if(key == 2)
+		// Any key
+		if(key > 0 && isl_from == nullptr)
 		{
-			HeavenWorld::instance->view_target->relYaw(-delta.X);
-			HeavenWorld::instance->view_target->relPitch(delta.Y);
+			world_instance->view_target->relYaw(-delta.X);
+			world_instance->view_target->relPitch(delta.Y);
 		}
 	}
 
@@ -289,8 +310,6 @@ namespace heaven
 		is_normal_view = false;
 		is_top_view = true;
 	}
-
-
 
 	HButton::HButton(void)
 	{

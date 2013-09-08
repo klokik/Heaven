@@ -49,6 +49,7 @@ namespace heaven
 		engine.OnKeyDown = iOnKeyDown;
 		engine.OnResize = iOnResize;
 		engine.OnMouseDown = iOnMouseDown;
+		engine.OnMouseUp = iOnMouseUp;
 		engine.OnMouseMove = iOnMouseMove;
 
 		//init camera
@@ -225,6 +226,13 @@ namespace heaven
 		if(!world) throw 0;
 
 		static_cast<HGUI*>(world->gui)->mouseDown(vec2f(param[0],param[1]));
+	}
+
+	void HeavenWorld::iOnMouseUp(int *param)
+	{
+		if(!world) throw 0;
+
+		static_cast<HGUI*>(world->gui)->mouseUp(vec2f(param[0],param[1]));
 	}
 
 	void HeavenWorld::iOnMouseMove(int *param)
