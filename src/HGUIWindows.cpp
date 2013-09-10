@@ -173,6 +173,16 @@ namespace heaven
 
 		btn_ok->on_click = toggleViewMode;
 
+		btn_message = new HButton;
+		btn_message->position = vec2f(0.0f,0.4);
+		btn_message->SetScale(vec3f(240.0f,64.0f,1.0f));
+		btn_message->getLabel.text = "msg";
+		btn_message->on_click = resumeGame;
+		btn_message->visible = false;
+
+		controls.push_back(btn_message);
+
+		AddChild(btn_message);
 		//btn_top_view = new HButton;
 		//btn_top_view->position = vec2f(0.4f,0.4f);
 	}

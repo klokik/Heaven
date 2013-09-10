@@ -268,8 +268,7 @@ namespace heaven
 	class HInGameWindow: public HWindow
 	{
 	protected:
-		HButton *btn_pause;
-		HButton *btn_top_view;
+		HButton *btn_message;
 	public:
 		HInGameWindow(void);
 		virtual ~HInGameWindow();
