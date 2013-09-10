@@ -250,6 +250,8 @@ namespace heaven
 				{
 					isl_target = world_instance->selected_island;
 					world_instance->transfer(isl_from->uid,isl_target->uid,1.0f);
+
+					isl_from = nullptr;
 				}
 			}
 		}
