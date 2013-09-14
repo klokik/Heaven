@@ -79,4 +79,9 @@ namespace heaven
 
 		top_view=!top_view;
 	}
+
+	void resumeGame(int *param)
+	{
+		
+	}
 }

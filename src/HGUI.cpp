@@ -230,6 +230,7 @@ namespace heaven
 	void HGUI::mouseDown(Vec2f pos)
 	{
 		if(active_window)
+		{
 			if(!active_window->click(pos)&&active_window->name=="in_game")
 			{
 				if(attemptToSelect(pos))
@@ -238,6 +239,9 @@ namespace heaven
 					isl_from = nullptr;
 				world_instance->selected_island = nullptr;
 			}
+		}
+		else
+			AEPrintLog("No active window");
 	}
 
 	void HGUI::mouseUp(Vec2f pos)
@@ -250,9 +254,9 @@ namespace heaven
 				{
 					isl_target = world_instance->selected_island;
 					world_instance->transfer(isl_from->uid,isl_target->uid,1.0f);
-
-					isl_from = nullptr;
 				}
+
+				isl_from = nullptr;
 			}
 		}
 	}
@@ -431,7 +435,7 @@ namespace heaven
 				continue;
 			}
 
-			if(control->isOver(pos))
+			if(control->isOver(pos)&&control->visible)
 			{
 				AEPrintLog("click");
 				control->click(pos);

@@ -37,6 +37,7 @@ namespace heaven
 	void showInGameWindow(int *param);
 	void showTextWindow(int *param);
 	void toggleViewMode(int *param);
+	void resumeGame(int *param);
 
 	class HGUI: public AEObjectEmpty
 	{
