@@ -19,9 +19,9 @@ namespace heaven
 		init();
 	}
 
-	Side::Side(std::string name,uint32_t server): Side()
+	Side::Side(std::wstring name,uint32_t server): Side()
 	{
-		std::cout<<"new: "<<name<<std::endl;
+		std::wcout<<"new: "<<name<<std::endl;
 		this->name = name;
 	}
 
@@ -175,7 +175,7 @@ namespace heaven
 	{
 		if(!empty&&connection_opened)
 		{
-			std::cout<<"destroy: "<<name<<std::endl;
+			std::wcout<<"destroy: "<<name<<std::endl;
 			done = true;
 			disconnect();
 			std::cout<<"joining to listener process: ... ";

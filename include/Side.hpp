@@ -26,14 +26,14 @@ namespace heaven
 		void init(void);
 	public:
 		uint32_t uid;
-		std::string name;
+		std::wstring name;
 		AEColor color;
 		bool done;
 
 		std::map<std::string,float> resources;
 
 		Side(void);
-		Side(std::string name,uint32_t server);
+		Side(std::wstring name,uint32_t server);
 		Side(Side &&s);
 
 		Side &operator=(Side &&s);
