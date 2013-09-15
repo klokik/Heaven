@@ -21,6 +21,7 @@ cmake_install.cmake
 
 build/
 bin/*
+libs/SimpleJSON
 
 ChangeLog
 # CMakeLists.txt
