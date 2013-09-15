@@ -63,18 +63,12 @@ namespace heaven
 
 		engine.scene->AddObject(view_target);
 
-		loadIslands();
-
 		initEnvironment();
-
-		// gui = new HGUI(this);
-		// engine.scene->AddObject(gui);
 
 		// create server and several clients
 		aengine::AEPrintLog("Starting server");
 		// server.start();
 		aengine::AEPrintLog("Server started");
-		loadPlayers();
 
 		aengine::AEPrintLog("Initialization complete");
 		
@@ -186,36 +180,12 @@ namespace heaven
 
 	void HeavenWorld::keyDown(int keycode)
 	{
-		static Island *isl_from = nullptr;
-		static Island *isl_target = nullptr;
-
 		switch(keycode)
 		{
 		case 27: // Escape
 			engine.Stop();
 			break;
-
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-		case '0':
-			selected_island = islands[keycode-'0'];
-			break;
-
-		case 'c':
-			isl_from = selected_island;
-			break;
-		case 'f':
-			isl_target = selected_island;
-			transfer(isl_from->uid,isl_target->uid,1.0f);
-			break;
-		}	
+		}
 	}
 
 	void HeavenWorld::iOnResize(int *param)

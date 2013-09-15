@@ -31,7 +31,7 @@ namespace heaven
 
 	HGUI::HGUI(HeavenWorld *instance,uint32_t side_uid)
 	{
-		// projection = AE_ORTHOGRAPHIC;
+		projection = AE_ORTHOGRAPHIC;
 
 		world_instance = instance;
 		HGUI::interface = side_uid;
@@ -40,38 +40,12 @@ namespace heaven
 
 		name = "HGUI";
 
-		res_info = new AEObjectText;	res_info->name = "res_info";
-		isl_info = new AEObjectText;	isl_info->name = "isl_info";
-
-		// btn_quit = new HButton;
-		// btn_quit->name = "btnQuit";
-		// static_cast<AEObjectSprite*>(btn_quit)->material->diffuse.vec = vec4f(1.0f,0.0f,0.0f,0.5f);
-		// static_cast<HButton*>(btn_quit)->on_click = iBtnQuitClick;
-
-		// btn_pause = new HButton;
-		// btn_pause->name = "btnPause";
-		// static_cast<AEObjectSprite*>(btn_pause)->material->diffuse.vec = vec4f(0.0f,0.0f,1.0f,0.5f);
-		// static_cast<HButton*>(btn_pause)->on_click = iBtnPauseClick;
-
-		// static_cast<AEObjectText*>(res_info)->text = "Resource info";
-		// static_cast<AEObjectText*>(isl_info)->text = "Island info";
-
-		// static_cast<AEObjectText*>(res_info)->alignment = AE_LEFT;
-		// static_cast<AEObjectText*>(isl_info)->alignment = AE_RIGHT;
-
-		isl_info->SetScale(vec3f(8.0f,8.0f,8.0f));
-
 		for(int q=0;q<20;q++)
 		{
 			AEObject *obj = new AEObjectEmpty;
 			cursor.push_back(obj);
 			this->AddChild(obj);
 		}
-
-		// this->AddChild(res_info);
-		// this->AddChild(isl_info);
-		// this->AddChild(btn_quit);
-		// this->AddChild(btn_pause);
 
 		last_normal_view_state = {20.0f,0.0f,-30.0f,0.0f};
 		last_top_view_state = {30.0f,0.0f,-90.0f,0.0f};
@@ -81,18 +55,8 @@ namespace heaven
 		setNormalView();
 
 		initWindows();
-	}
 
-	void HGUI::setValues(void)
-	{
-		std::stringstream res_str;
-
-		res_str<<"Iron: "<<world_instance->players[MINE].resources["iron"]<<"\n"
-			<<"Food: "<<world_instance->players[MINE].resources["food"];
-
-		if(world_instance->selected_island)
-			static_cast<AEObjectText*>(isl_info)->text = "Island \""+world_instance->selected_island->name+"\"";
-		static_cast<AEObjectText*>(res_info)->text = res_str.str();
+		isl_from = nullptr;
 	}
 
 	Line HGUI::getScreenRay(Vec2f screen_pos,AEObjectCamera &camera)
@@ -210,18 +174,11 @@ namespace heaven
 
 	void HGUI::update(void)
 	{
-		setValues();
 	}
 
 	void HGUI::realign(Vec2f size)
 	{
 		this->size = size;
-		
-		res_info->SetTranslate(vec3f(16.0f,size.Y - 25.0f,0.0f));
-		isl_info->SetTranslate(vec3f(size.X - 16.0f,128.0f,0.0f));
-
-		// btn_quit->SetTranslate(vec3f(132.0f,size.Y-64.0f,0.0f));
-		// btn_pause->SetTranslate(vec3f(84.0f,size.Y-64.0f,0.0f));
 
 		for(HWindow *&wnd:windows)
 			wnd->realign(size);
@@ -269,21 +226,6 @@ namespace heaven
 			world_instance->view_target->relYaw(-delta.X);
 			world_instance->view_target->relPitch(delta.Y);
 		}
-	}
-
-	void HGUI::iBtnRestartClick(int *param)
-	{
-
-	}
-
-	void HGUI::iBtnPauseClick(int *param)
-	{
-		std::cout<<"Pause"<<std::endl;
-	}
-
-	void HGUI::iBtnQuitClick(int *param)
-	{
-		HeavenWorld::instance->engine.Stop();
 	}
 
 	void HGUI::setNormalView(void)
@@ -437,7 +379,6 @@ namespace heaven
 
 			if(control->isOver(pos)&&control->visible)
 			{
-				AEPrintLog("click");
 				control->click(pos);
 				return true;
 			}
