@@ -12,6 +12,7 @@
 #include "Ownership.hpp"
 #include "Server.hpp"
 #include "Environment.hpp"
+#include "Storyboard.hpp"
 
 namespace heaven
 {
@@ -35,6 +36,8 @@ namespace heaven
 		std::map<uint32_t,Ship*> warships;
 
 		AEEngine engine;
+
+		Storyboard storyboard;
 
 		Island *selected_island;
 
@@ -77,8 +80,6 @@ namespace heaven
 		~HeavenWorld(void);
 
 	protected:
-		void loadIslands(void);
-		void loadPlayers(void);
 		void initEnvironment(void);
 	};
 }

@@ -37,6 +37,10 @@ namespace heaven
 		players[MINE].resources["iron"] = 100;
 		players[EVIL].resources["iron"] = 100;
 		players[NEUTRAL].resources["iron"] = 20;
+
+		this->gui = nullptr;
+		this->selected_island = nullptr;
+		storyboard.bind(this);
 	}
 
 	int HeavenWorld::init(void)
@@ -158,6 +162,12 @@ namespace heaven
 
 	void HeavenWorld::engineStarted(void)
 	{
+		storyboard.loadFromFile(L"res/game/level1.json");
+		Storyboard::Event event = {Storyboard::E_START,0,0};
+		storyboard.handleEvent(event);
+
+		engine.scene->AddObject(gui);
+
 		engine.scene->fonts.LoadFont("res/fonts/font_3.png","boundary",16,16);
 		aengine::AEPrintLog("Engine started");
 		engine.render->CacheScene(engine.scene);
@@ -240,86 +250,6 @@ namespace heaven
 		if(!world) throw 0;
 
 		static_cast<HGUI*>(world->gui)->mouseMove(vec2f(param[0],param[1]),vec2f(param[2],param[3]),param[4]);
-	}
-
-	void HeavenWorld::loadIslands(void)
-	{
-		aengine::AEPrintLog("Load Islands");
-
-		Island *island;
-
-
-		float dist = 10.0f;
-		// towns
-		island = new TownIsland;
-		island->SetTranslate(vec3f((0-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = MINE;
-		island = new TownIsland;
-		island->SetTranslate(vec3f((9-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = EVIL;
-
-		// farms
-		island = new FactoryIsland(FactoryIsland::FOOD);
-		island->SetTranslate(vec3f((1-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = MINE;
-		island = new FactoryIsland(FactoryIsland::FOOD);
-		island->SetTranslate(vec3f((8-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = EVIL;
-
-		// mines
-		island = new FactoryIsland(FactoryIsland::IRON);
-		island->SetTranslate(vec3f((2-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = MINE;
-		island = new FactoryIsland(FactoryIsland::IRON);
-		island->SetTranslate(vec3f((7-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = EVIL;
-
-		// factories
-		island = new FactoryIsland(FactoryIsland::GLIDER);
-		island->SetTranslate(vec3f((3-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = MINE;
-		island = new FactoryIsland(FactoryIsland::ZEPPELIN);
-		island->SetTranslate(vec3f((4-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = NEUTRAL;
-		island = new FactoryIsland(FactoryIsland::ZEPPELIN);
-		island->SetTranslate(vec3f((5-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = NEUTRAL;
-		island = new FactoryIsland(FactoryIsland::GLIDER);
-		island->SetTranslate(vec3f((6-5)*dist,0.0f,0.0f));
-		addIsland(island);
-		island->side_uid = EVIL;
-
-
-		selected_island = islands.begin()->second;
-	}
-
-	void HeavenWorld::loadPlayers(void)
-	{
-		aengine::AEPrintLog("Load Players");
-		HumanPlayer human;
-		human.uid = 0;
-		// human.connect(0);
-		this->gui = human.gui;
-		engine.scene->AddObject(gui);
-
-		players[human.uid] = std::move(human);
-
-		for(int q=1;q<3;q++)
-		{
-			Side side(string("player ")+static_cast<char>('a'+q),0);
-			side.uid = q;
-			// side.connect(0);
-			players[side.uid] = std::move(side);
-		}
 	}
 
 	void HeavenWorld::initEnvironment(void)
@@ -418,7 +348,6 @@ namespace heaven
 
 		return world->getIslandShips(island_uid);
 	}
-
 
 	HeavenWorld::~HeavenWorld(void)
 	{
