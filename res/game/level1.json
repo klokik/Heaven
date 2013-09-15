@@ -1,0 +1,113 @@
+{
+	"level": 1,
+	"level_name": "First blood",
+	"player_side_uid": 1,
+
+	"events":
+	[
+		{
+			"call": "on_start",
+			"actions":
+			[
+				{
+					"action_type": "add_side",
+					"side_uid": 1,
+					"side_color": "0.0 0.5 0.0",
+					"side_name": "Humans"
+				},
+				{
+					"action_type": "add_side",
+					"side_uid": 2,
+					"side_color": "0.5 0.0 0.0",
+					"side_name": "Bots"
+				},
+				{
+					"action_type": "add_side",
+					"side_uid": 3,
+					"side_color": "0.0 0.0 0.5",
+					"side_name": "Aliens"
+				},
+
+				{
+					"action_type": "add_island",
+					"island_uid": 1,
+					"side_uid": 1,
+					"island_type": "town",
+					"translate": "-20.0 0.0 0.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 2,
+					"side_uid": 1,
+					"island_type": "factory",
+					"factory_product": "iron",
+					"translate": "-20.0 0.0 5.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 3,
+					"side_uid": 1,
+					"island_type": "factory",
+					"factory_product": "food",
+					"translate": "-20.0 0.0 -5.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 4,
+					"side_uid": 1,
+					"island_type": "factory",
+					"factory_product": "glider",
+					"translate": "-15.0 0.0 0.0"
+				},
+
+				{
+					"action_type": "add_island",
+					"island_uid": 5,
+					"side_uid": 2,
+					"island_type": "town",
+					"translate": "20.0 0.0 0.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 6,
+					"side_uid": 2,
+					"island_type": "factory",
+					"factory_product": "iron",
+					"translate": "20.0 0.0 -5.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 7,
+					"side_uid": 2,
+					"island_type": "factory",
+					"factory_product": "food",
+					"translate": "20.0 0.0 5.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 8,
+					"side_uid": 2,
+					"island_type": "factory",
+					"factory_product": "glider",
+					"translate": "15.0 0.0 0.0"
+				},
+
+				{
+					"action_type": "goto_island",
+					"island_uid": 1
+				}
+			]
+		},
+		{
+			"call": "on_capture_island",
+			"actions":
+			[
+				{
+					"action_type": "show_message",
+					"side_uid": 1,
+					"text": "Well done!"
+				}
+			]
+		}
+	]
+}
