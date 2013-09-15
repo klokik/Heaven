@@ -30,22 +30,7 @@ namespace heaven
 
 	IslandProduct Island::update(float dt_ms)
 	{
-		switch(side_uid)
-		{
-		case MINE:
-			material->diffuse.vec = vec4f(0.0f,1.0f,0.0f,1.0f);	// green
-			break;
-		case EVIL:
-			material->diffuse.vec = vec4f(1.0f,0.0f,0.0f,1.0f);	// red
-			break;
-		case NEUTRAL:
-			material->diffuse.vec = vec4f(0.5f,0.5f,0.5f,1.0f); // lite gray
-			break;
-		default:
-			//undefined
-			material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,1.0f); // dark gray
-			break;
-		}
+		material->diffuse = HeavenWorld::instance->players[side_uid].color;
 
 		return {IslandProduct::NONE};
 	}
