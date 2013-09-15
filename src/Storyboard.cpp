@@ -1,93 +1,304 @@
 #include "AEDebug.h"
+#include "AEResourceManager.h"
 
+#include "JSON.h"
+
+#include "HGUI.hpp"
+#include "HeavenWorld.hpp"
 #include "Storyboard.hpp"
 
 
 namespace heaven
 {
-		Storyboard::Storyboard(void)
-		{
-			throw 0;
-		}
+	using namespace aengine;
 
-		void Storyboard::applyAction(Action &action)
-		{
-			switch(action.type)
-			{
-			case A_LOAD_STORYBOARD:
-				loadFromFile(action.data);
-				break;
-			case A_ADD_SIDE:
-				addSide(action.data);
-				break;
-			case A_ADD_ISLAND:
-				addIsland(action.data);
-				break;
-			case A_ADD_SHIP:
-				addShip(action.data);
-				break;
-			case A_SHOW_MSG:
-				static_cast<HGUI*>(world_instance->gui)->showMessage(action.data);
-				break;
-			case A_GOTO_ISLAND:
-				try
-				{
-					Island *isl = world_instance->islands.at(action.island_uid);
-					world_instance->selected_island = isl;
-				}
-				catch(...)
-				{
-					AEPrintLog("island not found");
-				}
-				break;
-			}
-		}
+	Storyboard::Storyboard(void)
+	{
+	}
 
-		void Storyboard::addIsland(std::string data)
+	void Storyboard::applyAction(Action &action)
+	{
+		switch(action.type)
 		{
-			throw 0;
-		}
-
-		void Storyboard::addShip(std::string data)
-		{
-			throw 0;
-		}
-
-		void Storyboard::addSide(std::string data)
-		{
-			throw 0;
-		}
-
-		bool Storyboard::loadFromFile(std::string filename)
-		{
-			throw 0;
-		}
-
-		void Storyboard::bind(HevenWorld *world)
-		{
-			if(!world)
-			{
-				AEPrintLog("world not bound to Storyboard");
-				throw 1;
-			}
-			world_instance = world;
-		}
-
-		void Storyboard::handleEvent(Event eve)
-		{
+		case A_LOAD_STORYBOARD:
+			loadFromFile(action.data);
+			break;
+		case A_ADD_SIDE:
+			addSide(action.data);
+			break;
+		case A_ADD_ISLAND:
+			addIsland(action.data);
+			break;
+		case A_ADD_SHIP:
+			addShip(action.data);
+			break;
+		case A_SHOW_MSG:
+			// static_cast<HGUI*>(world_instance->gui)->showMessage(action.data);
+			break;
+		case A_GOTO_ISLAND:
 			try
 			{
-				std::vector<Action> &act = actions.at(eve);
-				for(Action &action:act)
+				JSONValue *value = JSON::Parse(action.data.c_str());
+				if(!value)	break;
+				JSONObject item = value->AsObject();
+				if(item.find(L"island_uid")!=item.end()&&item[L"island_uid"]->IsNumber())
 				{
-					applyAction(action);
+					size_t island_uid = (size_t)item[L"island_uid"]->AsNumber();
+
+					Island *isl = world_instance->islands.at(island_uid);
+					world_instance->selected_island = isl;
+				}
+				else
+					AEPrintLog("island_uid unspecified");
+
+				delete value;
+			}
+			catch(...)
+			{
+				AEPrintLog("island not found");
+			}
+			break;
+		}
+	}
+
+	void Storyboard::addIsland(std::wstring data)
+	{
+		JSONValue *value = JSON::Parse(data.c_str());
+		if(!value) throw 1;
+		JSONObject jisland = value->AsObject();
+		if(
+			jisland.find(L"side_uid")!=jisland.end()
+			&&jisland.find(L"island_uid")!=jisland.end()
+			&&jisland.find(L"island_type")!=jisland.end()
+			&&jisland.find(L"translate")!=jisland.end()
+			&&jisland[L"side_uid"]->IsNumber()
+			&&jisland[L"island_uid"]->IsNumber()
+			&&jisland[L"island_type"]->IsString()
+			&&jisland[L"translate"]->IsString())
+		{
+			Island *new_island;
+
+			auto stype = jisland[L"island_type"]->AsString();
+			if(stype==L"factory")
+			{
+				if(jisland.find(L"factory_product")!=jisland.end()&&jisland[L"factory_product"]->IsString())
+				{
+					FactoryIsland::Type ftype;
+					auto sftype = jisland[L"factory_product"]->AsString();
+					if(sftype==L"iron")
+						ftype=FactoryIsland::IRON;
+					else if(sftype==L"food")
+						ftype=FactoryIsland::FOOD;
+					else if(sftype==L"glider")
+						ftype=FactoryIsland::GLIDER;
+					else if(sftype==L"plane")
+						ftype=FactoryIsland::PLANE;
+					else if(sftype==L"zeppelin")
+						ftype=FactoryIsland::ZEPPELIN;
+					else
+					{
+						AEPrintLog("Incorrect factory product");
+						delete value;
+						return;
+					}
+
+					new_island = new FactoryIsland(ftype);
+				}
+				else
+				{
+					AEPrintLog("No factory product");
+					delete value;
+					return;
 				}
 			}
-			catch(std::out_of_range &ex)
-			{ /* no action bound */}
+			else if(stype==L"town")
+				new_island = new TownIsland();
+			else
+			{
+				AEPrintLog("Incorrect island type");
+				delete value;
+				return;
+			}
+
+			new_island->uid = (size_t)jisland[L"island_uid"]->AsNumber();
+			new_island->side_uid = (size_t)jisland[L"side_uid"]->AsNumber();
+
+			Vec3f trans;
+			std::wstringstream wsstr(jisland[L"translate"]->AsString());
+			wsstr>>trans.X>>trans.Y>>trans.Z;
+
+			new_island->SetTranslate(trans);
+
+			world_instance->addIsland(new_island);
+		}
+		else
+			AEPrintLog("Invalid island definition");
+
+		delete value;
+	}
+
+	void Storyboard::addShip(std::wstring data)
+	{
+		throw 0;
+	}
+
+	void Storyboard::addSide(std::wstring data)
+	{
+		JSONValue *value = JSON::Parse(data.c_str());
+		if(!value) throw 1;
+		JSONObject jside = value->AsObject();
+		if(
+			jside.find(L"side_uid")!=jside.end()
+			&&jside.find(L"side_color")!=jside.end()
+			&&jside.find(L"side_name")!=jside.end()
+			&&jside[L"side_uid"]->IsNumber()
+			&&jside[L"side_color"]->IsString()
+			&&jside[L"side_name"]->IsString())
+		{
+			Side new_side(jside[L"side_name"]->AsString(),0);
+
+			new_side.uid = (uint32_t)jside[L"side_uid"]->AsNumber();
+			std::wstringstream wsstr(jside[L"side_color"]->AsString());
+			wsstr>>new_side.color.R>>new_side.color.G>>new_side.color.B;
+			new_side.color.A = 1.0f;
+
+			world_instance->players[new_side.uid] = std::move(new_side);
+		}
+		else
+			AEPrintLog("Invalid side definition");
+
+		delete value;
+	}
+
+	bool Storyboard::loadFromFile(std::wstring filename)
+	{
+		std::string json_str = AEResourceManager::LoadString("res/game/level1.json");
+
+		JSONValue *value = JSON::Parse(json_str.c_str());
+
+		if(value == nullptr)
+		{
+			AEPrintLog("Level code corrupted!");
+			return false;
 		}
 
-		Storyboard::~Storyboard(void)
+		if(!value->IsObject())
 		{
+			AEPrintLog("Root element is not an object");
+			return false;
 		}
+
+		JSONObject root = value->AsObject();
+
+		if(root.find(L"level")!=root.end() && root[L"level"]->IsNumber())
+		{
+			// dbgout()<<"Level: "/*<<root[L"level"]->AsNumber()*/<<" - "<<root[L"lavel_name"]->AsString()<<std::endl;
+
+			if(root.find(L"events")!=root.end() && root[L"events"]->IsArray())
+			{
+				JSONArray events = root[L"events"]->AsArray();
+
+				for(JSONValue *&jevent:events)
+				{
+					if(jevent->IsObject())
+					{
+						auto event = jevent->AsObject();
+
+						Event new_event = {E_START,0,0};
+						auto e_type = event[L"call"]->AsString();
+
+						if(e_type == L"on_start")
+							new_event.type = E_START;
+						else if(e_type == L"on_capture_island")
+							new_event.type = E_CAPTURE_ISLAND;
+						else if(e_type == L"on_lose_island")
+							new_event.type = E_LOSE_ISLAND;
+						else if(e_type == L"on_destroy_ship")
+							new_event.type = E_DESTROY_SHIP;
+
+						if(event.find(L"actions")!=event.end() && event[L"actions"]->IsArray())
+						{
+							JSONArray jactions = event[L"actions"]->AsArray();
+
+							std::vector<Action> vactions;
+
+							for(JSONValue *&action_val:jactions)
+							{
+								auto jaction = action_val->AsObject();
+								Action new_action;
+								auto a_type = jaction[L"action_type"]->AsString();
+
+								if(a_type == L"add_side")
+									new_action.type = A_ADD_SIDE;
+								else if(a_type == L"add_island")
+									new_action.type = A_ADD_ISLAND;
+								else if(a_type == L"goto_island")
+									new_action.type = A_GOTO_ISLAND;
+								else if(a_type == L"add_ship")
+									new_action.type = A_ADD_SHIP;
+								else if(a_type == L"show_message")
+									new_action.type = A_SHOW_MSG;
+								else if(a_type == L"load_storyboard")
+									new_action.type = A_LOAD_STORYBOARD;
+
+								new_action.data = action_val->Stringify();
+								vactions.push_back(new_action);
+							}
+							this->actions[new_event] = vactions;
+						}
+						else
+						{
+							AEPrintLog("no/incorrect actions bound to the event");
+							continue;
+						}
+					}
+					else
+					{
+						AEPrintLog("event corrupted");
+						continue;
+					}
+				}
+			}
+		}
+
+		if(root.find(L"player_side_uid")!=root.end()&&root[L"player_side_uid"]->IsNumber())
+		{
+			if(!world_instance->gui)
+				world_instance->gui = new HGUI(world_instance,(uint32_t)root[L"player_side_uid"]->AsNumber());
+		}
+		else
+			AEPrintLog("Player uid unspecified");
+
+		delete value;
+
+		return true;
+	}
+
+	void Storyboard::bind(HeavenWorld *world)
+	{
+		if(!world)
+		{
+			AEPrintLog("world not bound to Storyboard");
+			throw 1;
+		}
+		world_instance = world;
+	}
+
+	void Storyboard::handleEvent(Event eve)
+	{
+		try
+		{
+			std::vector<Action> &act = actions.at(eve);
+			for(Action &action:act)
+			{
+				applyAction(action);
+			}
+		}
+		catch(std::out_of_range &ex)
+		{ /* no action bound */}
+	}
+
+	Storyboard::~Storyboard(void)
+	{
+	}
 }
