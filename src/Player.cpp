@@ -5,6 +5,6 @@ namespace heaven
 {
 	HumanPlayer::HumanPlayer(void)
 	{
-		gui = new HGUI(HeavenWorld::instance,this);
+		gui = new HGUI(HeavenWorld::instance,uid);
 	}
 }

@@ -27,14 +27,14 @@ namespace heaven
 		return Length(B-pt);
 	}
 
-	Side *HGUI::interface = nullptr;
+	uint32_t HGUI::interface = 0;
 
-	HGUI::HGUI(HeavenWorld *instance,Side *interface)
+	HGUI::HGUI(HeavenWorld *instance,uint32_t side_uid)
 	{
 		// projection = AE_ORTHOGRAPHIC;
 
 		world_instance = instance;
-		HGUI::interface = interface;
+		HGUI::interface = side_uid;
 
 		active_window = nullptr;
 

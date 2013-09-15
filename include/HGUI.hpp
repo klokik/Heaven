@@ -79,11 +79,11 @@ namespace heaven
 
 	public:
 		HeavenWorld *world_instance;
-		static Side *interface;
+		static uint32_t interface;
 
 		HWindow *active_window;
 
-		HGUI(HeavenWorld *instance,Side *interface);
+		HGUI(HeavenWorld *instance,uint32_t side_uid);
 
 		void update(void);
 		void realign(Vec2f size);
