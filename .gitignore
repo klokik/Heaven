@@ -1,9 +1,9 @@
-*.png
+# *.png
 *.gif
 *.bmp
 *.jpg
 *.jpeg
-*.obj
+# *.obj
 *.dae
 *~
 ~*
