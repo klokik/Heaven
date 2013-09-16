@@ -89,6 +89,18 @@ namespace heaven
 			static_cast<HInGameWindow*>(hgui->active_window)->btn_message->visible = false;
 		}
 
-		// HeavenWorld::instance->resume();
+		HeavenWorld::instance->resume();
+	}
+
+	void pauseBtnClick(int *param)
+	{
+		HeavenWorld::instance->pause();
+		goBackWindow(nullptr);
+	}
+
+	void resumeBtnClick(int *param)
+	{
+		resumeGame(nullptr);
+		goBackWindow(nullptr);
 	}
 }

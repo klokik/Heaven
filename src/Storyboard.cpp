@@ -200,7 +200,7 @@ namespace heaven
 
 			if(item.find(L"pause")!=item.end() && item[L"pause"]->IsNumber() && item[L"pause"]->AsNumber()!=0)
 			{
-				//world_instance->pause();
+				world_instance->pause();
 			}
 		}
 		else

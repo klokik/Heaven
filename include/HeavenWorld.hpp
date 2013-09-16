@@ -28,6 +28,8 @@ namespace heaven
 
 		Server server;
 
+		bool paused;
+
 	public:
 		static HeavenWorld * const &instance;
 		CameraTarget *view_target;
@@ -52,6 +54,12 @@ namespace heaven
 		int init();
 		void run();
 
+		void pause(void);
+		void resume(void);
+		void loadState(void);
+		void saveState(void);
+		bool isPaused(void);
+
 		static void iOnRefresh(int *param);
 		static void iOnStart(int *param);
 		static void iOnKeyDown(int *param);
@@ -61,6 +69,7 @@ namespace heaven
 		static void iOnMouseMove(int *param);
 
 		void updateWorld(float dt_ms);
+		void updateGame(float dt_ms);
 		void engineStarted(void);
 		void keyDown(int keycode);
 		void resize(Vec2f size);

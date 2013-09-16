@@ -172,6 +172,7 @@ namespace heaven
 
 		sprite->visible = false;
 
+		btn_back->on_click = pauseBtnClick;
 		btn_ok->on_click = toggleViewMode;
 
 		btn_message = new HButton;
@@ -200,10 +201,11 @@ namespace heaven
 
 		prev_window = "in_game";
 
-		btn_ok->on_click = showMainMenuWindow;
 		btn_ok->getLabel().text = "Finish";
-
 		btn_back->getLabel().text = "Resume";
+
+		btn_back->on_click = resumeBtnClick;
+		btn_ok->on_click = showMainMenuWindow;
 	}
 
 	HMainMenuWindow::~HMainMenuWindow(void)

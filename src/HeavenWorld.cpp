@@ -41,6 +41,8 @@ namespace heaven
 		this->gui = nullptr;
 		this->selected_island = nullptr;
 		storyboard.bind(this);
+
+		paused = true;
 	}
 
 	int HeavenWorld::init(void)
@@ -82,6 +84,33 @@ namespace heaven
 		aengine::AEPrintLog("Finish");
 	}
 
+	void HeavenWorld::pause(void)
+	{
+		paused = true;
+		//have to do something with delta time
+	}
+
+	void HeavenWorld::resume(void)
+	{
+		paused = false;
+	}
+
+	void HeavenWorld::loadState(void)
+	{
+		throw 0;
+	}
+
+	void HeavenWorld::saveState(void)
+	{
+		throw 0;
+	}
+
+	bool HeavenWorld::isPaused(void)
+	{
+		return paused;
+	}
+
+
 	void HeavenWorld::iOnRefresh(int *param)
 	{
 		if(!world)
@@ -99,6 +128,15 @@ namespace heaven
 
 		this->game_time+=dt_ms;
 
+		if(!isPaused())
+			updateGame(dt_ms);
+
+		this->environment->update(game_time/1000,dt_ms);
+		updateView();
+	}
+
+	void HeavenWorld::updateGame(float dt_ms)
+	{
 		for(auto uid_island:islands)
 		{
 			IslandProduct product = uid_island.second->update(dt_ms);
@@ -141,10 +179,7 @@ namespace heaven
 		}
 		to_delete.clear();
 
-		this->environment->update(game_time/1000,dt_ms);
-		updateView();
-
-		dynamic_cast<HGUI*>(gui)->update();
+		static_cast<HGUI*>(gui)->update();
 	}
 
 	void HeavenWorld::iOnStart(int *param)
@@ -167,6 +202,8 @@ namespace heaven
 		engine.render->CacheScene(engine.scene);
 
 		aengine::AEPrintLog("Work dir: "+aengine::AEResourceManager::GetWorkDirectory());
+
+		paused = false;
 
 		game_time = 0;
 	}
