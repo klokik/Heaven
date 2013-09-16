@@ -28,6 +28,7 @@ namespace heaven
 				if(item.find(L"filename")!=item.end()&&item[L"filename"]->IsString())
 				{
 					loadFromFile(item[L"filename"]->AsString());
+					handleEvent({E_START,0,0});
 				}
 				else
 					AEPrintLog("filename unspecified");
