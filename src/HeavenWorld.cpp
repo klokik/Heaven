@@ -137,8 +137,12 @@ namespace heaven
 
 	void HeavenWorld::updateGame(float dt_ms)
 	{
+		std::map<uint32_t,size_t> islands_by_side;
+
 		for(auto uid_island:islands)
 		{
+			islands_by_side[uid_island.second->side_uid]++;
+
 			IslandProduct product = uid_island.second->update(dt_ms);
 
 			switch(product.prod_type)
@@ -163,6 +167,29 @@ namespace heaven
 					players[uid_island.second->side_uid].resources["iron"]-=product.amount;
 				}
 			}
+		}
+
+		{	// check if someone lose
+			std::vector<uint32_t> sides_to_delete;
+
+			for(auto &item:players)
+			{
+				if(islands_by_side[item.first]==0)
+				{
+					storyboard.handleEvent({Storyboard::E_LOSE_ALL_ISLANDS,item.first,0});
+					sides_to_delete.push_back(item.first);
+				}
+			}
+
+			for(auto uid:sides_to_delete)
+			{
+				players.erase(uid);
+			}
+		}
+		// check if someone win
+		if(islands_by_side.size()==1)
+		{
+			storyboard.handleEvent({Storyboard::E_CAPTURE_ALL_ISLANDS,islands_by_side.begin()->first,0});
 		}
 
 		std::vector<uint32_t> to_delete;

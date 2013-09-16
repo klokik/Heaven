@@ -255,6 +255,10 @@ namespace heaven
 							new_event.type = E_LOSE_ISLAND;
 						else if(e_type == L"on_destroy_ship")
 							new_event.type = E_DESTROY_SHIP;
+						else if(e_type == L"on_capture_all_islands")
+							new_event.type = E_CAPTURE_ALL_ISLANDS;
+						else if(e_type == L"on_lose_all_islands")
+							new_event.type = E_LOSE_ALL_ISLANDS;
 						else
 						{
 							AEPrintLog("invalid call event");
@@ -344,6 +348,8 @@ namespace heaven
 			{
 				applyAction(action);
 			}
+
+			actions.erase(eve);
 		}
 		catch(std::out_of_range &ex)
 		{ /* no action bound */}
