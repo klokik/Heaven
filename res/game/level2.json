@@ -1,0 +1,37 @@
+{
+	"level": 2,
+	"level_name": "First blood",
+	"player_side_uid": 1,
+
+	"events":
+	[
+		{
+			"call": "on_start",
+			"actions":
+			[
+				{
+					"action_type": "add_side",
+					"side_uid": 3,
+					"side_color": "0.0 0.0 0.5",
+					"side_name": "Aliens"
+				}
+			]
+		},
+
+		{
+			"call": "on_capture_all_islands",
+			"side_uid": 1,
+			"actions":
+			[
+				{
+					"action_type": "show_message",
+					"side_uid": 1,
+					"text": "You win!"
+				},
+				{
+					"action_type": "finish"
+				}
+			]
+		}
+	]
+}

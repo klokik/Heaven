@@ -109,7 +109,15 @@ namespace heaven
 		}
 
 		if(only_attack_side)
+		{
+			Storyboard::Event event = {Storyboard::E_LOSE_ISLAND,target->side_uid,target->uid};
+			HeavenWorld::instance->storyboard.handleEvent(event);
+
 			target->side_uid = this->side_uid;
+
+			event = {Storyboard::E_CAPTURE_ISLAND,target->side_uid,target->uid};
+			HeavenWorld::instance->storyboard.handleEvent(event);
+		}
 	}
 
 	bool Ship::inRange(Ship *ship)

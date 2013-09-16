@@ -21,12 +21,6 @@
 					"side_color": "0.5 0.0 0.0",
 					"side_name": "Bots"
 				},
-				{
-					"action_type": "add_side",
-					"side_uid": 3,
-					"side_color": "0.0 0.0 0.5",
-					"side_name": "Aliens"
-				},
 
 				{
 					"action_type": "add_island",
@@ -100,12 +94,31 @@
 		},
 		{
 			"call": "on_capture_island",
+			"side_uid": 1,
+			"item_uid": 5,
 			"actions":
 			[
 				{
 					"action_type": "show_message",
 					"side_uid": 1,
-					"text": "Well done!"
+					"text": "Well done!",
+					"pause": 1
+				}
+			]
+		},
+		{
+			"call": "on_capture_all_islands",
+			"side_uid": 1,
+			"actions":
+			[
+				{
+					"action_type": "show_message",
+					"side_uid": 1,
+					"text": "You win!"
+				},
+				{
+					"action_type": "load_storyboard",
+					"filename": "res/game/level2.json"
 				}
 			]
 		}

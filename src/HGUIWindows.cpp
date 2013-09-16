@@ -163,6 +163,7 @@ namespace heaven
 	HInGameWindow::HInGameWindow(void)
 	{
 		setText("In game");
+		label->visible = false;
 
 		prev_window = "pause";
 
@@ -175,7 +176,7 @@ namespace heaven
 
 		btn_message = new HButton;
 		btn_message->position = vec2f(0.0f,0.4);
-		btn_message->SetScale(vec3f(240.0f,64.0f,1.0f));
+		// btn_message->SetScale(vec3f(240.0f,64.0f,1.0f));
 		btn_message->getLabel().text = "msg";
 		btn_message->on_click = resumeGame;
 		btn_message->visible = false;
@@ -185,6 +186,12 @@ namespace heaven
 		AddChild(btn_message);
 		//btn_top_view = new HButton;
 		//btn_top_view->position = vec2f(0.4f,0.4f);
+	}
+
+	void HInGameWindow::showMessage(std::string text)
+	{
+		btn_message->getLabel().text = text;
+		btn_message->visible = true;
 	}
 
 	HPauseWindow::HPauseWindow(void)
@@ -242,5 +249,6 @@ namespace heaven
 
 	HInGameWindow::~HInGameWindow(void)
 	{
+		delete btn_message;
 	}
 }

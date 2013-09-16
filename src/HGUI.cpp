@@ -259,6 +259,15 @@ namespace heaven
 		is_top_view = true;
 	}
 
+	void HGUI::showInGameMessage(std::string text)
+	{
+		if(active_window&&active_window->name == "in_game")
+		{
+			HInGameWindow *wnd = static_cast<HInGameWindow*>(active_window);
+			wnd->showMessage(text);
+		}
+	}
+
 	HButton::HButton(void)
 	{
 		name = "h_button";

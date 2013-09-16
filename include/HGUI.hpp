@@ -87,6 +87,8 @@ namespace heaven
 
 		void setNormalView(void);
 		void setTopView(void);
+
+		void showInGameMessage(std::string text);
 	};
 
 	class HLabel: public AEObjectText
@@ -257,8 +259,13 @@ namespace heaven
 	{
 	protected:
 		HButton *btn_message;
+
+		friend void resumeGame(int *param);
 	public:
 		HInGameWindow(void);
+
+		void showMessage(std::string text);
+
 		virtual ~HInGameWindow();
 	};
 }

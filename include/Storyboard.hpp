@@ -13,7 +13,7 @@ namespace heaven
 	class Storyboard
 	{
 	public:
-		enum EventType {E_START,E_CAPTURE_ISLAND,E_LOSE_ISLAND,E_DESTROY_SHIP};
+		enum EventType {E_START,E_CAPTURE_ISLAND,E_CAPTURE_ALL_ISLANDS,E_LOSE_ALL_ISLANDS,E_LOSE_ISLAND,E_DESTROY_SHIP};
 		typedef struct Event
 		{
 			EventType type;
@@ -26,7 +26,7 @@ namespace heaven
 			}
 		} Event;
 
-		enum ActionType {A_ADD_SIDE,A_ADD_ISLAND,A_ADD_SHIP,A_SHOW_MSG,A_GOTO_ISLAND,A_LOAD_STORYBOARD};
+		enum ActionType {A_ADD_SIDE,A_ADD_ISLAND,A_ADD_SHIP,A_SHOW_MSG,A_GOTO_ISLAND,A_LOAD_STORYBOARD,A_FINISH_WIN,A_FINISH_LOSE};
 		typedef struct
 		{
 			ActionType type;
@@ -53,6 +53,7 @@ namespace heaven
 		void addIsland(std::wstring data);
 		void addShip(std::wstring data);
 		void addSide(std::wstring data);
+		void showMessage(std::wstring data);
 	public:
 		Storyboard(void);
 

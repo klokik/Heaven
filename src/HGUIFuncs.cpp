@@ -82,6 +82,13 @@ namespace heaven
 
 	void resumeGame(int *param)
 	{
-		
+		HGUI *hgui = static_cast<HGUI*>(HeavenWorld::instance->gui);
+
+		if(hgui->active_window && hgui->active_window->name == "in_game")
+		{
+			static_cast<HInGameWindow*>(hgui->active_window)->btn_message->visible = false;
+		}
+
+		// HeavenWorld::instance->resume();
 	}
 }

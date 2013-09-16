@@ -21,7 +21,19 @@ namespace heaven
 		switch(action.type)
 		{
 		case A_LOAD_STORYBOARD:
-			loadFromFile(action.data);
+			{
+				JSONValue *value = JSON::Parse(action.data.c_str());
+				if(!value)	break;
+				JSONObject item = value->AsObject();
+				if(item.find(L"filename")!=item.end()&&item[L"filename"]->IsString())
+				{
+					loadFromFile(item[L"filename"]->AsString());
+				}
+				else
+					AEPrintLog("filename unspecified");
+
+				delete value;
+			}
 			break;
 		case A_ADD_SIDE:
 			addSide(action.data);
@@ -33,7 +45,7 @@ namespace heaven
 			addShip(action.data);
 			break;
 		case A_SHOW_MSG:
-			// static_cast<HGUI*>(world_instance->gui)->showMessage(action.data);
+			showMessage(action.data);
 			break;
 		case A_GOTO_ISLAND:
 			try
@@ -57,6 +69,12 @@ namespace heaven
 			{
 				AEPrintLog("island not found");
 			}
+			break;
+		case A_FINISH_WIN:
+			throw 0;
+			break;
+		case A_FINISH_LOSE:
+			throw 0;
 			break;
 		}
 	}
@@ -170,9 +188,31 @@ namespace heaven
 		delete value;
 	}
 
+	void Storyboard::showMessage(std::wstring data)
+	{
+		JSONValue *value = JSON::Parse(data.c_str());
+		if(!value)	return;
+		JSONObject item = value->AsObject();
+		if(item.find(L"text")!=item.end()&&item[L"text"]->IsString())
+		{
+			std::string msg(item[L"text"]->AsString().begin(),item[L"text"]->AsString().end());
+			static_cast<HGUI*>(world_instance->gui)->showInGameMessage(msg);
+
+			if(item.find(L"pause")!=item.end() && item[L"pause"]->IsNumber() && item[L"pause"]->AsNumber()!=0)
+			{
+				//world_instance->pause();
+			}
+		}
+		else
+			AEPrintLog("text unspecified");
+
+		delete value;
+	}
+
 	bool Storyboard::loadFromFile(std::wstring filename)
 	{
-		std::string json_str = AEResourceManager::LoadString("res/game/level1.json");
+		std::string sfilename(filename.begin(),filename.end());
+		std::string json_str = AEResourceManager::LoadString(sfilename);
 
 		JSONValue *value = JSON::Parse(json_str.c_str());
 
@@ -215,6 +255,17 @@ namespace heaven
 							new_event.type = E_LOSE_ISLAND;
 						else if(e_type == L"on_destroy_ship")
 							new_event.type = E_DESTROY_SHIP;
+						else
+						{
+							AEPrintLog("invalid call event");
+							continue;
+						}
+
+						if(event.find(L"side_uid")!=event.end() && event[L"side_uid"]->IsNumber())
+							new_event.side_uid = (size_t)event[L"side_uid"]->AsNumber();
+
+						if(event.find(L"item_uid")!=event.end() && event[L"item_uid"]->IsNumber())
+							new_event.item_uid = (size_t)event[L"item_uid"]->AsNumber();
 
 						if(event.find(L"actions")!=event.end() && event[L"actions"]->IsArray())
 						{
