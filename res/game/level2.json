@@ -1,6 +1,6 @@
 {
 	"level": 2,
-	"level_name": "First blood",
+	"level_name": "I hope you are ready",
 	"player_side_uid": 1,
 
 	"events":
@@ -14,6 +14,102 @@
 					"side_uid": 3,
 					"side_color": "0.0 0.0 0.5",
 					"side_name": "Aliens"
+				},
+
+				{
+					"action_type": "add_island",
+					"island_uid": 9,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "plane",
+					"translate": "5.0 0.0 -7.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 10,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "plane",
+					"translate": "-5.0 0.0 -7.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 11,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "plane",
+					"translate": "10.0 0.0 -12.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 12,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "plane",
+					"translate": "-10.0 0.0 -12.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 13,
+					"side_uid": 3,
+					"island_type": "town",
+					"translate": "0.0 0.0 -15.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 14,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "food",
+					"translate": "5.0 0.0 -20.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 15,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "food",
+					"translate": "-5.0 0.0 -20.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 16,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "zeppelin",
+					"translate": "0.0 0.0 -25.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 17,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "glider",
+					"translate": "5.0 0.0 10.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 18,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "glider",
+					"translate": "-5.0 0.0 10.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 19,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "iron",
+					"translate": "10.0 0.0 -22.0"
+				},
+				{
+					"action_type": "add_island",
+					"island_uid": 20,
+					"side_uid": 3,
+					"island_type": "factory",
+					"factory_product": "iron",
+					"translate": "-10.0 0.0 -22.0"
 				}
 			]
 		},
@@ -26,7 +122,8 @@
 				{
 					"action_type": "show_message",
 					"side_uid": 1,
-					"text": "You win!"
+					"text": "You win!",
+					"pause": 1
 				},
 				{
 					"action_type": "finish"
