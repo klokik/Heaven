@@ -44,6 +44,8 @@ namespace heaven
 		void send(HPacket cmd);
 		void handlePacket(HPacket cmd);
 
+		void update(float dt_ms);
+
 		~Side(void);
 	};
 }

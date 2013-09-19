@@ -5,6 +5,7 @@
 
 #include "HGUI.hpp"
 #include "HeavenWorld.hpp"
+#include "Player.hpp"
 #include "Storyboard.hpp"
 
 

@@ -206,6 +206,11 @@ namespace heaven
 		}
 		to_delete.clear();
 
+		for(auto &side:players)
+		{
+			side.second.update(dt_ms);
+		}
+
 		static_cast<HGUI*>(gui)->update();
 	}
 
@@ -355,10 +360,11 @@ namespace heaven
 
 		std::cout<<"trans "<<from<<"-"<<to<<std::endl;
 
-		for(auto ship:getIslandShips(from))
+		auto island_ships = getIslandShips(from);
+		for(size_t q=0;q<floor(island_ships.size()*amount);++q)
 		{
-			// if(ship->side_uid==i_from->side_uid)
-				ship->goToIsland(i_to);
+			if(island_ships[q]->side_uid==i_from->side_uid)
+				island_ships[q]->goToIsland(i_to);
 		}
 	}
 

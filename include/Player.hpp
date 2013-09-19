@@ -27,6 +27,13 @@ namespace heaven
 		DummyPlayer(void);
 		~DummyPlayer();
 	};
+
+	// class AIPlayer: public Side
+	// {
+	// public:
+	// 	AIPlayer(std::wstring name,uint32_t server);
+	// 	~AIPlayer();
+	// };
 }
 
 #endif /* PLAYER_H_ */

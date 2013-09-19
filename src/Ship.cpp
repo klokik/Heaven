@@ -126,7 +126,7 @@ namespace heaven
 		if(target)
 		{
 			Vec3f new_pos = GetAbsPosition();
-			float path_delta = 0.01f; // per second
+			float path_delta = 0.1f; // per second
 
 			if(is_taking_off)
 			{
