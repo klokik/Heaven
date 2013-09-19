@@ -196,7 +196,7 @@ namespace heaven
 		for(auto uid_ship:warships)
 		{
 			uid_ship.second->update(dt_ms);
-			if(uid_ship.second->health<=0)
+			if(uid_ship.second->allowToDispose())
 				to_delete.push_back(uid_ship.first);
 		}
 
@@ -357,8 +357,8 @@ namespace heaven
 
 		for(auto ship:getIslandShips(from))
 		{
-			if(ship->side_uid==i_from->side_uid)
-				ship->target = i_to;
+			// if(ship->side_uid==i_from->side_uid)
+				ship->goToIsland(i_to);
 		}
 	}
 

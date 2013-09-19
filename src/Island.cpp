@@ -1,6 +1,7 @@
 #include <map>
 #include <string>
 #include <algorithm>
+#include <random>
 
 #include "AEObjectMesh.h"
 #include "AEVectorMath.h"
@@ -12,6 +13,8 @@
 namespace heaven
 {
 	using namespace aengine;
+
+	std::default_random_engine generator;
 
 	Island::Island(void)
 	{
@@ -102,11 +105,17 @@ namespace heaven
 					product.ship = nullptr;
 					return product;
 				}
+				// ship construction cost
 				product.prod_type = IslandProduct::IRON;
-				product.ship->manufacturer = this;
-				product.ship->target = this;
-				product.ship->SetTranslate(this->translate);
 				product.amount = -10.0f;
+
+				product.ship->manufacturer = this;
+				product.ship->goToIsland(this);
+				// product.ship->SetTranslate(this->translate);
+
+				// randomize ship speed a bit
+				std::uniform_real_distribution<float> distribution(-2.0f,2.0f);
+				product.ship->speed += distribution(generator);
 			}
 
 			time_elapsed -= time_per_item;
