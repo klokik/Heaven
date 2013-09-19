@@ -34,6 +34,8 @@ namespace heaven
 
 		float path_position;
 
+		void orientAlongVector(Vec3f vec);
+
 	public:
 		uint32_t uid;
 		Island *const &target;

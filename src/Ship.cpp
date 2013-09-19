@@ -58,7 +58,6 @@ namespace heaven
 
 		constructTakeOffPath();
 		constructOrbitPath();
-		constructFallDownPath();
 	}
 
 	void Ship::update(float dt_ms)
@@ -118,7 +117,19 @@ namespace heaven
 
 		path_fall_down.addStartPoint(GetAbsPosition());
 		Vec3f offset = vec3f(10.0f,-20.0f,-15.0f);
-		path_fall_down.addSegment(GetAbsPosition()+offset,GetAbsPosition()+offset*0.5f);
+		path_fall_down.addSegment(GetAbsPosition()+offset,GetAbsPosition()+vec3f(offset.X,0.0f,10.0f));
+	}
+
+	void Ship::orientAlongVector(Vec3f vec)
+	{
+		static float pi = 3.14159265f;
+		float angle;
+		Vec3f delta = normalize(vec);
+		angle = -(90.0f - acos(delta.X)*180.0f/pi);
+		if(delta.Z>0)
+			angle = 180 - angle;
+
+		SetRotate(vec3f(rotate.X,angle,rotate.Z));
 	}
 
 	void Ship::move(float dt_ms)
@@ -153,7 +164,7 @@ namespace heaven
 			}
 			if(is_transfering)
 			{
-				if(path_position>path_transfer.segLength())
+				if(path_position>=path_transfer.segLength())
 				{
 					path_position = 0.0f;
 					is_transfering = false;
@@ -178,10 +189,13 @@ namespace heaven
 				is_taking_off = false;
 				is_falling_down = true;
 				path_position = 0.0f;
+
+				constructFallDownPath();
 			}
 
 			path_position += path_delta*speed*dt_ms*0.001f;
 
+			// orientAlongVector(new_pos - GetAbsPosition());
 			SetTranslate(new_pos);
 		}
 	}
