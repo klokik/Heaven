@@ -129,7 +129,7 @@ namespace heaven
 		if(delta.Z>0)
 			angle = 180 - angle;
 
-		SetRotate(vec3f(rotate.X,angle,rotate.Z));
+		children[0]->SetRotate(vec3f(0.0f,angle,0.0f));
 	}
 
 	void Ship::move(float dt_ms)
@@ -195,7 +195,7 @@ namespace heaven
 
 			path_position += path_delta*speed*dt_ms*0.001f;
 
-			// orientAlongVector(new_pos - GetAbsPosition());
+			orientAlongVector(new_pos - GetAbsPosition());
 			SetTranslate(new_pos);
 		}
 	}
