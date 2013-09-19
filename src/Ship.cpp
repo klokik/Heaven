@@ -211,7 +211,7 @@ namespace heaven
 			}
 		}
 
-		if(only_attack_side)
+		if(only_attack_side&&Length(target->GetAbsPosition() - GetAbsPosition())<5.0f)
 		{
 			Storyboard::Event event = {Storyboard::E_LOSE_ISLAND,target->side_uid,target->uid};
 			HeavenWorld::instance->storyboard.handleEvent(event);
