@@ -106,8 +106,8 @@ namespace heaven
 			AEResourceManager::LoadMesh("res/models/ground.obj",*ground->mesh);
 
 			ground->SetTranslate(vec3f(0.0f,-40.0f,0.0f));
-			ground->SetScale(vec3f(10.0f,10.0f,10.0f));
-			skybox->SetScale(vec3f(2.0f,2.0f,2.0f));
+			ground->SetScale(vec3f(1.0f,1.0f,1.0f)*7.2f);
+			skybox->SetScale(vec3f(1.0f,1.5f,1.0f)*2);
 
 			sunlight = new AEObjectLight(AE_DIRECTIONAL_LIGHT);
 			sunlight->name = "sunlight";
@@ -128,12 +128,12 @@ namespace heaven
 			ground->material = manag.New();
 
 			skybox->material->shading=false;
-			ground->material->shading=true;
+			ground->material->shading=false;
 			skybox->material->diffuse.vec=vec4f(0.53f,0.81f,0.92f,1.0f);
 			ground->material->diffuse.vec=vec4f(1.0f,1.0f,1.0f,1.0f);
 
 			ground->material->texture = new AEImage;
-			if(!AEResourceManager::LoadImage("res/img/ground.png",*ground->material->texture,"png"))
+			if(!AEResourceManager::LoadImage("res/img/ground_real.png",*ground->material->texture,"png"))
 			{
 				delete ground->material->texture;
 				ground->material->texture=nullptr;
