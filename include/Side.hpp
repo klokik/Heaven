@@ -22,6 +22,8 @@ namespace heaven
 		bool connection_opened;
 		Side **thread_owner;
 
+		int use_AI;
+
 		static void *listen(void *param);
 		void init(void);
 	public:
@@ -45,6 +47,7 @@ namespace heaven
 		void handlePacket(HPacket cmd);
 
 		void update(float dt_ms);
+		void setAI(int level);
 
 		~Side(void);
 	};

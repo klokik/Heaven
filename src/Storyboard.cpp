@@ -182,6 +182,11 @@ namespace heaven
 			wsstr>>new_side.color.R>>new_side.color.G>>new_side.color.B;
 			new_side.color.A = 1.0f;
 
+			if(jside.find(L"ai")!=jside.end() && jside[L"ai"]->IsNumber())
+				new_side.setAI((int)jside[L"ai"]->AsNumber());
+			else
+				new_side.setAI(1);
+
 			world_instance->players[new_side.uid] = std::move(new_side);
 		}
 		else

@@ -40,6 +40,8 @@ namespace heaven
 		std::cout<<thread_owner<<std::endl;
 		*thread_owner = this;
 		connection_opened = false;
+
+		use_AI = false;
 	}
 
 	Side &Side::operator=(Side &&s)
@@ -52,6 +54,8 @@ namespace heaven
 		thread_owner = s.thread_owner;
 		*thread_owner = this;
 		connection_opened = s.connection_opened;
+
+		use_AI = s.use_AI;
 
 		empty = s.empty;
 		s.empty = true;
@@ -173,6 +177,9 @@ namespace heaven
 
 	void Side::update(float dt_ms)
 	{
+		if(!use_AI)
+			return;
+
 		// AI magic is here
 		std::multimap<size_t,uint32_t> suppliers;
 		std::vector<uint32_t> need_defence;
@@ -207,6 +214,11 @@ namespace heaven
 				suppliers.erase(supplier);
 			}
 		}
+	}
+
+	void Side::setAI(int level)
+	{
+		use_AI = level;
 	}
 
 	Side::~Side(void)
