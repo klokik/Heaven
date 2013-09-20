@@ -62,6 +62,7 @@ namespace heaven
 		view_target = new CameraTarget(engine.curCamera);
 		view_target->setDistance(30.0f);
 		view_target->setPitch(-30.0f);
+		engine.curCamera->z_far = 200;
 
 		engine.scene->AddObject(view_target);
 
@@ -325,9 +326,6 @@ namespace heaven
 		}
 
 		environment->SetTranslate(view_target->GetAbsPosition());
-
-		//BUG
-		view_target->children[0]->InvalidateTransform();
 	}
 
 	void HeavenWorld::addWarship(Ship *ship)
