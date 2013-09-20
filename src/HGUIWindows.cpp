@@ -182,6 +182,14 @@ namespace heaven
 		btn_message->on_click = resumeGame;
 		btn_message->visible = false;
 
+		btn_25p = new HButton;
+		btn_50p = new HButton;
+		btn_100p = new HButton;
+
+		btn_25p->position = vec2f(-0.4f,0.2f);
+		btn_50p->position = vec2f(-0.4f,0.0f);
+		btn_100p->position = vec2f(-0.4f,-0.2f);
+
 		controls.push_back(btn_message);
 
 		AddChild(btn_message);

@@ -262,6 +262,10 @@ namespace heaven
 	protected:
 		HButton *btn_message;
 
+		HButton *btn_25p;
+		HButton *btn_50p;
+		HButton *btn_100p;
+
 		friend void resumeGame(int *param);
 	public:
 		HInGameWindow(void);
