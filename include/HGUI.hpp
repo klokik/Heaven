@@ -40,6 +40,9 @@ namespace heaven
 	void resumeGame(int *param);
 	void pauseBtnClick(int *param);
 	void resumeBtnClick(int *param);
+	void p25BtnClick(int *param);
+	void p50BtnClick(int *param);
+	void p100BtnClick(int *param);
 
 	class HGUI: public AEObjectEmpty
 	{
@@ -75,6 +78,8 @@ namespace heaven
 		static uint32_t interface;
 
 		HWindow *active_window;
+
+		float transfer_amount;
 
 		HGUI(HeavenWorld *instance,uint32_t side_uid);
 
@@ -267,6 +272,9 @@ namespace heaven
 		HButton *btn_100p;
 
 		friend void resumeGame(int *param);
+		friend void p25BtnClick(int *param);
+		friend void p50BtnClick(int *param);
+		friend void p100BtnClick(int *param);
 	public:
 		HInGameWindow(void);
 

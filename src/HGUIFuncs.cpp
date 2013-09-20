@@ -103,4 +103,50 @@ namespace heaven
 		resumeGame(nullptr);
 		goBackWindow(nullptr);
 	}
+
+	void p25BtnClick(int *param)
+	{
+		HGUI *hgui = static_cast<HGUI*>(HeavenWorld::instance->gui);
+		hgui->transfer_amount = 0.25f;
+
+		if(hgui->active_window && hgui->active_window->name == "in_game")
+		{
+			HInGameWindow *wnd = static_cast<HInGameWindow*>(hgui->active_window);
+
+			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.5f);
+			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
+			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
+		}
+	}
+
+	void p50BtnClick(int *param)
+	{
+		HGUI *hgui = static_cast<HGUI*>(HeavenWorld::instance->gui);
+		hgui->transfer_amount = 0.5f;
+
+		if(hgui->active_window && hgui->active_window->name == "in_game")
+		{
+			HInGameWindow *wnd = static_cast<HInGameWindow*>(hgui->active_window);
+
+			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
+			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.5f);
+			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
+		}
+	}
+
+	void p100BtnClick(int *param)
+	{
+		HGUI *hgui = static_cast<HGUI*>(HeavenWorld::instance->gui);
+		hgui->transfer_amount = 1.0f;
+
+		if(hgui->active_window && hgui->active_window->name == "in_game")
+		{
+			HInGameWindow *wnd = static_cast<HInGameWindow*>(hgui->active_window);
+
+			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
+			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
+			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.5f);
+		}
+	}
+
 }

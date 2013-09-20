@@ -57,6 +57,8 @@ namespace heaven
 		initWindows();
 
 		isl_from = nullptr;
+
+		transfer_amount = 0.5f;
 	}
 
 	Line HGUI::getScreenRay(Vec2f screen_pos,AEObjectCamera &camera)
@@ -210,7 +212,7 @@ namespace heaven
 				if(attemptToSelect(pos))
 				{
 					isl_target = world_instance->selected_island;
-					world_instance->transfer(isl_from->uid,isl_target->uid,1.0f);
+					world_instance->transfer(isl_from->uid,isl_target->uid,transfer_amount);
 				}
 
 				isl_from = nullptr;

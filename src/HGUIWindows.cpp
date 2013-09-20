@@ -190,9 +190,23 @@ namespace heaven
 		btn_50p->position = vec2f(-0.4f,0.0f);
 		btn_100p->position = vec2f(-0.4f,-0.2f);
 
+		btn_25p->on_click = p25BtnClick;
+		btn_50p->on_click = p50BtnClick;
+		btn_100p->on_click = p100BtnClick;
+
+		btn_25p->getLabel().text = "25%";
+		btn_50p->getLabel().text = "50%";
+		btn_100p->getLabel().text = "100%";
+
 		controls.push_back(btn_message);
+		controls.push_back(btn_25p);
+		controls.push_back(btn_50p);
+		controls.push_back(btn_100p);
 
 		AddChild(btn_message);
+		AddChild(btn_25p);
+		AddChild(btn_50p);
+		AddChild(btn_100p);
 		//btn_top_view = new HButton;
 		//btn_top_view->position = vec2f(0.4f,0.4f);
 	}
