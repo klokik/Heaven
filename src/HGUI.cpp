@@ -223,8 +223,15 @@ namespace heaven
 		// Any key
 		if(key > 0 && isl_from == nullptr)
 		{
-			world_instance->view_target->relYaw(-delta.X);
-			world_instance->view_target->relPitch(delta.Y);
+			if(is_normal_view)
+			{
+				world_instance->view_target->relYaw(-delta.X);
+				world_instance->view_target->relPitch(delta.Y);
+			}
+			else
+			{
+				world_instance->view_target->RelTranslate(vec3f(-delta.X,0.0f,delta.Y)*0.1f);
+			}
 		}
 	}
 
