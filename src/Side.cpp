@@ -183,12 +183,16 @@ namespace heaven
 		// AI magic is here
 		std::multimap<size_t,uint32_t> suppliers;
 		std::vector<uint32_t> need_defence;
+		std::vector<uint32_t> to_capture;
 
 		for(auto iisland:HeavenWorld::instance->islands)
 		{
 			Island *island = iisland.second;
 			if(island->side_uid!=uid)
+			{
+				to_capture.push_back(iisland.first);
 				continue;
+			}
 
 			size_t ships_num = HeavenWorld::instance->getIslandShips(island->uid).size();
 			if(ships_num>0)
@@ -200,6 +204,7 @@ namespace heaven
 		if(suppliers.empty())
 			return;
 
+		// first we defend our islands
 		for(auto island:need_defence)
 		{
 			std::multimap<size_t,uint32_t>::iterator supplier = suppliers.end();
@@ -210,7 +215,25 @@ namespace heaven
 				HeavenWorld::instance->transfer(supplier->second,island,0.5f);
 
 				size_t ships_num = HeavenWorld::instance->getIslandShips(supplier->second).size();
-				suppliers.insert(std::pair<size_t,uint32_t>(ships_num,supplier->second));
+				if(ships_num>0)
+					suppliers.insert(std::pair<size_t,uint32_t>(ships_num,supplier->second));
+				suppliers.erase(supplier);
+			}
+		}
+
+		// then we attack enemy islands
+		for(auto island:to_capture)
+		{
+			std::multimap<size_t,uint32_t>::iterator supplier = suppliers.end();
+			supplier--;
+
+			if(supplier->first>1)
+			{
+				HeavenWorld::instance->transfer(supplier->second,island,0.5f);
+
+				size_t ships_num = HeavenWorld::instance->getIslandShips(supplier->second).size();
+				if(ships_num>0)
+					suppliers.insert(std::pair<size_t,uint32_t>(ships_num,supplier->second));
 				suppliers.erase(supplier);
 			}
 		}
