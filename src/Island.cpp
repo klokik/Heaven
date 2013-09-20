@@ -62,7 +62,7 @@ namespace heaven
 		AddChild(island_mesh_obj);
 
 		time_per_item = 2000.0f;
-		max_alive = 4;
+		max_alive = 5;
 	}
 
 	IslandProduct FactoryIsland::produce(void)
