@@ -186,7 +186,12 @@ namespace heaven
 			size_t ships_num = HeavenWorld::instance->getIslandShips(island->uid).size();
 			if(ships_num>0)
 				suppliers.insert(std::pair<size_t,uint32_t>(ships_num,iisland.first));
+			else
+				need_defence.push_back(iisland.first);
 		}
+
+		if(suppliers.empty())
+			return;
 
 		for(auto island:need_defence)
 		{
