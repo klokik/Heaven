@@ -349,19 +349,44 @@ namespace heaven
 	void Storyboard::clear(void)
 	{
 		actions.clear();
+
+		last_event = {E_NONE,0,0};
+		last_event_offset = 0;
 	}
 
 	void Storyboard::handleEvent(Event eve)
 	{
 		try
 		{
-			std::vector<Action> &act = actions.at(eve);
-			for(Action &action:act)
+			bool erase = true;
+			bool t_cont = (eve.type == E_CONTINUE);
+
+			std::vector<Action> &act = actions.at(t_cont?last_event:eve);
+			for(size_t q=(t_cont?last_event_offset+1:0);q<act.size();q++)
 			{
+				Action &action = act[q];
+
 				applyAction(action);
+				if(action.type == A_SHOW_MSG)
+				{
+					if(q==(act.size()-1))
+					{
+						last_event_offset = 0;
+						last_event = {E_NONE,0,0};
+					}
+					else
+					{
+						if(!t_cont)
+							last_event = eve;
+						last_event_offset = q;
+						erase = false;
+						break;
+					}
+				}
 			}
 
-			actions.erase(eve);
+			if(erase)
+				actions.erase(eve);
 		}
 		catch(std::out_of_range &ex)
 		{ /* no action bound */}

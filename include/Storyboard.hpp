@@ -13,7 +13,7 @@ namespace heaven
 	class Storyboard
 	{
 	public:
-		enum EventType {E_START,E_CAPTURE_ISLAND,E_CAPTURE_ALL_ISLANDS,E_LOSE_ALL_ISLANDS,E_LOSE_ISLAND,E_DESTROY_SHIP};
+		enum EventType {E_START,E_CAPTURE_ISLAND,E_CAPTURE_ALL_ISLANDS,E_LOSE_ALL_ISLANDS,E_LOSE_ISLAND,E_DESTROY_SHIP,E_CONTINUE,E_NONE};
 		typedef struct Event
 		{
 			EventType type;
@@ -45,6 +45,9 @@ namespace heaven
 		};
 	protected:
 		HeavenWorld *world_instance;
+
+		Event last_event;
+		size_t last_event_offset;
 
 		std::unordered_map<Event,std::vector<Action>,EventHash> actions;
 

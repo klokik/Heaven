@@ -179,7 +179,7 @@ namespace heaven
 		btn_message->position = vec2f(0.0f,0.4);
 		btn_message->getSprite().SetScale(vec3f(240.0f,64.0f,32.0f));
 		btn_message->getLabel().text = "msg";
-		btn_message->on_click = resumeGame;
+		btn_message->on_click = messageBtnClick;
 		btn_message->visible = false;
 
 		btn_25p = new HButton;

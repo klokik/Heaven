@@ -42,6 +42,7 @@ namespace heaven
 	void resumeGame(int *param);
 	void pauseBtnClick(int *param);
 	void resumeBtnClick(int *param);
+	void messageBtnClick(int *param);
 	void p25BtnClick(int *param);
 	void p50BtnClick(int *param);
 	void p100BtnClick(int *param);
@@ -273,7 +274,7 @@ namespace heaven
 		HButton *btn_50p;
 		HButton *btn_100p;
 
-		friend void resumeGame(int *param);
+		friend void messageBtnClick(int *param);
 		friend void p25BtnClick(int *param);
 		friend void p50BtnClick(int *param);
 		friend void p100BtnClick(int *param);

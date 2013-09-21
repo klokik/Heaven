@@ -270,11 +270,15 @@ namespace heaven
 
 	void HGUI::showInGameMessage(std::string text)
 	{
-		if(active_window&&active_window->name == "in_game")
-		{
-			HInGameWindow *wnd = static_cast<HInGameWindow*>(active_window);
-			wnd->showMessage(text);
-		}
+		HWindow *prev_wnd = active_window;
+
+		showWindow("in_game");
+
+		HInGameWindow *wnd = static_cast<HInGameWindow*>(active_window);
+		wnd->showMessage(text);
+
+		if(prev_wnd)
+			showWindow(prev_wnd->name);
 	}
 
 	HButton::HButton(void)
