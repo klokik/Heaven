@@ -115,10 +115,11 @@ namespace heaven
 
 		players.clear();
 		islands.clear();
-		warships.clear();
+		while(!warships.empty())
+			destroyWarship(warships.begin()->first);
 
 		storyboard.clear();
-		storyboard.loadFromFile(L"res/game/level1.json");
+		storyboard.loadFromFile(L"res/game/level0.json");
 		Storyboard::Event event = {Storyboard::E_START,0,0};
 		storyboard.handleEvent(event);
 	}
@@ -195,7 +196,7 @@ namespace heaven
 
 			for(auto uid:sides_to_delete)
 			{
-				players.erase(uid);
+				// players.erase(uid);
 			}
 		}
 		// check if someone win
@@ -244,10 +245,10 @@ namespace heaven
 
 		aengine::AEPrintLog("Work dir: "+aengine::AEResourceManager::GetWorkDirectory());
 
+		resume();
 		reset();
 		for(auto &side:players)
 			side.second.setAI(1);
-		resume();
 	}
 
 	void HeavenWorld::iOnKeyDown(int *param)

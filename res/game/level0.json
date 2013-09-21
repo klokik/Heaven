@@ -1,0 +1,62 @@
+{
+	"level": 0,
+	"level_name": "Quick start",
+	"player_side_uid": 1,
+
+	"events":
+	[
+		{
+			"call": "on_start",
+			"actions":
+			[
+				{ "action_type": "add_side", "side_uid": 1, "side_color": "0.0 0.5 0.0", "side_name": "Humans",  "iron": 100, "ai": 0 },
+				{ "action_type": "add_side", "side_uid": 2, "side_color": "0.5 0.5 0.5", "side_name": "Nobody0", "ai": 1 },
+				{ "action_type": "add_side", "side_uid": 3, "side_color": "0.5 0.5 0.5", "side_name": "Nobody1", "iron": 40, "ai": 1 },
+
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "(Tap to continue)"},
+
+				{ "action_type": "add_island", "island_uid": 1, "side_uid": 1, "island_type": "town"   ,							  "translate": "-5.0 0.0 0.0" },
+				{ "action_type": "goto_island","island_uid": 1 },
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "This is Town"},
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "and it's useless"},
+
+				{ "action_type": "add_island", "island_uid": 2, "side_uid": 1, "island_type": "factory", "factory_product": "food"  , "translate": "2.5 0.0  4.3301" },
+				{ "action_type": "goto_island","island_uid": 2 },
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "This is Farm"},
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "and it produce food for your town"},
+
+				{ "action_type": "add_island", "island_uid": 3, "side_uid": 1, "island_type": "factory", "factory_product": "glider", "translate": "2.5 0.0 -4.3301" },
+				{ "action_type": "goto_island","island_uid": 3 },
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "This is Factory"},
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "and it produce gliders to defend your civilization"},
+
+				{ "action_type": "add_island", "island_uid": 4, "side_uid": 2, "island_type": "factory", "factory_product": "food"  , "translate": "10.0 0.0 0.0" },
+				{ "action_type": "goto_island","island_uid": 4 },
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "This is enemy's island"},
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "To capture it drag pointer from one island to the other"},
+
+				{ "action_type": "goto_island","island_uid": 1 }
+			]
+		},
+		{
+			"call": "on_capture_island",
+			"side_uid": 1,
+			"item_uid": 4,
+			"actions":
+			[
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "Well done!"},
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "Try to capture the rest of the islands"},
+				{ "action_type": "add_island", "island_uid": 5, "side_uid": 2, "island_type": "factory", "factory_product": "iron"  , "translate": "15.0 0.0 5.0" },
+				{ "action_type": "add_island", "island_uid": 6, "side_uid": 2, "island_type": "town"   ,							  "translate": "20.0 0.0 0.0" },
+				{ "action_type": "add_island", "island_uid": 7, "side_uid": 3, "island_type": "factory", "factory_product": "glider", "translate": "15.0 0.0 -5.0" }
+			]
+		},
+		{
+			"call": "on_capture_all_islands",
+			"side_uid": 1,
+			"actions":
+			[
+			]
+		}
+	]
+}
