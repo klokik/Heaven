@@ -247,8 +247,6 @@ namespace heaven
 
 		resume();
 		reset();
-		for(auto &side:players)
-			side.second.setAI(1);
 	}
 
 	void HeavenWorld::iOnKeyDown(int *param)

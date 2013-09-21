@@ -222,6 +222,9 @@ namespace heaven
 			}
 		}
 
+		if(use_AI<2)
+			return;
+
 		// then we attack enemy islands
 		for(auto island:to_capture)
 		{
