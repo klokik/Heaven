@@ -33,7 +33,7 @@ namespace heaven
 
 	IslandProduct Island::update(float dt_ms)
 	{
-		material->diffuse = HeavenWorld::instance->players[side_uid].color;
+		material->diffuse = HeavenWorld::instance->players.at(side_uid).color;
 
 		return {IslandProduct::NONE};
 	}

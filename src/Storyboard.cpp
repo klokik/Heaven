@@ -187,7 +187,13 @@ namespace heaven
 			else
 				new_side.setAI(1);
 
-			world_instance->players[new_side.uid] = std::move(new_side);
+			if(jside.find(L"iron")!=jside.end() && jside[L"iron"]->IsNumber())
+				new_side.resources["iron"] = ((int)jside[L"iron"]->AsNumber());
+
+			if(jside.find(L"food")!=jside.end() && jside[L"food"]->IsNumber())
+				new_side.resources["food"] = ((int)jside[L"food"]->AsNumber());
+
+			world_instance->players.emplace(new_side.uid,std::move(new_side));
 		}
 		else
 			AEPrintLog("Invalid side definition");
