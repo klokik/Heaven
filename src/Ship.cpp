@@ -39,7 +39,7 @@ namespace heaven
 
 		speed = 20.0f;
 		gun_power = 20.0f;
-		attack_range = 5.0f;
+		attack_range = 7.0f;
 
 		orbit_radius = 3.0f;
 		orbit_height = 3.0f;
