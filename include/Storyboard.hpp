@@ -60,6 +60,8 @@ namespace heaven
 		bool loadFromFile(std::wstring filename);
 		void bind(HeavenWorld *world);
 
+		void clear(void);
+
 		void handleEvent(Event eve);
 
 		~Storyboard(void);

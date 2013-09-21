@@ -34,15 +34,12 @@ namespace heaven
 		HeavenWorld::world = this;
 		dt_ms = 0.0f;
 
-		players[MINE].resources["iron"] = 100;
-		players[EVIL].resources["iron"] = 100;
-		players[NEUTRAL].resources["iron"] = 20;
+		gui = nullptr;
 
-		this->gui = nullptr;
 		this->selected_island = nullptr;
 		storyboard.bind(this);
 
-		paused = true;
+		paused = false;
 	}
 
 	int HeavenWorld::init(void)
@@ -111,6 +108,20 @@ namespace heaven
 		return paused;
 	}
 
+	void HeavenWorld::reset(void)
+	{
+		game_time = 0;
+		paused = true;
+
+		players.clear();
+		islands.clear();
+		warships.clear();
+
+		storyboard.clear();
+		storyboard.loadFromFile(L"res/game/level1.json");
+		Storyboard::Event event = {Storyboard::E_START,0,0};
+		storyboard.handleEvent(event);
+	}
 
 	void HeavenWorld::iOnRefresh(int *param)
 	{
@@ -224,10 +235,7 @@ namespace heaven
 
 	void HeavenWorld::engineStarted(void)
 	{
-		storyboard.loadFromFile(L"res/game/level1.json");
-		Storyboard::Event event = {Storyboard::E_START,0,0};
-		storyboard.handleEvent(event);
-
+		this->gui = new HGUI(this,0);
 		engine.scene->AddObject(gui);
 
 		engine.scene->fonts.LoadFont("res/fonts/font_3.png","boundary",16,16);
@@ -236,9 +244,10 @@ namespace heaven
 
 		aengine::AEPrintLog("Work dir: "+aengine::AEResourceManager::GetWorkDirectory());
 
-		paused = false;
-
-		game_time = 0;
+		reset();
+		for(auto &side:players)
+			side.second.setAI(1);
+		resume();
 	}
 
 	void HeavenWorld::iOnKeyDown(int *param)

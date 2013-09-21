@@ -35,6 +35,8 @@ namespace heaven
 	void showNetworkGameWindow(int *param);
 	void showOptionsWindow(int *param);
 	void showInGameWindow(int *param);
+	void loadAndStartGame(int *param);
+	void startNewGame(int *param);
 	void showTextWindow(int *param);
 	void toggleViewMode(int *param);
 	void resumeGame(int *param);

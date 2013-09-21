@@ -90,8 +90,8 @@ namespace heaven
 		btn_continue->getLabel().text = "Continue";
 		btn_new_game->getLabel().text = "New game";
 
-		btn_continue->on_click = showInGameWindow;
-		btn_new_game->on_click = showInGameWindow;
+		btn_continue->on_click = loadAndStartGame;
+		btn_new_game->on_click = startNewGame;
 
 		controls.push_back(btn_continue);
 		controls.push_back(btn_new_game);

@@ -222,21 +222,21 @@ namespace heaven
 		}
 
 		// then we attack enemy islands
-		for(auto island:to_capture)
-		{
-			std::multimap<size_t,uint32_t>::iterator supplier = suppliers.end();
-			supplier--;
+		// for(auto island:to_capture)
+		// {
+		// 	std::multimap<size_t,uint32_t>::iterator supplier = suppliers.end();
+		// 	supplier--;
 
-			if(supplier->first>1)
-			{
-				HeavenWorld::instance->transfer(supplier->second,island,0.5f);
+		// 	if(supplier->first>1)
+		// 	{
+		// 		HeavenWorld::instance->transfer(supplier->second,island,0.5f);
 
-				size_t ships_num = HeavenWorld::instance->getIslandShips(supplier->second).size();
-				if(ships_num>0)
-					suppliers.insert(std::pair<size_t,uint32_t>(ships_num,supplier->second));
-				suppliers.erase(supplier);
-			}
-		}
+		// 		size_t ships_num = HeavenWorld::instance->getIslandShips(supplier->second).size();
+		// 		if(ships_num>0)
+		// 			suppliers.insert(std::pair<size_t,uint32_t>(ships_num,supplier->second));
+		// 		suppliers.erase(supplier);
+		// 	}
+		// }
 	}
 
 	void Side::setAI(int level)

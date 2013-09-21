@@ -325,8 +325,8 @@ namespace heaven
 
 		if(root.find(L"player_side_uid")!=root.end()&&root[L"player_side_uid"]->IsNumber())
 		{
-			if(!world_instance->gui)
-				world_instance->gui = new HGUI(world_instance,(uint32_t)root[L"player_side_uid"]->AsNumber());
+			if(world_instance->gui)
+				static_cast<HGUI*>(world_instance->gui)->interface = (uint32_t)root[L"player_side_uid"]->AsNumber();
 		}
 		else
 			AEPrintLog("Player uid unspecified");
@@ -344,6 +344,11 @@ namespace heaven
 			throw 1;
 		}
 		world_instance = world;
+	}
+
+	void Storyboard::clear(void)
+	{
+		actions.clear();
 	}
 
 	void Storyboard::handleEvent(Event eve)

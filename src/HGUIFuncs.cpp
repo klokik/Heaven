@@ -58,6 +58,22 @@ namespace heaven
 		hgui->showWindow("in_game");
 	}
 
+	void loadAndStartGame(int *param)
+	{
+		HeavenWorld::instance->reset();
+		HeavenWorld::instance->resume();
+
+		showInGameWindow(nullptr);
+	}
+
+	void startNewGame(int *param)
+	{
+		HeavenWorld::instance->reset();
+		HeavenWorld::instance->resume();
+
+		showInGameWindow(nullptr);
+	}
+
 	void showTextWindow(int *param)
 	{
 		// HTextInput *ti = static_cast<HTextInput*>(param);

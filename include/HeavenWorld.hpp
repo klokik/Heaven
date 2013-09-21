@@ -60,6 +60,8 @@ namespace heaven
 		void saveState(void);
 		bool isPaused(void);
 
+		void reset(void);
+
 		static void iOnRefresh(int *param);
 		static void iOnStart(int *param);
 		static void iOnKeyDown(int *param);
