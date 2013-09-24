@@ -196,13 +196,13 @@ namespace heaven
 
 			for(auto uid:sides_to_delete)
 			{
-				// players.erase(uid);
+				players.erase(uid);
 			}
 		}
 		// check if someone win
 		if(islands_by_side.size()==1)
 		{
-			storyboard.handleEvent({Storyboard::E_CAPTURE_ALL_ISLANDS,islands_by_side.begin()->first,0});
+			storyboard.handleEvent({Storyboard::E_CAPTURE_ALL_ISLANDS,islands_by_side.begin()->first,islands_by_side.begin()->second});
 		}
 
 		std::vector<uint32_t> to_delete;

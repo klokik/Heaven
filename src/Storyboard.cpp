@@ -364,7 +364,6 @@ namespace heaven
 	{
 		try
 		{
-			bool erase = true;
 			bool t_cont = (eve.type == E_CONTINUE);
 
 			std::vector<Action> &act = actions.at(t_cont?last_event:eve);
@@ -385,14 +384,12 @@ namespace heaven
 						if(!t_cont)
 							last_event = eve;
 						last_event_offset = q;
-						erase = false;
-						break;
+						return;
 					}
 				}
 			}
 
-			if(erase)
-				actions.erase(eve);
+			actions.erase(eve);
 		}
 		catch(std::out_of_range &ex)
 		{ /* no action bound */}
