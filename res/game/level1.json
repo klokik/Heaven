@@ -9,47 +9,50 @@
 			"call": "on_start",
 			"actions":
 			[
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "You've done it!"},
+				{ "action_type": "show_message", "side_uid": 1, "pause": 1, "text": "Things get harder"},
 				{
 					"action_type": "add_side",
-					"side_uid": 1,
-					"side_color": "0.0 0.5 0.0",
-					"side_name": "Humans",
-					"ai": 0
+					"side_uid": 10,
+					"side_color": "0.5 0.5 0.0",
+					"side_name": "Fishes",
+					"ai": 1
 				},
 				{
 					"action_type": "add_side",
-					"side_uid": 2,
+					"side_uid": 11,
 					"side_color": "0.5 0.0 0.0",
-					"side_name": "Bots"
+					"side_name": "Bots",
+					"ai": 2
 				},
 
 				{
 					"action_type": "add_island",
-					"island_uid": 1,
-					"side_uid": 1,
+					"island_uid": 10,
+					"side_uid": 10,
 					"island_type": "town",
 					"translate": "-20.0 0.0 0.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 2,
-					"side_uid": 1,
+					"island_uid": 11,
+					"side_uid": 10,
 					"island_type": "factory",
 					"factory_product": "iron",
 					"translate": "-20.0 0.0 5.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 3,
-					"side_uid": 1,
+					"island_uid": 12,
+					"side_uid": 10,
 					"island_type": "factory",
 					"factory_product": "food",
 					"translate": "-20.0 0.0 -5.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 4,
-					"side_uid": 1,
+					"island_uid": 13,
+					"side_uid": 10,
 					"island_type": "factory",
 					"factory_product": "glider",
 					"translate": "-15.0 0.0 0.0"
@@ -57,31 +60,31 @@
 
 				{
 					"action_type": "add_island",
-					"island_uid": 5,
-					"side_uid": 2,
+					"island_uid": 14,
+					"side_uid": 11,
 					"island_type": "town",
-					"translate": "20.0 0.0 0.0"
+					"translate": "25.0 0.0 0.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 6,
-					"side_uid": 2,
+					"island_uid": 15,
+					"side_uid": 11,
 					"island_type": "factory",
 					"factory_product": "iron",
 					"translate": "20.0 0.0 -5.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 7,
-					"side_uid": 2,
+					"island_uid": 16,
+					"side_uid": 11,
 					"island_type": "factory",
 					"factory_product": "food",
 					"translate": "20.0 0.0 5.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 8,
-					"side_uid": 2,
+					"island_uid": 17,
+					"side_uid": 11,
 					"island_type": "factory",
 					"factory_product": "glider",
 					"translate": "15.0 0.0 0.0"
@@ -110,14 +113,9 @@
 		{
 			"call": "on_capture_all_islands",
 			"side_uid": 1,
+			"item_uid": 15,
 			"actions":
 			[
-				{
-					"action_type": "show_message",
-					"side_uid": 1,
-					"text": "You win!",
-					"pause": 1
-				},
 				{
 					"action_type": "load_storyboard",
 					"filename": "res/game/level2.json"
@@ -126,7 +124,7 @@
 		},
 		{
 			"call": "on_lose_all_islands",
-			"side_uid": 1,
+			"side_uid": 80,
 			"actions":
 			[
 				{

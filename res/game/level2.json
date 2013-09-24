@@ -11,102 +11,103 @@
 			[
 				{
 					"action_type": "add_side",
-					"side_uid": 3,
+					"side_uid": 20,
 					"side_color": "0.0 0.0 0.5",
-					"side_name": "Aliens"
+					"side_name": "Aliens",
+					"ai": 2
 				},
 
 				{
 					"action_type": "add_island",
-					"island_uid": 9,
-					"side_uid": 3,
+					"island_uid": 30,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "plane",
 					"translate": "5.0 0.0 -7.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 10,
-					"side_uid": 3,
+					"island_uid": 31,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "plane",
 					"translate": "-5.0 0.0 -7.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 11,
-					"side_uid": 3,
+					"island_uid": 32,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "plane",
 					"translate": "10.0 0.0 -12.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 12,
-					"side_uid": 3,
+					"island_uid": 33,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "plane",
 					"translate": "-10.0 0.0 -12.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 13,
-					"side_uid": 3,
+					"island_uid": 34,
+					"side_uid": 20,
 					"island_type": "town",
 					"translate": "0.0 0.0 -15.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 14,
-					"side_uid": 3,
+					"island_uid": 35,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "food",
 					"translate": "5.0 0.0 -20.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 15,
-					"side_uid": 3,
+					"island_uid": 36,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "food",
 					"translate": "-5.0 0.0 -20.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 16,
-					"side_uid": 3,
+					"island_uid": 37,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "zeppelin",
 					"translate": "0.0 0.0 -25.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 17,
-					"side_uid": 3,
+					"island_uid": 38,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "glider",
 					"translate": "5.0 0.0 10.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 18,
-					"side_uid": 3,
+					"island_uid": 39,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "glider",
 					"translate": "-5.0 0.0 10.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 19,
-					"side_uid": 3,
+					"island_uid": 40,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "iron",
 					"translate": "10.0 0.0 -22.0"
 				},
 				{
 					"action_type": "add_island",
-					"island_uid": 20,
-					"side_uid": 3,
+					"island_uid": 41,
+					"side_uid": 20,
 					"island_type": "factory",
 					"factory_product": "iron",
 					"translate": "-10.0 0.0 -22.0"
