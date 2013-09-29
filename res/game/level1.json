@@ -14,14 +14,14 @@
 				{
 					"action_type": "add_side",
 					"side_uid": 10,
-					"side_color": "0.5 0.5 0.0",
+					"side_color": "0.8 0.8 0.0",
 					"side_name": "Fishes",
 					"ai": 1
 				},
 				{
 					"action_type": "add_side",
 					"side_uid": 11,
-					"side_color": "0.5 0.0 0.0",
+					"side_color": "0.8 0.0 0.0",
 					"side_name": "Bots",
 					"ai": 2
 				},
@@ -30,6 +30,7 @@
 					"action_type": "add_island",
 					"island_uid": 10,
 					"side_uid": 10,
+					"radius": 1,
 					"island_type": "town",
 					"translate": "-20.0 0.0 0.0"
 				},
@@ -37,6 +38,7 @@
 					"action_type": "add_island",
 					"island_uid": 11,
 					"side_uid": 10,
+					"radius": 1,
 					"island_type": "factory",
 					"factory_product": "iron",
 					"translate": "-20.0 0.0 5.0"
@@ -45,6 +47,7 @@
 					"action_type": "add_island",
 					"island_uid": 12,
 					"side_uid": 10,
+					"radius": 1,
 					"island_type": "factory",
 					"factory_product": "food",
 					"translate": "-20.0 0.0 -5.0"
@@ -53,6 +56,7 @@
 					"action_type": "add_island",
 					"island_uid": 13,
 					"side_uid": 10,
+					"radius": 1,
 					"island_type": "factory",
 					"factory_product": "glider",
 					"translate": "-15.0 0.0 0.0"
@@ -62,6 +66,7 @@
 					"action_type": "add_island",
 					"island_uid": 14,
 					"side_uid": 11,
+					"radius": 1,
 					"island_type": "town",
 					"translate": "25.0 0.0 0.0"
 				},
@@ -69,6 +74,7 @@
 					"action_type": "add_island",
 					"island_uid": 15,
 					"side_uid": 11,
+					"radius": 1,
 					"island_type": "factory",
 					"factory_product": "iron",
 					"translate": "20.0 0.0 -5.0"
@@ -77,6 +83,7 @@
 					"action_type": "add_island",
 					"island_uid": 16,
 					"side_uid": 11,
+					"radius": 1,
 					"island_type": "factory",
 					"factory_product": "food",
 					"translate": "20.0 0.0 5.0"
@@ -85,6 +92,7 @@
 					"action_type": "add_island",
 					"island_uid": 17,
 					"side_uid": 11,
+					"radius": 1,
 					"island_type": "factory",
 					"factory_product": "glider",
 					"translate": "15.0 0.0 0.0"

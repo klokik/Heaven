@@ -21,6 +21,7 @@
 					"action_type": "add_island",
 					"island_uid": 30,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "plane",
 					"translate": "5.0 0.0 -7.0"
@@ -29,6 +30,7 @@
 					"action_type": "add_island",
 					"island_uid": 31,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "plane",
 					"translate": "-5.0 0.0 -7.0"
@@ -37,6 +39,7 @@
 					"action_type": "add_island",
 					"island_uid": 32,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "plane",
 					"translate": "10.0 0.0 -12.0"
@@ -45,6 +48,7 @@
 					"action_type": "add_island",
 					"island_uid": 33,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "plane",
 					"translate": "-10.0 0.0 -12.0"
@@ -53,6 +57,7 @@
 					"action_type": "add_island",
 					"island_uid": 34,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "town",
 					"translate": "0.0 0.0 -15.0"
 				},
@@ -60,6 +65,7 @@
 					"action_type": "add_island",
 					"island_uid": 35,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "food",
 					"translate": "5.0 0.0 -20.0"
@@ -68,6 +74,7 @@
 					"action_type": "add_island",
 					"island_uid": 36,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "food",
 					"translate": "-5.0 0.0 -20.0"
@@ -76,6 +83,7 @@
 					"action_type": "add_island",
 					"island_uid": 37,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "zeppelin",
 					"translate": "0.0 0.0 -25.0"
@@ -84,6 +92,7 @@
 					"action_type": "add_island",
 					"island_uid": 38,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "glider",
 					"translate": "5.0 0.0 10.0"
@@ -92,6 +101,7 @@
 					"action_type": "add_island",
 					"island_uid": 39,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "glider",
 					"translate": "-5.0 0.0 10.0"
@@ -100,6 +110,7 @@
 					"action_type": "add_island",
 					"island_uid": 40,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "iron",
 					"translate": "10.0 0.0 -22.0"
@@ -108,6 +119,7 @@
 					"action_type": "add_island",
 					"island_uid": 41,
 					"side_uid": 20,
+					"radius": 2,
 					"island_type": "factory",
 					"factory_product": "iron",
 					"translate": "-10.0 0.0 -22.0"
