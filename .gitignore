@@ -5,10 +5,12 @@
 *.jpeg
 # *.obj
 *.dae
+*.xcf
 *~
 ~*
 cmake_install.cmake
 # *.cmake
+*.blend*
 
 /resource/*
 !/resource/shader/
