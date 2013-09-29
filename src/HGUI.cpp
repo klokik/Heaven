@@ -47,8 +47,8 @@ namespace heaven
 			this->AddChild(obj);
 		}
 
-		last_normal_view_state = {20.0f,0.0f,-30.0f,0.0f};
-		last_top_view_state = {30.0f,0.0f,-90.0f,0.0f};
+		last_normal_view_state = {10.0f,0.0f,-30.0f,0.0f};
+		last_top_view_state = {10.0f,0.0f,-90.0f,0.0f};
 		is_top_view = false;
 		is_normal_view = true;
 
@@ -88,7 +88,7 @@ namespace heaven
 
 		std::vector<Island*> intersected;
 		for(auto &uid_island:world_instance->islands)
-			if(distance(uid_island.second->translate,ray)<uid_island.second->bounding_sphere.radius)
+			if(distance(uid_island.second->translate,ray)<uid_island.second->radius)
 				intersected.push_back(uid_island.second);
 
 		for(int q=0;q<20;q++)
@@ -174,8 +174,12 @@ namespace heaven
 		}
 	}
 
-	void HGUI::update(void)
+	void HGUI::update(float dt_ms)
 	{
+		if(active_window&&active_window->name=="in_game")
+		{
+			static_cast<HInGameWindow*>(active_window)->update(dt_ms);
+		}
 	}
 
 	void HGUI::realign(Vec2f size)
@@ -292,12 +296,13 @@ namespace heaven
 		label = new HLabel;
 		label->projection = AE_ORTHOGRAPHIC;
 		label->text = "Button";
+		label->RelScale(vec3f(1.5f,1.5f,1.5f));
 		AddChild(label);
 
 		sprite = new AEObjectSprite;
 		sprite->projection = AE_ORTHOGRAPHIC;
 		sprite->material = HeavenWorld::instance->engine.scene->materials.New();
-		sprite->material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.9f);
+		sprite->material->diffuse.vec = vec4f(0.1f,0.1f,0.1f,0.95f);
 		sprite->material->transparent = true;
 		sprite->SetScale(vec3f(128.0f,64.0f,32.0f));
 		AddChild(sprite);

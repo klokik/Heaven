@@ -1,15 +1,17 @@
 #include <string.h>
+#include <sstream>
 
 #include "AEVectorMath.h"
 
 #include "HGUI.hpp"
+#include "HeavenWorld.hpp"
 
 
 namespace heaven
 {
 	HMainMenuWindow::HMainMenuWindow(void)
 	{
-		setText("Welcome to the Heaven World");
+		setText("Welcome to the\nHeaven World");
 
 		btn_local	= new HButton;
 		btn_network	= new HButton;
@@ -22,6 +24,11 @@ namespace heaven
 		btn_network->position = vec2f(0.0f, 0.0f);
 		btn_options->position = vec2f(0.0f,-0.2f);
 		btn_about->position = vec2f(0.0f,-0.4f);
+
+		btn_local->getSprite().SetScale(vec3f(240.0f,64.0f,1.0f));
+		btn_network->getSprite().SetScale(vec3f(240.0f,64.0f,1.0f));
+		btn_options->getSprite().SetScale(vec3f(240.0f,64.0f,1.0f));
+		btn_about->getSprite().SetScale(vec3f(240.0f,64.0f,1.0f));
 
 		btn_local->getLabel().text = "Local";
 		btn_network->getLabel().text = "Network";
@@ -86,6 +93,9 @@ namespace heaven
 
 		btn_continue->position = vec2f(0.0f,0.2f);
 		btn_new_game->position = vec2f(0.0f,0.0f);
+
+		btn_continue->getSprite().SetScale(vec3f(240.0f,64.0f,1.0f));
+		btn_new_game->getSprite().SetScale(vec3f(240.0f,64.0f,1.0f));
 
 		btn_continue->getLabel().text = "Continue";
 		btn_new_game->getLabel().text = "New game";
@@ -198,23 +208,57 @@ namespace heaven
 		btn_50p->getLabel().text = "50%";
 		btn_100p->getLabel().text = "100%";
 
+		btn_info = new HButton;
+		btn_info->getLabel().text = "info";
+		btn_info->position = vec2f(0.35f,-0.25f);
+		btn_info->getSprite().SetScale(vec3f(240.0f,240.0f,1.0f));
+
 		controls.push_back(btn_message);
 		controls.push_back(btn_25p);
 		controls.push_back(btn_50p);
 		controls.push_back(btn_100p);
+		controls.push_back(btn_info);
 
 		AddChild(btn_message);
 		AddChild(btn_25p);
 		AddChild(btn_50p);
 		AddChild(btn_100p);
-		//btn_top_view = new HButton;
-		//btn_top_view->position = vec2f(0.4f,0.4f);
+		AddChild(btn_info);
 	}
 
 	void HInGameWindow::showMessage(std::string text)
 	{
 		btn_message->getLabel().text = text;
 		btn_message->visible = true;
+	}
+
+	void HInGameWindow::update(float dt_ms)
+	{
+		try
+		{
+			if(HeavenWorld::instance->players.empty())
+				return;
+
+			std::stringstream sstr;
+			sstr<<"FPS:"<<floor((1000/dt_ms))<<"\n";
+
+			if(HeavenWorld::instance->selected_island)
+				sstr<<"Island\n\""+HeavenWorld::instance->selected_island->name<<"\"\n";
+			sstr<<"Iron "<<HeavenWorld::instance->players[static_cast<HGUI*>(HeavenWorld::instance->gui)->interface].resources["iron"]<<"\n";
+			sstr<<"Food "<<HeavenWorld::instance->players[static_cast<HGUI*>(HeavenWorld::instance->gui)->interface].resources["food"]<<"";
+			btn_info->getLabel().text = sstr.str();
+		}
+		catch(...)
+		{
+			// no sides
+		}
+	}
+
+	void HInGameWindow::realign(Vec2f size)
+	{
+		HWindow::realign(size);
+		btn_message->getSprite().SetScale(vec3f(size.X*0.6f,128.0f,32.0f));
+		// btn_info->getSprite().SetScale(vec3f(size.X*0.2f,240.0f,1.0f));
 	}
 
 	HPauseWindow::HPauseWindow(void)

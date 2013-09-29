@@ -86,7 +86,7 @@ namespace heaven
 
 		HGUI(HeavenWorld *instance,uint32_t side_uid);
 
-		void update(void);
+		void update(float dt_ms);
 		void realign(Vec2f size);
 
 		void mouseDown(Vec2f pos);
@@ -274,6 +274,8 @@ namespace heaven
 		HButton *btn_50p;
 		HButton *btn_100p;
 
+		HButton *btn_info;
+
 		friend void messageBtnClick(int *param);
 		friend void p25BtnClick(int *param);
 		friend void p50BtnClick(int *param);
@@ -282,6 +284,8 @@ namespace heaven
 		HInGameWindow(void);
 
 		void showMessage(std::string text);
+		void update(float dt_ms);
+		virtual void realign(Vec2f size);
 
 		virtual ~HInGameWindow();
 	};

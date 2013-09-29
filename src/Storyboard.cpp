@@ -88,10 +88,12 @@ namespace heaven
 		JSONObject jisland = value->AsObject();
 		if(
 			jisland.find(L"side_uid")!=jisland.end()
+			&&jisland.find(L"radius")!=jisland.end()
 			&&jisland.find(L"island_uid")!=jisland.end()
 			&&jisland.find(L"island_type")!=jisland.end()
 			&&jisland.find(L"translate")!=jisland.end()
 			&&jisland[L"side_uid"]->IsNumber()
+			&&jisland[L"radius"]->IsNumber()
 			&&jisland[L"island_uid"]->IsNumber()
 			&&jisland[L"island_type"]->IsString()
 			&&jisland[L"translate"]->IsString())
@@ -148,6 +150,8 @@ namespace heaven
 			wsstr>>trans.X>>trans.Y>>trans.Z;
 
 			new_island->SetTranslate(trans);
+
+			new_island->radius = jisland[L"radius"]->AsNumber();
 
 			world_instance->addIsland(new_island);
 		}

@@ -29,6 +29,8 @@ namespace heaven
 
 		static uint32_t seed_uid = 0;
 		uid = seed_uid++;
+
+		radius = 1.0f;
 	}
 
 	IslandProduct Island::update(float dt_ms)
@@ -59,6 +61,7 @@ namespace heaven
 		island_mesh_obj->name = m_name[product_type];
 		island_mesh_obj->mesh = getMesh(m_name[product_type]);
 		island_mesh_obj->material = material;
+		island_mesh_obj->SetScale(vec3f(1.0f,1.0f,1.0f)*0.1f);
 
 		this->name = island_mesh_obj->name + "_base";
 
@@ -147,6 +150,7 @@ namespace heaven
 		island_mesh_obj->mesh = getMesh("town");
 		island_mesh_obj->material = material;
 		island_mesh_obj->name = "town";
+		island_mesh_obj->SetScale(vec3f(1.0f,1.0f,1.0f)*0.1f);
 
 		AddChild(island_mesh_obj);
 

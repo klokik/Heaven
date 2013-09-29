@@ -133,9 +133,9 @@ namespace heaven
 		{
 			HInGameWindow *wnd = static_cast<HInGameWindow*>(hgui->active_window);
 
-			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.5f);
-			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
-			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
+			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.1f,0.1f,0.1f,0.95f);
+			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.5f,0.5f,0.5f,0.5f);
+			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.5f,0.5f,0.5f,0.5f);
 		}
 	}
 
@@ -148,9 +148,9 @@ namespace heaven
 		{
 			HInGameWindow *wnd = static_cast<HInGameWindow*>(hgui->active_window);
 
-			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
-			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.5f);
-			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
+			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.5f,0.5f,0.5f,0.5f);
+			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.1f,0.1f,0.1f,0.95f);
+			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.5f,0.5f,0.5f,0.5f);
 		}
 	}
 
@@ -163,9 +163,9 @@ namespace heaven
 		{
 			HInGameWindow *wnd = static_cast<HInGameWindow*>(hgui->active_window);
 
-			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
-			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.3f);
-			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.3f,0.3f,0.3f,0.5f);
+			wnd->btn_25p->getSprite().material->diffuse.vec = vec4f(0.5f,0.5f,0.5f,0.5f);
+			wnd->btn_50p->getSprite().material->diffuse.vec = vec4f(0.5f,0.5f,0.5f,0.5f);
+			wnd->btn_100p->getSprite().material->diffuse.vec = vec4f(0.1f,0.1f,0.1f,0.95f);
 		}
 	}
 

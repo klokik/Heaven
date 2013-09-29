@@ -26,6 +26,8 @@ namespace heaven
 		// AEObjectEmpty *ship_mesh = new AEObjectEmpty;
 		ship_mesh->mesh = getMesh(type);
 		ship_mesh->name = "warship_"; ship_mesh->name += (char)('a'+counter);
+		ship_mesh->material = HeavenWorld::instance->engine.scene->materials.New();
+		ship_mesh->material->diffuse.vec = HeavenWorld::instance->players[_side_uid].color.vec*1.5f;
 
 		this->name = ship_mesh->name + "_base";
 
@@ -138,6 +140,8 @@ namespace heaven
 		{
 			Vec3f new_pos = GetAbsPosition();
 			float path_delta = 0.1f; // per second
+			if(path_position<0)
+				path_position = 0.0f;
 
 			if(is_taking_off)
 			{

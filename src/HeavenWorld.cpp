@@ -1,5 +1,6 @@
 #include <random>
 #include <algorithm>
+#include <cmath>
 
 #include "AEObjectMesh.h"
 #include "AEVectorMath.h"
@@ -57,7 +58,7 @@ namespace heaven
 
 		//init camera
 		view_target = new CameraTarget(engine.curCamera);
-		view_target->setDistance(30.0f);
+		view_target->setDistance(10.0f);
 		view_target->setPitch(-30.0f);
 		engine.curCamera->z_far = 200;
 
@@ -224,7 +225,7 @@ namespace heaven
 			side.second.update(dt_ms);
 		}
 
-		static_cast<HGUI*>(gui)->update();
+		static_cast<HGUI*>(gui)->update(dt_ms);
 	}
 
 	void HeavenWorld::iOnStart(int *param)
@@ -310,14 +311,17 @@ namespace heaven
 
 	void HeavenWorld::updateView(void)
 	{
+		float dist_delta = min(exp((view_target->getDistance()-2.0f)*0.05f)-1.0f,view_target->getDistance()/3);
 		if(engine.GetKeyState('a'))
 			view_target->relYaw(-4.0f);
 		if(engine.GetKeyState('d'))
 			view_target->relYaw(4.0f);
 		if(engine.GetKeyState('w'))
-			view_target->relDistance(-1.0f);
+			view_target->relDistance(-dist_delta);
 		if(engine.GetKeyState('s'))
-			view_target->relDistance(1.0f);
+			view_target->relDistance(dist_delta);
+		if(view_target->getDistance()>40)
+			view_target->setDistance(40.0f);
 
 		if(selected_island)
 		{

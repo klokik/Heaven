@@ -21,6 +21,8 @@ namespace heaven
 		uint32_t uid;
 		uint32_t side_uid;
 
+		float radius;
+
 		Island(void);
 
 		virtual IslandProduct update(float dt_ms);
