@@ -224,7 +224,7 @@ namespace heaven
 
 			if(inRange(ship))
 			{
-				ship->health-=gun_power;
+				ship->damage(gun_power);
 				only_attack_side = false;
 			}
 		}
@@ -238,6 +238,18 @@ namespace heaven
 
 			event = {Storyboard::E_CAPTURE_ISLAND,target->side_uid,target->uid};
 			HeavenWorld::instance->storyboard.handleEvent(event);
+		}
+	}
+
+	void Ship::damage(float power)
+	{
+		this->health-=power;
+
+		// in some case
+		//FIXME: specify condition
+		if(i_target->side_uid == this->side_uid)
+		{
+			i_target->requestSupport(0.5f);
 		}
 	}
 

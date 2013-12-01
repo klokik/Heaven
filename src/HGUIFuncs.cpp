@@ -169,4 +169,34 @@ namespace heaven
 		}
 	}
 
+	void linkIslandBtnClick(int *param)
+	{
+		HGUI *hgui = static_cast<HGUI*>(HeavenWorld::instance->gui);
+		HInGameWindow *wnd = static_cast<HInGameWindow*>(hgui->active_window);
+
+		static Island *first_selected = nullptr;
+
+		if(!HeavenWorld::instance->selected_island)
+		{
+			first_selected = nullptr;
+			wnd->btn_link->getLabel().text = "Link";
+			return;
+		}
+
+
+		if(first_selected)
+		{
+			first_selected->linkTo(HeavenWorld::instance->selected_island->uid);
+			first_selected = nullptr;
+			wnd->btn_link->getLabel().text = "Link";
+			return;
+		}
+		else
+		{
+			hgui->showInGameMessage("Select second island to link");
+			first_selected = HeavenWorld::instance->selected_island;
+			wnd->btn_link->getLabel().text = "Cancel";
+		}
+	}
+
 }

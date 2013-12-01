@@ -4,7 +4,7 @@
 
 namespace heaven
 {
-	CameraTarget::CameraTarget(AEObjectCamera *camera)
+	CameraTarget::CameraTarget(aengine::AEObjectCamera *camera)
 	{
 		this->AddChild(camera);
 		this->name = "CameraTarget";

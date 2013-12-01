@@ -18,7 +18,7 @@ namespace heaven
 {
 	class Island;
 
-	class Ship: public AEObjectEmpty, public StaticMeshLibrary
+	class Ship: public aengine::AEObjectEmpty, public StaticMeshLibrary
 	{
 	protected:
 		Island *i_target;
@@ -61,6 +61,7 @@ namespace heaven
 		void update(float dt_ms);
 		void move(float dt_ms);
 		void attack(void);
+		void damage(float power);
 
 		void goToIsland(Island *targ);
 		bool allowToDispose();

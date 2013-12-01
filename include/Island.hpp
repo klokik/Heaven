@@ -12,7 +12,7 @@ namespace heaven
 	// using namespace aengine;
 
 
-	class Island: public AEObjectEmpty, public StaticMeshLibrary
+	class Island: public aengine::AEObjectEmpty, public StaticMeshLibrary
 	{
 	protected:
 		AEMaterial *material;
@@ -20,12 +20,17 @@ namespace heaven
 	public:
 		uint32_t uid;
 		uint32_t side_uid;
+		uint32_t linked_to_uid;
+		std::vector<uint32_t> linked_with_uid;
 
 		float radius;
 
 		Island(void);
 
 		virtual IslandProduct update(float dt_ms);
+
+		void requestSupport(float power);
+		void linkTo(uint32_t isl_uid);
 
 		virtual ~Island() = 0;
 	};

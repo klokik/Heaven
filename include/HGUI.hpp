@@ -10,6 +10,7 @@
 
 #include "Side.hpp"
 
+
 namespace heaven
 {
 	//using namespace aengine;
@@ -46,11 +47,12 @@ namespace heaven
 	void p25BtnClick(int *param);
 	void p50BtnClick(int *param);
 	void p100BtnClick(int *param);
+	void linkIslandBtnClick(int *param);
 
-	class HGUI: public AEObjectEmpty
+	class HGUI: public aengine::AEObjectEmpty
 	{
 	protected:
-		std::vector<AEObject*> cursor;
+		std::vector<aengine::AEObject*> cursor;
 
 		std::vector<HWindow*> windows;
 
@@ -70,7 +72,7 @@ namespace heaven
 		Island *isl_target;
 
 		//returns a point and direction of the line, that comes from center of camera to point on screen
-		Line getScreenRay(Vec2f screen_pos,AEObjectCamera &camera);
+		Line getScreenRay(Vec2f screen_pos,aengine::AEObjectCamera &camera);
 
 		bool attemptToSelect(Vec2f pos);
 
@@ -101,14 +103,14 @@ namespace heaven
 		void showInGameMessage(std::string text);
 	};
 
-	class HLabel: public AEObjectText
+	class HLabel: public aengine::AEObjectText
 	{};
 
-	class HButton: public AEObjectEmpty
+	class HButton: public aengine::AEObjectEmpty
 	{
 	protected:
 		HLabel *label;
-		AEObjectSprite *sprite;
+		aengine::AEObjectSprite *sprite;
 
 	public:
 		Vec2f position;
@@ -125,7 +127,7 @@ namespace heaven
 		bool isOver(Vec2f pos);
 
 		HLabel &getLabel(void);
-		AEObjectSprite &getSprite(void);
+		aengine::AEObjectSprite &getSprite(void);
 
 		virtual ~HButton(void);
 	};
@@ -168,7 +170,7 @@ namespace heaven
 		HTextInput *text;
 
 		Vec2f orig_text_position;
-		AEObject *orig_text_parent;
+		aengine::AEObject *orig_text_parent;
 	public:
 		HTextInputWindow(HTextInput *input);
 
@@ -275,11 +277,13 @@ namespace heaven
 		HButton *btn_100p;
 
 		HButton *btn_info;
+		HButton *btn_link;
 
 		friend void messageBtnClick(int *param);
 		friend void p25BtnClick(int *param);
 		friend void p50BtnClick(int *param);
 		friend void p100BtnClick(int *param);
+		friend void linkIslandBtnClick(int *param);
 	public:
 		HInGameWindow(void);
 

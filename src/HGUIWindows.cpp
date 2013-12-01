@@ -213,17 +213,25 @@ namespace heaven
 		btn_info->position = vec2f(0.35f,-0.25f);
 		btn_info->getSprite().SetScale(vec3f(240.0f,240.0f,1.0f));
 
+		btn_link = new HButton;
+		btn_link->on_click = linkIslandBtnClick;
+		btn_link->getLabel().text = "Link";
+		btn_link->position = vec2f(0.4f,0.2f);
+		//btn_link->getSprite().SetScale(vec3f(64.0f,64.0f,1.0f));
+
 		controls.push_back(btn_message);
 		controls.push_back(btn_25p);
 		controls.push_back(btn_50p);
 		controls.push_back(btn_100p);
 		controls.push_back(btn_info);
+		controls.push_back(btn_link);
 
 		AddChild(btn_message);
 		AddChild(btn_25p);
 		AddChild(btn_50p);
 		AddChild(btn_100p);
 		AddChild(btn_info);
+		AddChild(btn_link);
 	}
 
 	void HInGameWindow::showMessage(std::string text)

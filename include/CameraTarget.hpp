@@ -6,10 +6,10 @@
 
 namespace heaven
 {
-	class CameraTarget: public AEObjectEmpty
+	class CameraTarget: public aengine::AEObjectEmpty
 	{
 	public:
-		CameraTarget(AEObjectCamera *camera);
+		CameraTarget(aengine::AEObjectCamera *camera);
 
 		void setDistance(float distance);
 		void relDistance(float delta);

@@ -43,6 +43,27 @@ namespace heaven
 		return {IslandProduct::NONE};
 	}
 
+	void Island::requestSupport(float power)
+	{
+		for(auto linked:linked_with_uid)
+			HeavenWorld::instance->transfer(linked,uid,power);
+	}
+
+	void Island::linkTo(uint32_t isl_uid)
+	{
+		Island *isl = HeavenWorld::instance->islands[isl_uid];
+		auto &linked_with = isl->linked_with_uid;
+
+		if(isl->side_uid != side_uid)
+			return;
+
+		//if not already linked
+		if(std::find(linked_with.begin(),linked_with.end(),uid) == linked_with.end())
+		{
+			linked_with.push_back(uid);
+		}
+	}
+
 	Island::~Island(void)
 	{
 	}
