@@ -94,10 +94,12 @@ namespace heaven
 	{
 		Vec3f direct = to.GetAbsPosition() - this->target->GetAbsPosition();
 		Vec3f r_ort;
-		if(direct.Y!=0)
-			r_ort = vec3f(1.0f,0.0f,-direct.X/direct.Z);
-		else
-			r_ort = vec3f(0.0f,0.0f,-direct.X);
+
+		r_ort = cross(direct,vec3f(0.0f,1.0f,0.0f));
+		// if(direct.Y!=0)
+		// 	r_ort = vec3f(1.0f,0.0f,-direct.X/direct.Z);
+		// else
+		// 	r_ort = vec3f(0.0f,0.0f,-direct.X);
 
 		r_ort = normalize(r_ort)*orbit_radius;
 		Vec3f v_or_h = vec3f(0.0f,orbit_height,0.0f);
@@ -139,9 +141,10 @@ namespace heaven
 		if(target)
 		{
 			Vec3f new_pos = GetAbsPosition();
-			float path_delta = 0.1f; // per second
 			if(path_position<0)
 				path_position = 0.0f;
+
+			float bcurve_length = 1.0f;
 
 			if(is_taking_off)
 			{
@@ -153,6 +156,7 @@ namespace heaven
 				}
 				else
 				{
+					bcurve_length = path_take_off.lenOfSegment(std::floor(path_position));
 					new_pos = path_take_off.getPoint(0,path_position) + target->GetAbsPosition();
 				}
 			}
@@ -164,6 +168,7 @@ namespace heaven
 					// can stay on orbit forever
 				}
 
+				bcurve_length = path_orbit.lenOfSegment(std::floor(path_position));
 				new_pos = path_orbit.getPoint(0,path_position) + target->GetAbsPosition();
 			}
 			if(is_transfering)
@@ -176,6 +181,7 @@ namespace heaven
 				}
 				else
 				{
+					bcurve_length = path_transfer.lenOfSegment(std::floor(path_position));
 					new_pos = path_transfer.getPoint(0,path_position);
 				}
 			}
@@ -184,6 +190,7 @@ namespace heaven
 				if(path_position>=path_fall_down.segLength())
 					path_position = path_fall_down.segLength();
 				new_pos = path_fall_down.getPoint(0,path_position);
+				bcurve_length = path_fall_down.lenOfSegment(std::floor(path_position));
 			}
 
 			if(health<=0&&!is_falling_down)
@@ -197,7 +204,11 @@ namespace heaven
 				constructFallDownPath();
 			}
 
-			path_position += path_delta*speed*dt_ms*0.001f;
+			float path_delta = speed/bcurve_length;
+
+			path_position += path_delta*dt_ms*0.001f;
+			if(path_position!=path_position)
+				throw "dildo";
 
 			orientAlongVector(new_pos - GetAbsPosition());
 			SetTranslate(new_pos);
