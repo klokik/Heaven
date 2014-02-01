@@ -2,7 +2,7 @@
 
 # add all content of src folder as libraries
 set(LOCAL_SOURCES "")
-set(LOCAL_LIBS "")
+set(LOCAL_LIBS "pthread")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
