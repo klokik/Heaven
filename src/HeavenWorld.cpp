@@ -120,7 +120,8 @@ namespace heaven
 			destroyWarship(warships.begin()->first);
 
 		storyboard.clear();
-		storyboard.loadFromFile(L"res/game/level0.json");
+		// storyboard.loadFromFile(L"res/game/level0.json");
+		storyboard.loadFromFile(L"res/game/test0.json");
 		Storyboard::Event event = {Storyboard::E_START,0,0};
 		storyboard.handleEvent(event);
 	}
@@ -151,7 +152,7 @@ namespace heaven
 
 	void HeavenWorld::updateGame(float dt_ms)
 	{
-		std::map<uint32_t,size_t> islands_by_side;
+		std::map<uint32_t,uint32_t> islands_by_side;
 
 		for(auto uid_island:islands)
 		{
@@ -210,7 +211,7 @@ namespace heaven
 		for(auto uid_ship:warships)
 		{
 			uid_ship.second->update(dt_ms);
-			if(uid_ship.second->allowToDispose())
+			if(uid_ship.second->canBeDisposed())
 				to_delete.push_back(uid_ship.first);
 		}
 
