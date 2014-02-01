@@ -8,17 +8,19 @@
 
 #include "AEObjectEmpty.h"
 #include "AEObjectMesh.h"
+#include "AEObjectParticleSystem.h"
 
 #include "Ownership.hpp"
 #include "StaticMeshLibrary.hpp"
 #include "BezierCurve.hpp"
+#include "Swarm.hpp"
 
 
 namespace heaven
 {
 	class Island;
 
-	class Ship: public aengine::AEObjectEmpty, public StaticMeshLibrary
+	class Ship: public aengine::AEObjectDynamicEmpty, public StaticMeshLibrary, public SwarmItem
 	{
 	protected:
 		Island *i_target;
@@ -39,7 +41,7 @@ namespace heaven
 	public:
 		uint32_t uid;
 		Island *const &target;
-		float speed;
+		// float speed;
 		float max_health;
 		float health;
 		float gun_power;
@@ -53,6 +55,9 @@ namespace heaven
 		bool is_on_orbit;
 		bool is_transfering;
 		bool is_falling_down;
+		bool is_chaseing;
+
+		aengine::AEObjectParticleSystem bullets;
 
 		std::vector<Ship*> (*getIslandShips)(uint32_t island_uid);
 
@@ -61,10 +66,11 @@ namespace heaven
 		void update(float dt_ms);
 		void move(float dt_ms);
 		void attack(void);
+		void fire(Ship *aim);
 		void damage(float power);
 
 		void goToIsland(Island *targ);
-		bool allowToDispose();
+		bool canBeDisposed();
 
 	protected:
 		float attack_dt;

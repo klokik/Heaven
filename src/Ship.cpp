@@ -39,7 +39,7 @@ namespace heaven
 		attack_time_limit = 200;
 		attack_dt = attack_time_limit;
 
-		speed = 20.0f;
+		SwarmItem::speed = 20.0f;
 		gun_power = 20.0f;
 		attack_range = 7.0f;
 
@@ -55,11 +55,38 @@ namespace heaven
 		is_on_orbit = false;
 		is_transfering = false;
 		is_falling_down = false;
+		is_chaseing = false;
 
 		path_position = 0.0f;
 
 		constructTakeOffPath();
 		constructOrbitPath();
+
+		AddChild(&bullets);
+
+		class ParticleAffectorDestroyBullets: public AEParticleAffector
+		{
+		private:
+			std::vector<AEObject*> aims;
+			Ship *owner;
+		public:
+			ParticleAffectorDestroyBullets(Ship *_owner): owner(_owner)
+			{
+			}
+
+			virtual bool Affect(AEParticle &particle,float dt_ms)
+			{
+				for(auto aim:aims)
+				{
+					if(SqrLength(aim->GetAbsPosition() - owner->GetAbsPosition()) <= 1)
+						return false;
+				}
+
+				return true;
+			}
+		};
+
+		bullets.affectors.push_back(make_shared<ParticleAffectorDestroyBullets>(this));
 	}
 
 	void Ship::update(float dt_ms)
@@ -69,6 +96,8 @@ namespace heaven
 		move(dt_ms);
 		if(target->side_uid != this->side_uid)
 			attack();
+
+		bullets.Update(dt_ms);
 	}
 
 	void Ship::constructOrbitPath(void)
@@ -138,7 +167,7 @@ namespace heaven
 
 	void Ship::move(float dt_ms)
 	{
-		if(target)
+		/*if(target)
 		{
 			Vec3f new_pos = GetAbsPosition();
 			if(path_position<0)
@@ -212,7 +241,25 @@ namespace heaven
 
 			orientAlongVector(new_pos - GetAbsPosition());
 			SetTranslate(new_pos);
+		}*/
+
+		// set direction - particle attractor
+		if(target)
+		{
+			if(is_on_orbit || is_taking_off)
+				SwarmItem::attractor = Ship::target;
+
+			if(is_falling_down)
+				SwarmItem::attractor = nullptr; // create an attractor somewhere on the ground
+
+			if(is_transfering)
+				SwarmItem::attractor = Ship::target;
 		}
+
+		//swarm intelligence
+		auto obstaces = getIslandShips(target->uid);
+		SwarmSystem<decltype(this),decltype(obstaces)>::swarm_one(this,obstaces,dt_ms);
+		orientAlongVector(SwarmItem::direction);
 	}
 
 	void Ship::attack(void)
@@ -235,7 +282,7 @@ namespace heaven
 
 			if(inRange(ship))
 			{
-				ship->damage(gun_power);
+				fire(ship);
 				only_attack_side = false;
 			}
 		}
@@ -250,6 +297,13 @@ namespace heaven
 			event = {Storyboard::E_CAPTURE_ISLAND,target->side_uid,target->uid};
 			HeavenWorld::instance->storyboard.handleEvent(event);
 		}
+	}
+
+	void Ship::fire(Ship *aim)
+	{
+		bullets.emitter.direction = aim->translate - translate;
+		bullets.EmitNum(1);
+		aim->damage(gun_power);
 	}
 
 	void Ship::damage(float power)
@@ -282,7 +336,7 @@ namespace heaven
 		return (SqrLength(ship->translate - this->translate) <= attack_range*attack_range);
 	}
 
-	bool Ship::allowToDispose()
+	bool Ship::canBeDisposed()
 	{
 		if(is_falling_down && health<=0 && path_position >= 0.5f)
 			return true;
