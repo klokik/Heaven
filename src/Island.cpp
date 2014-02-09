@@ -64,6 +64,24 @@ namespace heaven
 		}
 	}
 
+	void Island::createWaypoints(void)
+	{
+		int waypoints_num = 10;
+		std::uniform_real_distribution distribution(-2,2);
+		float radius = 5.0f;
+		float orbit_height = 5.0f,
+
+		for(int q=0;q<waypoints_num;q++)
+		{
+			auto obj = static_pointer_cast<AEObject*>(make_shared<AEEmptyObject*>());
+			AddChild(obj.get());
+
+			obj->SetTranslate(vec3f(0,0,orbit_heigth) + vec3f(
+				cos(2*3.1415926f*q/waypoints_num),
+				sin(2*3.1415926f*q/waypoints_num),0.0f)*(radius+distribution(generator)));
+		}
+	}
+
 	Island::~Island(void)
 	{
 	}

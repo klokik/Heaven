@@ -22,6 +22,8 @@ namespace heaven
 		uint32_t side_uid;
 		uint32_t linked_to_uid;
 		std::vector<uint32_t> linked_with_uid;
+		std::vector<std::shared_ptr<AEObject> > waypoints;
+		uint32_t takeoff_offset = 1;
 
 		float radius;
 
@@ -31,6 +33,8 @@ namespace heaven
 
 		void requestSupport(float power);
 		void linkTo(uint32_t isl_uid);
+
+		virtual void createWaypoints(void);
 
 		virtual ~Island() = 0;
 	};

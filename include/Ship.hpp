@@ -55,7 +55,9 @@ namespace heaven
 		bool is_on_orbit;
 		bool is_transfering;
 		bool is_falling_down;
-		bool is_chaseing;
+		bool is_chasing;
+
+		std::shared_ptr<Ship*>	chased_ship;
 
 		aengine::AEObjectParticleSystem bullets;
 

@@ -55,7 +55,7 @@ namespace heaven
 		is_on_orbit = false;
 		is_transfering = false;
 		is_falling_down = false;
-		is_chaseing = false;
+		is_chasing = false;
 
 		path_position = 0.0f;
 
@@ -94,7 +94,7 @@ namespace heaven
 		attack_dt += dt_ms;
 
 		move(dt_ms);
-		if(target->side_uid != this->side_uid)
+		if(is_chasing)
 			attack();
 
 		bullets.Update(dt_ms);
@@ -167,97 +167,61 @@ namespace heaven
 
 	void Ship::move(float dt_ms)
 	{
-		/*if(target)
-		{
-			Vec3f new_pos = GetAbsPosition();
-			if(path_position<0)
-				path_position = 0.0f;
-
-			float bcurve_length = 1.0f;
-
-			if(is_taking_off)
-			{
-				if(path_position>=path_take_off.segLength())
-				{
-					path_position = 0.0f;
-					is_taking_off = false;
-					is_on_orbit = true;
-				}
-				else
-				{
-					bcurve_length = path_take_off.lenOfSegment(std::floor(path_position));
-					new_pos = path_take_off.getPoint(0,path_position) + target->GetAbsPosition();
-				}
-			}
-			if(is_on_orbit)
-			{
-				if(path_position>path_orbit.segLength())
-				{
-					path_position = 0.0f;
-					// can stay on orbit forever
-				}
-
-				bcurve_length = path_orbit.lenOfSegment(std::floor(path_position));
-				new_pos = path_orbit.getPoint(0,path_position) + target->GetAbsPosition();
-			}
-			if(is_transfering)
-			{
-				if(path_position>=path_transfer.segLength())
-				{
-					path_position = 0.0f;
-					is_transfering = false;
-					is_on_orbit = true;
-				}
-				else
-				{
-					bcurve_length = path_transfer.lenOfSegment(std::floor(path_position));
-					new_pos = path_transfer.getPoint(0,path_position);
-				}
-			}
-			if(is_falling_down)
-			{
-				if(path_position>=path_fall_down.segLength())
-					path_position = path_fall_down.segLength();
-				new_pos = path_fall_down.getPoint(0,path_position);
-				bcurve_length = path_fall_down.lenOfSegment(std::floor(path_position));
-			}
-
-			if(health<=0&&!is_falling_down)
-			{
-				is_transfering = false;
-				is_on_orbit = false;
-				is_taking_off = false;
-				is_falling_down = true;
-				path_position = 0.0f;
-
-				constructFallDownPath();
-			}
-
-			float path_delta = speed/bcurve_length;
-
-			path_position += path_delta*dt_ms*0.001f;
-			if(path_position!=path_position)
-				throw "dildo";
-
-			orientAlongVector(new_pos - GetAbsPosition());
-			SetTranslate(new_pos);
-		}*/
-
 		// set direction - particle attractor
 		if(target)
 		{
 			if(is_on_orbit || is_taking_off)
-				SwarmItem::attractor = Ship::target;
+			{
+				// choose next attractor in range of FOV
+
+				if(!SwarmItem::attractor ||
+					Length(SwarmItem::attractor->GetAbsPosition()-Ship::GetAbsPosition() < SwarmItem::radius_gain)
+				{
+					//TODO: use FOV
+					std::dafault_random_generator generator;
+					std::uniform_int_distribution distribution(0,Ship::target->waypoints.size()-1);
+
+					SwarmItem::attractor = Ship::target->waypoints[distribution(generator)];
+				}
+			}
 
 			if(is_falling_down)
 				SwarmItem::attractor = nullptr; // create an attractor somewhere on the ground
 
 			if(is_transfering)
+			{
 				SwarmItem::attractor = Ship::target;
+
+				if(Length(SwarmItem::attractor->GetAbsPosition()-Ship::GetAbsPosition() < SwarmItem::radius_gain))
+				{
+					is_transfering = false;
+					is_on_orbit = true;
+
+					// chase ship to chase if thre is one
+					std::vector<Ship*> evil_ships = getIslandShips(target->uid);
+					for(auto ship:evil_ships)
+						if(ship->side != this->side)
+						{
+							chased_ship = ship;
+							break;
+						}
+				}
+			}
+
+			if(is_chasing)
+			{
+				SwarmItem::attractor = chased_ship.get();
+
+				if(target->side_uid == this->side_uid)
+				{
+					is_chasing = false;
+					is_on_orbit = true;
+				}
+			}
 		}
 
 		//swarm intelligence
-		auto obstaces = getIslandShips(target->uid);
+		auto obstacles = getIslandShips(target->uid);
 		SwarmSystem<decltype(this),decltype(obstaces)>::swarm_one(this,obstaces,dt_ms);
 		orientAlongVector(SwarmItem::direction);
 	}
@@ -272,31 +236,34 @@ namespace heaven
 		else
 			return;
 
-		bool only_attack_side = true;
+		if(inRange(chased_ship))
+			fire(chased_ship);
+		// bool only_attack_side = true;
 
-		std::vector<Ship*> evil_ships = getIslandShips(target->uid);
-		for(auto ship:evil_ships)
-		{
-			if(ship->side_uid == this->side_uid)
-				continue;
+		// std::vector<Ship*> evil_ships = getIslandShips(target->uid);
+		// for(auto ship:evil_ships)
+		// {
+		// 	if(ship->side_uid == this->side_uid)
+		// 		continue;
 
-			if(inRange(ship))
-			{
-				fire(ship);
-				only_attack_side = false;
-			}
-		}
+		// 	only_attack_side = false;
 
-		if(only_attack_side&&Length(target->GetAbsPosition() - GetAbsPosition())<5.0f)
-		{
-			Storyboard::Event event = {Storyboard::E_LOSE_ISLAND,target->side_uid,target->uid};
-			HeavenWorld::instance->storyboard.handleEvent(event);
+		// 	if(inRange(ship))
+		// 	{
+		// 		fire(ship);
+		// 	}
+		// }
 
-			i_target->side_uid = this->side_uid;
+		// if(only_attack_side&&Length(target->GetAbsPosition() - GetAbsPosition())<SwarmItem::radius_gain)
+		// {
+		// 	Storyboard::Event event = {Storyboard::E_LOSE_ISLAND,target->side_uid,target->uid};
+		// 	HeavenWorld::instance->storyboard.handleEvent(event);
 
-			event = {Storyboard::E_CAPTURE_ISLAND,target->side_uid,target->uid};
-			HeavenWorld::instance->storyboard.handleEvent(event);
-		}
+		// 	i_target->side_uid = this->side_uid;
+
+		// 	event = {Storyboard::E_CAPTURE_ISLAND,target->side_uid,target->uid};
+		// 	HeavenWorld::instance->storyboard.handleEvent(event);
+		// }
 	}
 
 	void Ship::fire(Ship *aim)
