@@ -9,10 +9,12 @@
 			"call": "on_start",
 			"actions":
 			[
-				{ "action_type": "add_side", "side_uid": 1, "side_color": "0.0 0.5 0.0", "side_name": "Humans",  "iron": 100, "ai": 0 },
-				{ "action_type": "add_island", "island_uid": 1, "side_uid": 1, "radius": 1, "island_type": "town"   ,							   "translate": "-5.0 0.0 0.0" },
-				{ "action_type": "add_island", "island_uid": 2, "side_uid": 1, "radius": 1, "island_type": "factory", "factory_product": "glider", "translate": " 5.0 0.0 0.0" },
-				{ "action_type": "goto_island","island_uid": 1 }
+				{ "action_type": "add_side", "side_uid": 1, "side_color": "0.0 0.5 0.0", "side_name": "Humans",  "iron": 1000, "ai": 0 },
+				{ "action_type": "add_island", "island_uid": 1, "side_uid": 1, "radius": 1, "island_type": "town"   ,							   "translate": "-15.0 0.0 0.0" },
+				{ "action_type": "add_island", "island_uid": 2, "side_uid": 1, "radius": 1, "island_type": "factory", "factory_product": "glider", "translate": " 15.0 0.0 0.0" },
+
+				{ "action_type": "add_side", "side_uid": 2, "side_color": "0.0 0.0 0.5", "side_name": "Aliens",  "iron": 1000, "ai": 0 },
+				{ "action_type": "add_island", "island_uid": 3, "side_uid": 2, "radius": 1, "island_type": "factory", "factory_product": "glider", "translate": "  0.0 0.0 -10.0" }
 			]
 		}
 	]
