@@ -1,3 +1,5 @@
+#include <random>
+
 #include "AEVectorMath.h"
 
 #include "Ship.hpp"
@@ -9,6 +11,7 @@ namespace heaven
 	using namespace std;
 	using namespace aengine;
 	
+	extern std::default_random_engine generator;
 
 	Ship::Ship(string type,uint32_t _side_uid):
 		target(i_target)
@@ -16,6 +19,7 @@ namespace heaven
 		i_target = nullptr;
 		getIslandShips = nullptr;
 		manufacturer = nullptr;
+		chased_ship_uid = 0;
 
 		loadMesh("glider","res/models/glider.obj");
 		loadMesh("plane","res/models/plane.obj");
@@ -39,7 +43,7 @@ namespace heaven
 		attack_time_limit = 200;
 		attack_dt = attack_time_limit;
 
-		SwarmItem::speed = 20.0f;
+		SwarmItem::speed = 10.0f;
 		gun_power = 20.0f;
 		attack_range = 7.0f;
 
@@ -74,7 +78,7 @@ namespace heaven
 			{
 			}
 
-			virtual bool Affect(AEParticle &particle,float dt_ms)
+			virtual bool Affect(AEParticle &particle,size_t pt_id,float dt_ms)
 			{
 				for(auto aim:aims)
 				{
@@ -87,6 +91,10 @@ namespace heaven
 		};
 
 		bullets.affectors.push_back(make_shared<ParticleAffectorDestroyBullets>(this));
+		bullets.affectors.push_back(make_shared<AEParticleAffectorLifetime>(1.f,.2f));
+
+		bullets.emitter.grouping = vec3f(0,0,0);
+		bullets.emitter.initial_velocity = 10.0f;
 	}
 
 	void Ship::update(float dt_ms)
@@ -94,8 +102,6 @@ namespace heaven
 		attack_dt += dt_ms;
 
 		move(dt_ms);
-		if(is_chasing)
-			attack();
 
 		bullets.Update(dt_ms);
 	}
@@ -170,18 +176,59 @@ namespace heaven
 		// set direction - particle attractor
 		if(target)
 		{
+			auto newChaseOrCapture = [this]
+			{
+				std::vector<Ship*> evil_ships = getIslandShips(target->uid);
+				for(auto ship:evil_ships)
+					if(ship->side_uid != this->side_uid)
+					{
+						chased_ship_uid = ship->uid;
+						SwarmItem::attractor = ship;
+						is_chasing = true;
+						is_transfering = false;
+						is_on_orbit = false;
+						is_taking_off = false;
+						break;
+					}
+					else
+						if(ship == *evil_ships.rbegin())
+						{
+							//capture this island
+							is_on_orbit = true;
+							is_transfering = false;
+							is_chasing = false;
+							is_taking_off = false;
+							target->side_uid = side_uid;
+							SwarmItem::attractor = nullptr;
+						}
+			};
+
 			if(is_on_orbit || is_taking_off)
 			{
 				// choose next attractor in range of FOV
 
 				if(!SwarmItem::attractor ||
-					Length(SwarmItem::attractor->GetAbsPosition()-Ship::GetAbsPosition() < SwarmItem::radius_gain)
+					Length(SwarmItem::attractor->GetAbsPosition()-Ship::GetAbsPosition()) < SwarmItem::radius_gain)
 				{
 					//TODO: use FOV
-					std::dafault_random_generator generator;
-					std::uniform_int_distribution distribution(0,Ship::target->waypoints.size()-1);
+					if(Ship::target->waypoints.empty())
+						throw 0;
 
-					SwarmItem::attractor = Ship::target->waypoints[distribution(generator)];
+					std::uniform_int_distribution<int> distribution(0,Ship::target->waypoints.size()-1);
+					for(size_t i=0;i<Ship::target->waypoints.size();i++)
+					{
+						auto waypoint = Ship::target->waypoints[distribution(generator)];
+						if(SwarmItem::attractor == waypoint.get())
+							continue;
+
+						SwarmItem::attractor = waypoint.get();
+
+						if(dot(
+						normalize(SwarmItem::direction),
+						normalize(SwarmItem::attractor->GetAbsPosition()-GetAbsPosition()))
+							>cos(3.1415926f*SwarmItem::fov/180))
+							break;
+					}
 				}
 			}
 
@@ -192,41 +239,56 @@ namespace heaven
 			{
 				SwarmItem::attractor = Ship::target;
 
-				if(Length(SwarmItem::attractor->GetAbsPosition()-Ship::GetAbsPosition() < SwarmItem::radius_gain))
+				if(Length(SwarmItem::attractor->GetAbsPosition()-Ship::GetAbsPosition()) < SwarmItem::radius_gain)
 				{
 					is_transfering = false;
-					is_on_orbit = true;
 
-					// chase ship to chase if thre is one
-					std::vector<Ship*> evil_ships = getIslandShips(target->uid);
-					for(auto ship:evil_ships)
-						if(ship->side != this->side)
-						{
-							chased_ship = ship;
-							break;
-						}
+					// choose ship to chase if there is one
+					newChaseOrCapture();
 				}
 			}
 
 			if(is_chasing)
 			{
-				SwarmItem::attractor = chased_ship.get();
-
-				if(target->side_uid == this->side_uid)
+				try
 				{
-					is_chasing = false;
-					is_on_orbit = true;
+					auto ship = HeavenWorld::instance->warships.at(chased_ship_uid);
+					SwarmItem::attractor = ship;
+
+					if(target->side_uid == this->side_uid)
+					{
+						is_chasing = false;
+						is_on_orbit = true;
+						SwarmItem::attractor = nullptr;
+					}
+
+					attack(ship);
+				}
+				catch(const std::out_of_range &ex)
+				{
+					//TODO choose new object to chase
+
+					if(target->side_uid==side_uid)
+					{
+						is_chasing = false;
+						is_on_orbit = true;
+						SwarmItem::attractor = nullptr;
+					}
+					else
+					{
+						newChaseOrCapture();
+					}
 				}
 			}
 		}
 
 		//swarm intelligence
 		auto obstacles = getIslandShips(target->uid);
-		SwarmSystem<decltype(this),decltype(obstaces)>::swarm_one(this,obstaces,dt_ms);
+		SwarmSystem<decltype(this),decltype(obstacles)>::swarm_one(this,obstacles,dt_ms);
 		orientAlongVector(SwarmItem::direction);
 	}
 
-	void Ship::attack(void)
+	void Ship::attack(Ship *aim)
 	{
 		if(!getIslandShips)
 			throw 0; // island is nowhere?
@@ -236,8 +298,8 @@ namespace heaven
 		else
 			return;
 
-		if(inRange(chased_ship))
-			fire(chased_ship);
+		if(inRange(aim))
+			fire(aim);
 		// bool only_attack_side = true;
 
 		// std::vector<Ship*> evil_ships = getIslandShips(target->uid);
@@ -271,6 +333,10 @@ namespace heaven
 		bullets.emitter.direction = aim->translate - translate;
 		bullets.EmitNum(1);
 		aim->damage(gun_power);
+		if(aim->health<=0)
+		{
+			SwarmItem::attractor = nullptr;
+		}
 	}
 
 	void Ship::damage(float power)
@@ -305,6 +371,8 @@ namespace heaven
 
 	bool Ship::canBeDisposed()
 	{
+		return (health<=0);
+
 		if(is_falling_down && health<=0 && path_position >= 0.5f)
 			return true;
 		

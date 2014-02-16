@@ -57,7 +57,7 @@ namespace heaven
 		bool is_falling_down;
 		bool is_chasing;
 
-		std::shared_ptr<Ship*>	chased_ship;
+		uint32_t chased_ship_uid;
 
 		aengine::AEObjectParticleSystem bullets;
 
@@ -67,7 +67,7 @@ namespace heaven
 
 		void update(float dt_ms);
 		void move(float dt_ms);
-		void attack(void);
+		void attack(Ship *aim);
 		void fire(Ship *aim);
 		void damage(float power);
 

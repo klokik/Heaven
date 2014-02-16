@@ -1,6 +1,8 @@
 #ifndef ISLAND_H_
 #define ISLAND_H_
 
+#include <memory>
+
 #include "AEObjectEmpty.h"
 
 #include "Ownership.hpp"

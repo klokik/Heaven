@@ -120,8 +120,8 @@ namespace heaven
 			destroyWarship(warships.begin()->first);
 
 		storyboard.clear();
-		// storyboard.loadFromFile(L"res/game/level0.json");
-		storyboard.loadFromFile(L"res/game/test0.json");
+		storyboard.loadFromFile(L"res/game/level0.json");
+		// storyboard.loadFromFile(L"res/game/test0.json");
 		Storyboard::Event event = {Storyboard::E_START,0,0};
 		storyboard.handleEvent(event);
 	}
@@ -217,6 +217,7 @@ namespace heaven
 
 		for(uint32_t item:to_delete)
 		{
+			dbgout()<<"die";
 			destroyWarship(item);
 		}
 		to_delete.clear();
@@ -241,14 +242,16 @@ namespace heaven
 		this->gui = new HGUI(this,0);
 		engine.scene->AddObject(gui);
 
+		static_cast<HGUI*>(gui)->showWindow("in_game");
+
 		engine.scene->fonts.LoadFont("res/fonts/font_3.png","boundary",16,16);
 		aengine::AEPrintLog("Engine started");
 		engine.render->CacheScene(engine.scene);
 
 		aengine::AEPrintLog("Work dir: "+aengine::AEResourceManager::GetWorkDirectory());
 
-		resume();
 		reset();
+		resume();
 	}
 
 	void HeavenWorld::iOnKeyDown(int *param)
@@ -343,6 +346,8 @@ namespace heaven
 
 	void HeavenWorld::addWarship(Ship *ship)
 	{
+		dbgout()<<"Add warship "<<ship->name<<" "<<ship->uid;
+
 		ship->getIslandShips = iGetIslandShips;
 		warships[ship->uid] = ship;
 		engine.scene->AddObject(ship);
@@ -350,6 +355,7 @@ namespace heaven
 
 	void HeavenWorld::destroyWarship(uint32_t ship_uid)
 	{
+		dbgout()<<"Destroy warship "<<warships[ship_uid]->name<<" "<<ship_uid;
 		// we need some animation for destroy process
 		Ship *ship = warships[ship_uid];
 		warships.erase(ship_uid);

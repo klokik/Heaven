@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <random>
+#include <functional>
 
 #include "AEObjectMesh.h"
 #include "AEVectorMath.h"
@@ -31,6 +32,8 @@ namespace heaven
 		uid = seed_uid++;
 
 		radius = 1.0f;
+
+		createWaypoints();
 	}
 
 	IslandProduct Island::update(float dt_ms)
@@ -67,18 +70,19 @@ namespace heaven
 	void Island::createWaypoints(void)
 	{
 		int waypoints_num = 10;
-		std::uniform_real_distribution distribution(-2,2);
+		std::uniform_real_distribution<float> distribution(-2,2);
 		float radius = 5.0f;
-		float orbit_height = 5.0f,
+		float orbit_height = 5.0f;
 
 		for(int q=0;q<waypoints_num;q++)
 		{
-			auto obj = static_pointer_cast<AEObject*>(make_shared<AEEmptyObject*>());
+			auto obj = std::static_pointer_cast<AEObject>(std::make_shared<AEObjectEmpty>());
+			waypoints.push_back(obj);
 			AddChild(obj.get());
 
-			obj->SetTranslate(vec3f(0,0,orbit_heigth) + vec3f(
-				cos(2*3.1415926f*q/waypoints_num),
-				sin(2*3.1415926f*q/waypoints_num),0.0f)*(radius+distribution(generator)));
+			obj->SetTranslate(vec3f(0,orbit_height,0) + vec3f(
+				cos(2*3.1415926f*q/waypoints_num), 0.0f,
+				sin(2*3.1415926f*q/waypoints_num))*(radius/*+distribution(generator)*/));
 		}
 	}
 
@@ -107,7 +111,7 @@ namespace heaven
 		AddChild(island_mesh_obj);
 
 		time_per_item = 2000.0f;
-		max_alive = 5;
+		max_alive = 4;
 	}
 
 	IslandProduct FactoryIsland::produce(void)
@@ -116,6 +120,15 @@ namespace heaven
 
 		if(time_elapsed >= time_per_item)
 		{
+			auto countAliveShips = std::bind(
+					static_cast<decltype(HeavenWorld::instance->warships)::const_iterator::difference_type(&)(
+						decltype(HeavenWorld::instance->warships)::const_iterator,
+						decltype(HeavenWorld::instance->warships)::const_iterator,
+						std::function<bool(std::pair<uint32_t,Ship*>)>)>(std::count_if),
+					HeavenWorld::instance->warships.begin(),
+					HeavenWorld::instance->warships.end(),
+					[this](std::pair<uint32_t,Ship*> uid_ship) { return uid_ship.second->manufacturer==this && uid_ship.second->side_uid==side_uid; });
+
 			switch(product_type)
 			{
 			case FOOD:
@@ -127,29 +140,33 @@ namespace heaven
 				product.amount = 7.25f*time_elapsed/time_per_item;
 				break;
 			case GLIDER:
-				product.ship = new Ship("glider",side_uid);
+				if(countAliveShips()<max_alive)
+					product.ship = new Ship("glider",side_uid);
 				break;
 			case PLANE:
-				product.ship = new Ship("plane",side_uid);
+				if(countAliveShips()<max_alive)
+					product.ship = new Ship("plane",side_uid);
 				break;
 			case ZEPPELIN:
-				product.ship = new Ship("zeppelin",side_uid);
+				if(countAliveShips()<max_alive)
+					product.ship = new Ship("zeppelin",side_uid);
 				break;
 			}
 
 			if(product.ship)
 			{
-				// count alive ships
-				size_t alive = std::count_if(
-					HeavenWorld::instance->warships.begin(),
-					HeavenWorld::instance->warships.end(),
-					[this](std::pair<uint32_t,Ship*> uid_ship) { return uid_ship.second->manufacturer==this && uid_ship.second->side_uid==side_uid; });
-				if(alive>=max_alive)
-				{
-					delete product.ship;
-					product.ship = nullptr;
-					return product;
-				}
+				// // count alive ships
+				// size_t alive = std::count_if(
+				// 	HeavenWorld::instance->warships.begin(),
+				// 	HeavenWorld::instance->warships.end(),
+				// 	[this](std::pair<uint32_t,Ship*> uid_ship) { return uid_ship.second->manufacturer==this && uid_ship.second->side_uid==side_uid; });
+				// if(alive>=max_alive)
+				// {
+				// 	delete product.ship;
+				// 	product.ship = nullptr;
+				// 	return product;
+				// }
+
 				// ship construction cost
 				product.prod_type = IslandProduct::IRON;
 				product.amount = -10.0f;
@@ -161,7 +178,11 @@ namespace heaven
 				// randomize ship speed a bit
 				std::uniform_real_distribution<float> distribution(-2.0f,2.0f);
 				product.ship->speed += distribution(generator);
+
+				product.ship->SetTranslate(this->GetAbsPosition());
 			}
+			else
+				return product;
 
 			time_elapsed -= time_per_item;
 		}
