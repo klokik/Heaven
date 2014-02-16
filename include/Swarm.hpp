@@ -17,7 +17,7 @@ namespace heaven
 	//	float radius_repulsion;
 		float radius_alingment = 3.0f;
 	//	float radius_attraction;
-		float radius_gain = 5.0f;
+		float radius_gain = 1.0f;
 		float fov = 90.0f;
 
 		AEObject *attractor = nullptr;
@@ -41,6 +41,9 @@ namespace heaven
 	public:
 		static void swarm_one(T const &item_ptr,Container &items_ptr,float dt_ms)
 		{
+			if(item_ptr->attractor)
+				item_ptr->direction = item_ptr->attractor->GetAbsPosition() - item_ptr->GetAbsPosition();
+
 			for(auto it_ptr:items_ptr)
 			{
 				auto chase_dir = it_ptr->GetAbsPosition()-item_ptr->GetAbsPosition();
@@ -50,7 +53,7 @@ namespace heaven
 				}
 			}
 
-			item_ptr->SetTranslate(item_ptr->translate + normalize(item_ptr->direction)*item_ptr->speed);
+			item_ptr->SetTranslate(item_ptr->translate + normalize(item_ptr->direction)*item_ptr->speed*(dt_ms/1000));
 		}
 
 		static void swarm(Container &items_ptr,float dt_ms)
