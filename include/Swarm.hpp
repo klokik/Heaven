@@ -31,7 +31,7 @@ namespace heaven
 
 			auto chase_dir = attractor->GetAbsPosition() - this->GetAbsPosition();
 
-			return (SqrLength(chase_dir) > radius_gain*radius_gain);
+			return (SqrLength(chase_dir) < radius_gain*radius_gain);
 		}
 	};
 
@@ -43,17 +43,20 @@ namespace heaven
 		{
 			if(item_ptr->attractor)
 				item_ptr->direction = item_ptr->attractor->GetAbsPosition() - item_ptr->GetAbsPosition();
+			else
+				return; // FIXME: generally we need to continue move in the specific direction, just debugging...
 
-			for(auto it_ptr:items_ptr)
-			{
-				auto chase_dir = it_ptr->GetAbsPosition()-item_ptr->GetAbsPosition();
-				if(it_ptr != item_ptr && SqrLength(chase_dir) < item_ptr->radius_alingment*item_ptr->radius_alingment)
-				{
-					item_ptr->direction = (item_ptr->direction + flip(chase_dir,item_ptr->direction))*0.5f;
-				}
-			}
+			// for(auto it_ptr:items_ptr)
+			// {
+			// 	auto chase_dir = it_ptr->GetAbsPosition()-item_ptr->GetAbsPosition();
+			// 	if(it_ptr != item_ptr && SqrLength(chase_dir) < item_ptr->radius_alingment*item_ptr->radius_alingment)
+			// 	{
+			// 		item_ptr->direction = (item_ptr->direction + flip(chase_dir,item_ptr->direction))*0.5f;
+			// 	}
+			// }
 
-			item_ptr->SetTranslate(item_ptr->translate + normalize(item_ptr->direction)*item_ptr->speed*(dt_ms/1000));
+			if(SqrLength(item_ptr->direction)!=0)
+				item_ptr->SetTranslate(item_ptr->translate + normalize(item_ptr->direction)*item_ptr->speed*(dt_ms/1000));
 		}
 
 		static void swarm(Container &items_ptr,float dt_ms)

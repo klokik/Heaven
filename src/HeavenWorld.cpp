@@ -120,8 +120,8 @@ namespace heaven
 			destroyWarship(warships.begin()->first);
 
 		storyboard.clear();
-		storyboard.loadFromFile(L"res/game/level0.json");
-		// storyboard.loadFromFile(L"res/game/test0.json");
+		// storyboard.loadFromFile(L"res/game/level0.json");
+		storyboard.loadFromFile(L"res/game/test0.json");
 		Storyboard::Event event = {Storyboard::E_START,0,0};
 		storyboard.handleEvent(event);
 	}

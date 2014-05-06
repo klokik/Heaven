@@ -56,6 +56,7 @@ namespace heaven
 		bool is_transfering;
 		bool is_falling_down;
 		bool is_chasing;
+		bool exploded;
 
 		uint32_t chased_ship_uid;
 

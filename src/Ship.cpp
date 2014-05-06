@@ -60,6 +60,7 @@ namespace heaven
 		is_transfering = false;
 		is_falling_down = false;
 		is_chasing = false;
+		exploded = false;
 
 		path_position = 0.0f;
 
@@ -176,75 +177,79 @@ namespace heaven
 		// set direction - particle attractor
 		if(target)
 		{
-			auto newChaseOrCapture = [this]
+			auto getEnemyShip = [this]()->Ship*
 			{
 				std::vector<Ship*> evil_ships = getIslandShips(target->uid);
 				for(auto ship:evil_ships)
-					if(ship->side_uid != this->side_uid)
-					{
-						chased_ship_uid = ship->uid;
-						SwarmItem::attractor = ship;
-						is_chasing = true;
-						is_transfering = false;
-						is_on_orbit = false;
-						is_taking_off = false;
-						break;
-					}
-					else
-						if(ship == *evil_ships.rbegin())
-						{
-							//capture this island
-							is_on_orbit = true;
-							is_transfering = false;
-							is_chasing = false;
-							is_taking_off = false;
-							target->side_uid = side_uid;
-							SwarmItem::attractor = nullptr;
-						}
+					if(ship->side_uid != this->side_uid && !ship->is_falling_down)
+						return ship;
+				return nullptr;
 			};
 
 			if(is_on_orbit || is_taking_off)
 			{
-				// choose next attractor in range of FOV
-
-				if(!SwarmItem::attractor ||
-					Length(SwarmItem::attractor->GetAbsPosition()-Ship::GetAbsPosition()) < SwarmItem::radius_gain)
+				// check if there are any enemies
+				auto enemy = getEnemyShip();
+				if(enemy)
 				{
-					//TODO: use FOV
-					if(Ship::target->waypoints.empty())
-						throw 0;
-
-					std::uniform_int_distribution<int> distribution(0,Ship::target->waypoints.size()-1);
-					for(size_t i=0;i<Ship::target->waypoints.size();i++)
+					SwarmItem::attractor = enemy;
+					Ship::chased_ship_uid = enemy->uid;
+					is_on_orbit = false;
+					is_taking_off = false;
+					is_chasing = true;
+				}
+				else
+				{
+					// choose next waypoint in range of FOV
+					if(!SwarmItem::attractor || SwarmItem::gain())
 					{
-						auto waypoint = Ship::target->waypoints[distribution(generator)];
-						if(SwarmItem::attractor == waypoint.get())
-							continue;
 
-						SwarmItem::attractor = waypoint.get();
+						//TODO: don't use FOV, use limited rotation instead
+						if(Ship::target->waypoints.empty())
+							throw 0;
 
-						if(dot(
-						normalize(SwarmItem::direction),
-						normalize(SwarmItem::attractor->GetAbsPosition()-GetAbsPosition()))
-							>cos(3.1415926f*SwarmItem::fov/180))
-							break;
+						std::uniform_int_distribution<int> distribution(0,Ship::target->waypoints.size()-1);
+						for(size_t i=0;i<Ship::target->waypoints.size();i++)
+						{
+							auto waypoint = Ship::target->waypoints[distribution(generator)];
+							if(SwarmItem::attractor == waypoint.get())
+								continue;
+
+							SwarmItem::attractor = waypoint.get();
+
+							if(dot(
+							normalize(SwarmItem::direction),
+							normalize(SwarmItem::attractor->GetAbsPosition()-GetAbsPosition()))
+								>cos(3.1415926f*SwarmItem::fov/180))
+								break;	// target is in FOV
+						}
 					}
 				}
 			}
 
 			if(is_falling_down)
-				SwarmItem::attractor = nullptr; // create an attractor somewhere on the ground
+			{
+				static AEObjectEmpty dead_attractor;  // create an attractor somewhere on the ground
+				dead_attractor.SetTranslate(vec3f(0.0f,-10.0f,0.0f));
+				SwarmItem::attractor = &dead_attractor;
+
+				if(path_position >= 2.0f)
+				{
+					//explode
+					exploded = true;
+				}
+
+				path_position += dt_ms/1000;
+			}
 
 			if(is_transfering)
 			{
 				SwarmItem::attractor = Ship::target;
-
-				if(Length(SwarmItem::attractor->GetAbsPosition()-Ship::GetAbsPosition()) < SwarmItem::radius_gain)
+				if(Length(Ship::target->GetAbsPosition()-Ship::GetAbsPosition()) < 5)
 				{
 					is_transfering = false;
-
-					// choose ship to chase if there is one
-					newChaseOrCapture();
+					is_on_orbit = true;
+					SwarmItem::attractor = nullptr;
 				}
 			}
 
@@ -253,34 +258,43 @@ namespace heaven
 				try
 				{
 					auto ship = HeavenWorld::instance->warships.at(chased_ship_uid);
-					SwarmItem::attractor = ship;
-
-					if(target->side_uid == this->side_uid)
+					if(!ship->is_falling_down)
 					{
-						is_chasing = false;
-						is_on_orbit = true;
-						SwarmItem::attractor = nullptr;
-					}
-
-					attack(ship);
-				}
-				catch(const std::out_of_range &ex)
-				{
-					//TODO choose new object to chase
-
-					if(target->side_uid==side_uid)
-					{
-						is_chasing = false;
-						is_on_orbit = true;
-						SwarmItem::attractor = nullptr;
+						SwarmItem::attractor = ship;
+						attack(ship);
 					}
 					else
 					{
-						newChaseOrCapture();
+						is_chasing = false;
+						is_on_orbit = true;
+						SwarmItem::attractor = nullptr;
 					}
+				}
+				catch(const std::out_of_range &ex)
+				{
+					dbgout()<<chased_ship_uid<<" dead";
+					// back to orbit
+					is_chasing = false;
+					is_on_orbit = true;
+					SwarmItem::attractor = nullptr;
 				}
 			}
 		}
+		else
+			throw std::runtime_error("no target for island "+name);
+
+		std::string state;
+		if(is_on_orbit)
+			state += "orbit";
+		if(is_chasing)
+			state += "chase";
+		if(is_transfering)
+			state += "trans";
+		if(is_falling_down)
+			state += "fall";
+		if(is_taking_off)
+			state += "take-off";
+		dbgout()<<uid<<": "+state<<" ("<<translate.X<<","<<translate.Z<<")";
 
 		//swarm intelligence
 		auto obstacles = getIslandShips(target->uid);
@@ -343,6 +357,17 @@ namespace heaven
 	{
 		this->health-=power;
 
+		if(this->health <= 0)
+		{
+			is_falling_down = true;
+			is_chasing = false;
+			is_transfering = false;
+			is_on_orbit = false;
+			is_taking_off = false;
+
+			path_position = 0.0f;
+		}
+
 		// in some case
 		//FIXME: specify condition
 		if(i_target->side_uid == this->side_uid)
@@ -356,6 +381,7 @@ namespace heaven
 		if(this->target && targ!=this->target)
 		{
 			is_on_orbit = false;
+			is_taking_off = false;
 			is_transfering = true;
 			path_position = 0.0f;
 			constructTransferPath(*targ);
@@ -371,11 +397,6 @@ namespace heaven
 
 	bool Ship::canBeDisposed()
 	{
-		return (health<=0);
-
-		if(is_falling_down && health<=0 && path_position >= 0.5f)
-			return true;
-		
-		return false;
+		return exploded;
 	}
 }
