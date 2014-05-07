@@ -200,6 +200,11 @@ namespace heaven
 				}
 				else
 				{
+					if(Ship::side_uid != Ship::target->side_uid)
+					{
+						// TODO: Send event
+						Ship::target->i_side_uid = Ship::side_uid;
+					}
 					// choose next waypoint in range of FOV
 					if(!SwarmItem::attractor || SwarmItem::gain())
 					{
