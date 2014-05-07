@@ -283,19 +283,6 @@ namespace heaven
 		else
 			throw std::runtime_error("no target for island "+name);
 
-		std::string state;
-		if(is_on_orbit)
-			state += "orbit";
-		if(is_chasing)
-			state += "chase";
-		if(is_transfering)
-			state += "trans";
-		if(is_falling_down)
-			state += "fall";
-		if(is_taking_off)
-			state += "take-off";
-		dbgout()<<uid<<": "+state<<" ("<<translate.X<<","<<translate.Z<<")";
-
 		//swarm intelligence
 		auto obstacles = getIslandShips(target->uid);
 		SwarmSystem<decltype(this),decltype(obstacles)>::swarm_one(this,obstacles,dt_ms);

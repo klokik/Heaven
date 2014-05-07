@@ -41,19 +41,24 @@ namespace heaven
 	public:
 		static void swarm_one(T const &item_ptr,Container &items_ptr,float dt_ms)
 		{
+			Vec3f prev_dir = item_ptr->direction;
+			Vec3f desired_dir = vec3f(0,0,0);
+
 			if(item_ptr->attractor)
-				item_ptr->direction = item_ptr->attractor->GetAbsPosition() - item_ptr->GetAbsPosition();
+				desired_dir = item_ptr->attractor->GetAbsPosition() - item_ptr->GetAbsPosition();
 			else
 				return; // FIXME: generally we need to continue move in the specific direction, just debugging...
 
-			// for(auto it_ptr:items_ptr)
-			// {
-			// 	auto chase_dir = it_ptr->GetAbsPosition()-item_ptr->GetAbsPosition();
-			// 	if(it_ptr != item_ptr && SqrLength(chase_dir) < item_ptr->radius_alingment*item_ptr->radius_alingment)
-			// 	{
-			// 		item_ptr->direction = (item_ptr->direction + flip(chase_dir,item_ptr->direction))*0.5f;
-			// 	}
-			// }
+			item_ptr->direction = normalize(prev_dir*0.9f+normalize(desired_dir)*0.1f);
+
+			for(auto it_ptr:items_ptr)
+			{
+				auto chase_dir = it_ptr->GetAbsPosition()-item_ptr->GetAbsPosition();
+				if(it_ptr != item_ptr && SqrLength(chase_dir) < item_ptr->radius_alingment*item_ptr->radius_alingment)
+				{
+					item_ptr->direction = (item_ptr->direction + flip(chase_dir,item_ptr->direction))*0.5f;
+				}
+			}
 
 			if(SqrLength(item_ptr->direction)!=0)
 				item_ptr->SetTranslate(item_ptr->translate + normalize(item_ptr->direction)*item_ptr->speed*(dt_ms/1000));
