@@ -69,30 +69,44 @@ namespace heaven
 
 		AddChild(&bullets);
 
-		class ParticleAffectorDestroyBullets: public AEParticleAffector
+		class ParticleAffectorBullet: public AEParticleAffector
 		{
 		private:
-			std::vector<AEObject*> aims;
+			// std::vector<AEObject*> aims;
+			std::map<size_t,weak_ptr<Ship> > aims;
 			Ship *owner;
 		public:
-			ParticleAffectorDestroyBullets(Ship *_owner): owner(_owner)
+			ParticleAffectorBullet(Ship *_owner): owner(_owner)
 			{
 			}
 
 			virtual bool Affect(AEParticle &particle,size_t pt_id,float dt_ms)
 			{
-				for(auto aim:aims)
+				if(auto aim = aims.at(pt_id).lock())
 				{
-					if(SqrLength(aim->GetAbsPosition() - owner->GetAbsPosition()) <= 1)
+					auto direction = aim->GetAbsPosition() - particle.translate;
+
+					if(SqrLength(direction) <= 1)
 						return false;
+
+					particle.velocity = normalize(direction)*Length(particle.velocity);
 				}
 
 				return true;
 			}
+
+			virtual void Notify(EventType event,AEParticle &particle,size_t pt_id,void *ex)
+			{
+				if(event == EventType::NEW_PARTICLE)
+					aims.emplace(pt_id,*static_cast<weak_ptr<Ship>*>(ex));
+
+				if(event == EventType::PARTICLE_DIED)
+					aims.erase(pt_id);
+			}
 		};
 
-		bullets.affectors.push_back(make_shared<ParticleAffectorDestroyBullets>(this));
-		bullets.affectors.push_back(make_shared<AEParticleAffectorLifetime>(1.f,.2f));
+		bullets.affectors.push_back(make_shared<ParticleAffectorBullet>(this));
+		bullets.affectors.push_back(make_shared<AEParticleAffectorLifetime>(3.f,.2f));
 
 		bullets.emitter.grouping = vec3f(0,0,0);
 		bullets.emitter.initial_velocity = 10.0f;
@@ -202,9 +216,15 @@ namespace heaven
 				{
 					if(Ship::side_uid != Ship::target->side_uid)
 					{
-						// TODO: Send event
-						Ship::target->i_side_uid = Ship::side_uid;
+						Storyboard::Event event = {Storyboard::E_LOSE_ISLAND,Ship::target->side_uid,Ship::target->uid};
+						HeavenWorld::instance->storyboard.handleEvent(event);
+
+						Ship::target->side_uid = Ship::side_uid;
+
+						event = {Storyboard::E_CAPTURE_ISLAND,Ship::target->side_uid,Ship::target->uid};
+						HeavenWorld::instance->storyboard.handleEvent(event);
 					}
+	
 					// choose next waypoint in range of FOV
 					if(!SwarmItem::attractor || SwarmItem::gain())
 					{
@@ -338,7 +358,7 @@ namespace heaven
 	{
 		bullets.emitter.direction = aim->translate - translate;
 		bullets.EmitNum(1);
-		aim->damage(gun_power);
+		aim->damage(gun_power); // FIXME: ony when bullet hit it's target
 		if(aim->health<=0)
 		{
 			SwarmItem::attractor = nullptr;
