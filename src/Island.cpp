@@ -124,10 +124,10 @@ namespace heaven
 					static_cast<decltype(HeavenWorld::instance->warships)::const_iterator::difference_type(&)(
 						decltype(HeavenWorld::instance->warships)::const_iterator,
 						decltype(HeavenWorld::instance->warships)::const_iterator,
-						std::function<bool(std::pair<uint32_t,Ship*>)>)>(std::count_if),
+						std::function<bool(std::pair<uint32_t,std::shared_ptr<Ship> >)>)>(std::count_if),
 					HeavenWorld::instance->warships.begin(),
 					HeavenWorld::instance->warships.end(),
-					[this](std::pair<uint32_t,Ship*> uid_ship) { return uid_ship.second->manufacturer==this && uid_ship.second->side_uid==side_uid; });
+					[this](std::pair<uint32_t,std::shared_ptr<Ship> > uid_ship) { return uid_ship.second->manufacturer==this && uid_ship.second->side_uid==side_uid; });
 
 			switch(product_type)
 			{

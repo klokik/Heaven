@@ -20,7 +20,7 @@ namespace heaven
 		float radius_gain = 1.0f;
 		float fov = 90.0f;
 
-		AEObject *attractor = nullptr;
+		AEObject *attractor = nullptr;	// FIXME: weak_ptr????
 
 		bool fixed = false;
 
@@ -54,7 +54,7 @@ namespace heaven
 			for(auto it_ptr:items_ptr)
 			{
 				auto chase_dir = it_ptr->GetAbsPosition()-item_ptr->GetAbsPosition();
-				if(it_ptr != item_ptr && SqrLength(chase_dir) < item_ptr->radius_alingment*item_ptr->radius_alingment)
+				if(*it_ptr != *item_ptr && SqrLength(chase_dir) < item_ptr->radius_alingment*item_ptr->radius_alingment)
 				{
 					item_ptr->direction = (item_ptr->direction + flip(chase_dir,item_ptr->direction))*0.5f;
 				}

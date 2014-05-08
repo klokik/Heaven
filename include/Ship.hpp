@@ -62,14 +62,14 @@ namespace heaven
 
 		aengine::AEObjectParticleSystem bullets;
 
-		std::vector<Ship*> (*getIslandShips)(uint32_t island_uid);
+		std::vector<std::weak_ptr<Ship> > (*getIslandShips)(uint32_t island_uid);
 
 		Ship(std::string type,uint32_t _side_uid);
 
 		void update(float dt_ms);
 		void move(float dt_ms);
-		void attack(Ship *aim);
-		void fire(Ship *aim);
+		void attack(std::shared_ptr<Ship> aim);
+		void fire(std::shared_ptr<Ship> aim);
 		void damage(float power);
 
 		void goToIsland(Island *targ);
@@ -79,8 +79,11 @@ namespace heaven
 		float attack_dt;
 		float attack_time_limit;
 
-		bool inRange(Ship *ship);
+		bool inRange(std::shared_ptr<Ship> ship) const;
 	};
+
+	bool operator==(const Ship &a,const Ship &b);
+	bool operator!=(const Ship &a,const Ship &b);
 }
 
 #endif /* SHIP_H_ */

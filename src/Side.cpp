@@ -165,7 +165,7 @@ namespace heaven
 			HeavenWorld::instance->destroyWarship(data[0]);
 			break;
 		case 0xa2: //add/alter ship
-			HeavenWorld::instance->addWarship(new Ship("glider",1));//cmd));
+			HeavenWorld::instance->addWarship(std::make_shared<Ship>("glider",1));//cmd));
 			break;
 		case 0xa1: //add island
 			break;

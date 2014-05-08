@@ -35,7 +35,7 @@ namespace heaven
 		CameraTarget *view_target;
 
 		std::map<uint32_t,Island*> islands;
-		std::map<uint32_t,Ship*> warships;
+		std::map<uint32_t,std::shared_ptr<Ship> > warships;
 
 		AEEngine engine;
 
@@ -78,15 +78,15 @@ namespace heaven
 
 		void updateView(void);
 
-		void addWarship(Ship *ship);
+		void addWarship(std::shared_ptr<Ship> ship);
 		void destroyWarship(uint32_t ship_uid);
 		void addIsland(Island *island);
 		void LoadEnvironment(void);
 
 		void transfer(uint32_t from,uint32_t to,float amount);
 
-		static std::vector<Ship*> iGetIslandShips(uint32_t island_uid);
-		std::vector<Ship*> getIslandShips(uint32_t island_uid);
+		static std::vector<std::weak_ptr<Ship> > iGetIslandShips(uint32_t island_uid);
+		std::vector<std::weak_ptr<Ship> > getIslandShips(uint32_t island_uid);
 
 		~HeavenWorld(void);
 

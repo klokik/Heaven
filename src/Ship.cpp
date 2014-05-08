@@ -1,4 +1,5 @@
 #include <random>
+#include <algorithm>
 
 #include "AEVectorMath.h"
 
@@ -74,9 +75,9 @@ namespace heaven
 		private:
 			// std::vector<AEObject*> aims;
 			std::map<size_t,weak_ptr<Ship> > aims;
-			Ship *owner;
+			//Ship *owner; // What is it for???
 		public:
-			ParticleAffectorBullet(Ship *_owner): owner(_owner)
+			ParticleAffectorBullet(Ship *_owner)//: owner(_owner)
 			{
 			}
 
@@ -98,7 +99,7 @@ namespace heaven
 			virtual void Notify(EventType event,AEParticle &particle,size_t pt_id,void *ex)
 			{
 				if(event == EventType::NEW_PARTICLE)
-					aims.emplace(pt_id,*static_cast<weak_ptr<Ship>*>(ex));
+					aims.emplace(pt_id,*static_cast<std::weak_ptr<Ship>*>(ex));
 
 				if(event == EventType::PARTICLE_DIED)
 					aims.erase(pt_id);
@@ -191,12 +192,15 @@ namespace heaven
 		// set direction - particle attractor
 		if(target)
 		{
-			auto getEnemyShip = [this]()->Ship*
+			auto getEnemyShip = [this]()->shared_ptr<Ship>
 			{
-				std::vector<Ship*> evil_ships = getIslandShips(target->uid);
-				for(auto ship:evil_ships)
+				auto evil_wships = getIslandShips(target->uid);
+				for(auto wship:evil_wships)
+				{
+					auto ship = wship.lock();
 					if(ship->side_uid != this->side_uid && !ship->is_falling_down)
 						return ship;
+				}
 				return nullptr;
 			};
 
@@ -206,7 +210,7 @@ namespace heaven
 				auto enemy = getEnemyShip();
 				if(enemy)
 				{
-					SwarmItem::attractor = enemy;
+					SwarmItem::attractor = enemy.get();
 					Ship::chased_ship_uid = enemy->uid;
 					is_on_orbit = false;
 					is_taking_off = false;
@@ -285,7 +289,7 @@ namespace heaven
 					auto ship = HeavenWorld::instance->warships.at(chased_ship_uid);
 					if(!ship->is_falling_down)
 					{
-						SwarmItem::attractor = ship;
+						SwarmItem::attractor = ship.get();
 						attack(ship);
 					}
 					else
@@ -309,12 +313,15 @@ namespace heaven
 			throw std::runtime_error("no target for island "+name);
 
 		//swarm intelligence
-		auto obstacles = getIslandShips(target->uid);
+		auto wobstacles = getIslandShips(target->uid);
+		std::vector<shared_ptr<Ship> > obstacles;
+		std::for_each(wobstacles.begin(),wobstacles.end(),[&](weak_ptr<Ship> &item){obstacles.push_back(item.lock());});
+
 		SwarmSystem<decltype(this),decltype(obstacles)>::swarm_one(this,obstacles,dt_ms);
 		orientAlongVector(SwarmItem::direction);
 	}
 
-	void Ship::attack(Ship *aim)
+	void Ship::attack(std::shared_ptr<Ship> aim)
 	{
 		if(!getIslandShips)
 			throw 0; // island is nowhere?
@@ -354,12 +361,13 @@ namespace heaven
 		// }
 	}
 
-	void Ship::fire(Ship *aim)
+	void Ship::fire(std::shared_ptr<Ship> aim)
 	{
 		bullets.emitter.direction = aim->translate - translate;
-		bullets.EmitNum(1);
+		std::weak_ptr<Ship> targ(aim);
+		bullets.EmitNum(1,{&targ});
 		aim->damage(gun_power); // FIXME: ony when bullet hit it's target
-		if(aim->health<=0)
+		if(aim->health <= 0)
 		{
 			SwarmItem::attractor = nullptr;
 		}
@@ -402,7 +410,7 @@ namespace heaven
 		i_target = targ;
 	}
 
-	bool Ship::inRange(Ship *ship)
+	bool Ship::inRange(shared_ptr<Ship> ship) const
 	{
 		return (SqrLength(ship->translate - this->translate) <= attack_range*attack_range);
 	}
@@ -410,5 +418,15 @@ namespace heaven
 	bool Ship::canBeDisposed()
 	{
 		return exploded;
+	}
+
+	bool operator==(const Ship &a,const Ship &b)
+	{
+		return (a.uid==b.uid);
+	}
+
+	bool operator!=(const Ship &a,const Ship &b)
+	{
+		return !(a==b);
 	}
 }

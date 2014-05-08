@@ -175,7 +175,7 @@ namespace heaven
 			if(product.ship)
 			{
 				if(players[uid_island.second->side_uid].resources["iron"]>=0)
-					addWarship(product.ship);
+					addWarship(std::shared_ptr<Ship>(product.ship));
 				else
 				{
 					delete product.ship;
@@ -344,24 +344,22 @@ namespace heaven
 		environment->SetTranslate(view_target->GetAbsPosition());
 	}
 
-	void HeavenWorld::addWarship(Ship *ship)
+	void HeavenWorld::addWarship(shared_ptr<Ship> ship)
 	{
 		dbgout()<<"Add warship "<<ship->name<<" "<<ship->uid;
 
 		ship->getIslandShips = iGetIslandShips;
-		warships[ship->uid] = ship;
-		engine.scene->AddObject(ship);
+		warships.emplace(ship->uid,ship);
+		engine.scene->AddObject(ship.get());
 	}
 
 	void HeavenWorld::destroyWarship(uint32_t ship_uid)
 	{
 		dbgout()<<"Destroy warship "<<warships[ship_uid]->name<<" "<<ship_uid;
 		// we need some animation for destroy process
-		Ship *ship = warships[ship_uid];
+		auto ship = warships.at(ship_uid);
 		warships.erase(ship_uid);
-		engine.scene->RemoveObject(ship);
-
-		delete ship;
+		engine.scene->RemoveObject(ship.get());
 	}
 
 	void HeavenWorld::addIsland(Island *island)
@@ -380,14 +378,15 @@ namespace heaven
 		auto island_ships = getIslandShips(from);
 		for(size_t q=0;q<floor(island_ships.size()*amount);++q)
 		{
-			if(island_ships[q]->side_uid==i_from->side_uid)
-				island_ships[q]->goToIsland(i_to);
+			auto ship = island_ships[q].lock();
+			if(ship->side_uid==i_from->side_uid)
+				ship->goToIsland(i_to);
 		}
 	}
 
-	vector<Ship*> HeavenWorld::getIslandShips(uint32_t island_uid)
+	vector<weak_ptr<Ship> > HeavenWorld::getIslandShips(uint32_t island_uid)
 	{
-		vector<Ship*> result;
+		vector<weak_ptr<Ship> > result;
 		Island *targ = islands[island_uid];
 
 		for(auto uid_ship:warships)
@@ -399,7 +398,7 @@ namespace heaven
 		return result;
 	}
 
-	vector<Ship*> HeavenWorld::iGetIslandShips(uint32_t island_uid)
+	vector<weak_ptr<Ship> > HeavenWorld::iGetIslandShips(uint32_t island_uid)
 	{
 		if(!world) throw 0;
 
